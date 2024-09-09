@@ -20,7 +20,7 @@ Urban Mobility Simulation은 도시의 교통 및 이동 시스템을 가상으�
 
 ```{image} ../figures/ch01_DTUMOS.jpg
 :alt: Urban Mobility Simulation
-:width: 70%
+:width: 100%
 :align: center
 ```
 
