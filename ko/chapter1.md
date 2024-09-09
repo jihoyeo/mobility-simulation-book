@@ -10,6 +10,14 @@ Urban Mobility Simulation은 도시의 교통 및 이동 시스템을 가상으�
 
 현실 세계에서 다양한 모빌리티 서비스를 테스트하는 것은 비용, 이해관계 충돌, 안전 문제 등으로 인해 불가능하다. 따라서 로보틱스 분야에서 사용되는 OpenAI gym, Mujoco와 같은 가상 환경처럼 모빌리티 시스템 운영에 특화된 가상 환경을 만들 필요가 있다.
 
+```{image} ../figures/ch01_DTUMOS.jpg
+:alt: Urban Mobility Simulation
+:width: 70%
+:align: center
+```
+
+<p style="text-align: center;"><strong>[Urban Mobility Simulation Example (Taxi services in Seoul)]</strong></p>
+
 ## 1.4 Mobility Simulation Framework
 
 이러한 문제를 해결하기 위해 DTUMOS(Digital Twin for Urban Mobility Operating System)라는 프레임워크를 제시하였다. DTUMOS는 도시 모빌리티 운영 시스템을 위한 디지털 트윈으로, 경량화되고 오픈소스 기반의 프레임워크이다. 아래 그림에서 확인할 수 있듯이 모든 기능을 개별 모듈로 분리하여 높은 확장성과 유연성을 제공한다. 
