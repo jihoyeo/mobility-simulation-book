@@ -370,7 +370,10 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-demand-data-trip-record-data">2.1 Travel Demand Data (Trip record data)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.2 Road Network and Geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.2 Road Network and Geometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.2.1 Open Street Map</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.3 GTFS (General Transit Feed Specification)</a></li>
 </ul>
             </nav>
@@ -388,6 +391,7 @@ document.write(`
 <p>2장에 대한 수정 작업을 develop 브랜치에서 진행하고 있음. 계속 진행하는 중. 한번 더 수정</p>
 <section id="travel-demand-data-trip-record-data">
 <h2>2.1 Travel Demand Data (Trip record data)<a class="headerlink" href="#travel-demand-data-trip-record-data" title="Permalink to this heading">#</a></h2>
+<p>수도권 생활이동 데이터 가공</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> 
@@ -398,6 +402,10 @@ document.write(`
 </section>
 <section id="road-network-and-geometry">
 <h2>2.2 Road Network and Geometry<a class="headerlink" href="#road-network-and-geometry" title="Permalink to this heading">#</a></h2>
+<section id="open-street-map">
+<h3>2.2.1 Open Street Map<a class="headerlink" href="#open-street-map" title="Permalink to this heading">#</a></h3>
+<p>OSM을 이용해서 수도권 지역의 도로 데이터를 가져오고, 시각화 하는 작업을 수행</p>
+</section>
 </section>
 <section id="gtfs-general-transit-feed-specification">
 <h2>2.3 GTFS (General Transit Feed Specification)<a class="headerlink" href="#gtfs-general-transit-feed-specification" title="Permalink to this heading">#</a></h2>
@@ -468,7 +476,10 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-demand-data-trip-record-data">2.1 Travel Demand Data (Trip record data)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.2 Road Network and Geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.2 Road Network and Geometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.2.1 Open Street Map</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.3 GTFS (General Transit Feed Specification)</a></li>
 </ul>
   </nav></div>
