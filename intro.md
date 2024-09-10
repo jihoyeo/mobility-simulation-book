@@ -10,6 +10,10 @@
 ```{tableofcontents}
 ```
 
+### Contributors
+- [여지호](https://github.com/jihoyeo)
+- [김민수](https://github.com/alstn)
+
 ```{note}
 본 교재는 지속적으로 업데이트가 되며, 최종버전이 아닙니다. 한 학기동안 지속적으로 업데이트 할 예정이니 꾸준히 복습하시기 바랍니다. 
 ```
@@ -24,3 +28,4 @@ danger: 위험 경고
 error: 오류 정보
 hint: 힌트
 admonition: 사용자 정의 메시지 박스 -->
+
