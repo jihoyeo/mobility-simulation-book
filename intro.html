@@ -345,7 +345,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -361,6 +363,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributors">Contributors</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -384,6 +394,12 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="ko/chapter3.html">3. Models for Predicting Estimated Time of Arrival</a></li>
 </ul>
 </div>
+<section id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jihoyeo">여지호</a></p></li>
+<li><p><a class="reference external" href="https://github.com/alstn">김민수</a></p></li>
+</ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>본 교재는 지속적으로 업데이트가 되며, 최종버전이 아닙니다. 한 학기동안 지속적으로 업데이트 할 예정이니 꾸준히 복습하시기 바랍니다.</p>
@@ -397,7 +413,9 @@ attention: 주목해야 할 사항
 danger: 위험 경고
 error: 오류 정보
 hint: 힌트
-admonition: 사용자 정의 메시지 박스 --></section>
+admonition: 사용자 정의 메시지 박스 -->
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -444,6 +462,20 @@ admonition: 사용자 정의 메시지 박스 --></section>
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributors">Contributors</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
