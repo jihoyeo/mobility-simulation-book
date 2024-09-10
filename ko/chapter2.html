@@ -376,12 +376,27 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-time-data">2.2 Travel Time Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.3 Road Network and Geometry</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.3.1 Open Street Map</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.3.1 Open Street Map</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm-pbf">[1] .osm.pbf 파일 다운로드</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">[3] 원하는 지역의 폴리곤을 활용하여 주변 반경 네트워크 시각화</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[4] 여러 네트워크를 한번에 표시</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">[5]  도로망 중심성 시각화</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[6] 최단거리 분석</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">[7] 이동 속도 및 시간 영향</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">[8] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify">[9] SIMPLIFY</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">1</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.4 GTFS (General Transit Feed Specification)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.5 Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.5.1 통행 수요 데이터 분석 및 시각화</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.5.1 통행 수요 데이터 분석 및 시각화</a></li>
 </ul>
 </li>
 </ul>
@@ -783,8 +798,2555 @@ To: f:\mobility-simulation-book\data\chp2_od_data.parquet
 <section id="open-street-map">
 <h3>2.3.1 Open Street Map<a class="headerlink" href="#open-street-map" title="Permalink to this heading">#</a></h3>
 <p><a class="reference external" href="https://osm.kr/usage/">오픈스트리트맵 한국</a>에서는 대한민국의 OSM을 이용하는 상세한 방법에 대한 메뉴얼을 제공해주고 있다. 상세한 내용은 이곳을 참고하면 되며, 본 장에서는 한국의 OSM 데이터를 불러와서 <code class="docutils literal notranslate"><span class="pre">OSMnx</span></code> 패키지로 간략히 분석하고 시각화 하는 작업을 진행한다.</p>
-<p>OSM을 이용해서 수도권 지역의 도로 데이터를 가져오고, 시각화 하는 작업을 수행<br />
-OSMnx 이용해서 그래프 분석하고, 지난번 세미나 때 했던 간소화 하는 작업도 해볼 수 있지 않을까</p>
+<ul class="simple">
+<li><p>OSM을 이용해서 수도권 지역의 도로 데이터를 가져오고, 시각화 하는 작업을 수행한다</p></li>
+<li><p>OSMnx 이용해서 그래프 분석하고, 복잡한 그래프를 간소화 하는 작업을 실습한다</p></li>
+</ul>
+<section id="osm-pbf">
+<h4>[1] .osm.pbf 파일 다운로드<a class="headerlink" href="#osm-pbf" title="Permalink to this heading">#</a></h4>
+<ul class="simple">
+<li><p>사이트 : <a class="reference external" href="https://download.geofabrik.de/asia.html">https://download.geofabrik.de/asia.html</a></p></li>
+<li><p>South Korea 부분의 .osm.pbf 버튼 클릭</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">osmnx</span> <span class="k">as</span> <span class="nn">ox</span>
+
+<span class="n">ox</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">log_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ox</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\rnt53\AppData\Local\Temp\ipykernel_13568\606638948.py:4: FutureWarning: The `utils.config` function is deprecated and will be removed in the v2.0.0 release. Instead, use the `settings` module directly to configure a global setting&#39;s value. For example, `ox.settings.log_console=True`. See the OSMnx v2 migration guide: https://github.com/gboeing/osmnx/issues/1123
+  ox.config(use_cache=True, log_console=True)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;1.9.4&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="osm">
+<h4>[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현<a class="headerlink" href="#osm" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># get a graph for some city</span>
+<span class="c1"># www.openstreetmap.org에서 검색 결과가 city-state-country 단위로 나와야 함 </span>
+
+<span class="c1"># # 서울특별시 전체 도로 네트워크 불러오기</span>
+<span class="c1"># G = ox.graph_from_place(&#39;서울특별시, 대한민국&#39;, network_type=&#39;drive&#39;)</span>
+
+<span class="c1"># osmnx 그래프 생성( osm 지도 다운로드 )</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
+
+<span class="c1">## 시각화</span>
+<span class="c1"># fig, ax = ox.plot_graph(G)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span>
+                            <span class="n">G</span><span class="p">,</span> 
+                            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+                            <span class="n">node_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                            <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.5</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/2e73d504d3fde5dc625265c9408d635e5f81cc720f5cd320c9b06cbe29cf5b8b.png" src="../_images/2e73d504d3fde5dc625265c9408d635e5f81cc720f5cd320c9b06cbe29cf5b8b.png" />
+</div>
+</div>
+</section>
+<section id="id3">
+<h4>[3] 원하는 지역의 폴리곤을 활용하여 주변 반경 네트워크 시각화<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Piedmont, California 지역의 폴리곤(경계) 정보를 GeoDataFrame으로 가져옴</span>
+<span class="c1"># polygon = ox.geocode_to_gdf(&quot;Piedmont, California, USA&quot;).loc[0, &quot;geometry&quot;]</span>
+<span class="n">polygon</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">geocode_to_gdf</span><span class="p">(</span><span class="s1">&#39;동대문구, 서울, 대한민국&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;geometry&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># 가져온 폴리곤을 적절한 투영 좌표계로 변환 (투영 좌표계를 사용하면 거리 계산이 정확해짐)</span>
+<span class="n">poly_proj</span><span class="p">,</span> <span class="n">crs_proj</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">project_geometry</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+<span class="c1"># 투영된 폴리곤에 500미터의 버퍼를 추가하여, 해당 지역으로부터 500미터 내외의 범위 생성</span>
+<span class="c1"># 투영 좌표계를 다시 위도/경도로 변환 (WGS84)</span>
+<span class="n">polygon</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">projection</span><span class="o">.</span><span class="n">project_geometry</span><span class="p">(</span><span class="n">poly_proj</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs_proj</span><span class="p">,</span> <span class="n">to_latlong</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 생성된 500미터 버퍼 내에서 도보 네트워크를 가져옴</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_polygon</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s2">&quot;walk&quot;</span><span class="p">)</span>
+
+<span class="c1"># 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span>                      <span class="c1">#</span>
+    <span class="n">node_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>            <span class="c1"># 노드 크기를 0으로 설정 (노드 표시 안함)</span>
+    <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;#FFFF5C&quot;</span><span class="p">,</span>    <span class="c1"># 엣지 색상을 노란색으로 설정</span>
+    <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.25</span>      <span class="c1"># 엣지의 두께를 0.25로 설정</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6c86544e260e5fdbf041c0483a039799c4a336ad44feb9d405300391f6a80697.png" src="../_images/6c86544e260e5fdbf041c0483a039799c4a336ad44feb9d405300391f6a80697.png" />
+</div>
+</div>
+</section>
+<section id="id4">
+<h4>[4] 여러 네트워크를 한번에 표시<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 여러 위치에서 네트워크를 생성하기 위한 서울 지역 리스트 설정</span>
+<span class="n">places</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Jongno-gu, Seoul, South Korea&quot;</span><span class="p">,</span>  
+    <span class="p">{</span><span class="s2">&quot;city&quot;</span><span class="p">:</span> <span class="s2">&quot;Gangnam-gu&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;Seoul&quot;</span><span class="p">},</span>  
+    <span class="s2">&quot;Mapo-gu, Seoul, South Korea&quot;</span><span class="p">,</span>  
+<span class="p">]</span>
+
+<span class="c1"># retain_all=True를 사용하여 모든 연결되지 않은 서브그래프도 유지 (연속된 네트워크가 아닌 경우에도 유지)</span>
+<span class="c1"># 여러 장소를 기반으로 차량 도로 네트워크(network_type=&quot;drive&quot;)를 생성</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="n">places</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s2">&quot;drive&quot;</span><span class="p">,</span> <span class="n">retain_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 생성된 네트워크 시각화 </span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span>                      
+    <span class="n">node_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>           
+    <span class="n">edge_color</span><span class="o">=</span><span class="s2">&quot;#FFFF5C&quot;</span><span class="p">,</span>    
+    <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.25</span>      
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5bb777c5013316fb3925e13d223a9fa143b7ea99b9cdb161b960e7b15e570ff8.png" src="../_images/5bb777c5013316fb3925e13d223a9fa143b7ea99b9cdb161b960e7b15e570ff8.png" />
+</div>
+</div>
+</section>
+<section id="id5">
+<h4>[5]  도로망 중심성 시각화<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 그래프의 간선을 노드로, 노드를 간선으로 변환하여 line graph 생성</span>
+<span class="c1"># (간선 중심성을 계산하기 위해 Line Graph 기법을 사용)</span>
+<span class="n">edge_centrality</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">closeness_centrality</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">line_graph</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
+
+<span class="c1"># 원래 그래프 G의 각 간선에 대해 closeness centrality 값을 속성으로 설정</span>
+<span class="n">nx</span><span class="o">.</span><span class="n">set_edge_attributes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">edge_centrality</span><span class="p">,</span> <span class="s1">&#39;edge_centrality&#39;</span><span class="p">)</span>
+
+<span class="c1"># 원래 그래프의 간선을 중심성 값으로 색칠하기 위해 컬러맵(inferno)을 사용하여 색상 설정</span>
+<span class="n">ec</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">get_edge_colors_by_attr</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="s1">&#39;edge_centrality&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;inferno&#39;</span><span class="p">)</span>
+
+<span class="c1"># closeness centrality 값을 바탕으로 색상이 지정된 간선을 가진 그래프 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span>
+                        <span class="n">G</span><span class="p">,</span>                  <span class="c1"># 시각화할 그래프</span>
+                        <span class="n">edge_color</span><span class="o">=</span><span class="n">ec</span><span class="p">,</span>      <span class="c1"># 간선의 색상 (중심성 값에 따라 설정된 색상)</span>
+                        <span class="n">edge_linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>   <span class="c1"># 간선의 두께</span>
+                        <span class="n">node_size</span><span class="o">=</span><span class="mi">0</span>         <span class="c1"># 노드 크기 (0으로 설정하여 노드 미표시)</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/fdb1d19e47a06a6bddf822b76c4d3331575ce478702875306bc5b09ebced7bf3.png" src="../_images/fdb1d19e47a06a6bddf822b76c4d3331575ce478702875306bc5b09ebced7bf3.png" />
+</div>
+</div>
+</section>
+<section id="id6">
+<h4>[6] 최단거리 분석<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">folium</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pip install scikit-learn</span>
+<span class="c1"># pip install folium</span>
+<span class="c1"># pip install scipy</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 원하는 지역 그래프 생성</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;동대문구, 서울, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="n">simplify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 그래프 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span>
+                            <span class="n">G</span><span class="p">,</span> 
+                            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+                            <span class="n">node_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                            <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.5</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/83ec5994b115d7dbe13c9ff0d73f83adaf6842ae489c4001e38e38f39fdd28a7.png" src="../_images/83ec5994b115d7dbe13c9ff0d73f83adaf6842ae489c4001e38e38f39fdd28a7.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## 직각 좌표계로 변환</span>
+<span class="c1"># G_proj = ox.project_graph(G)</span>
+
+<span class="c1"># 출발지 도착지 좌표 설정( 좌표와 가장 가까운 노드를 찾아줌 )</span>
+<span class="n">orig_node</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">nearest_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="mf">127.0462200</span><span class="p">,</span> <span class="mf">37.5804100</span><span class="p">)</span> <span class="c1">#청량리역</span>
+<span class="n">dest_node</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">nearest_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="mf">127.0114887</span><span class="p">,</span> <span class="mf">37.5718616</span><span class="p">)</span> <span class="c1">#동대문역</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 최단 거리 경로 추출</span>
+<span class="n">route</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig_node</span><span class="p">,</span> <span class="n">dest_node</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 최단 거리 추출</span>
+<span class="nb">len</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig_node</span><span class="p">,</span> <span class="n">dest_node</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;킬로미터&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.9 킬로미터
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 촤단거리 지도 생성</span>
+<span class="n">route_graph_map</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_route_folium</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">popup_attribute</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+    
+<span class="c1"># 출발지와 목적지 좌표</span>
+<span class="n">orig_node_xy</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">orig_node</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">orig_node</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>  <span class="c1"># (위도, 경도)</span>
+<span class="n">dest_node_xy</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">dest_node</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">dest_node</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>  <span class="c1"># (위도, 경도)</span>
+
+<span class="c1"># 출발지 마커 추가</span>
+<span class="n">folium</span><span class="o">.</span><span class="n">Marker</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">orig_node_xy</span><span class="p">,</span> <span class="n">popup</span><span class="o">=</span><span class="s1">&#39;출발지&#39;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="n">folium</span><span class="o">.</span><span class="n">Icon</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">route_graph_map</span><span class="p">)</span>
+
+<span class="c1"># 목적지 마커 추가</span>
+<span class="n">folium</span><span class="o">.</span><span class="n">Marker</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">dest_node_xy</span><span class="p">,</span> <span class="n">popup</span><span class="o">=</span><span class="s1">&#39;목적지&#39;</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="n">folium</span><span class="o">.</span><span class="n">Icon</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">route_graph_map</span><span class="p">)</span>
+
+<span class="c1"># 지도 시각화</span>
+<span class="n">route_graph_map</span>
+
+<span class="c1"># 지도 저장 </span>
+<span class="c1"># filepath = &#39;data/route_graph.html&#39; # 경로 지정</span>
+<span class="c1"># route_graph_map.save(filepath)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alstn\AppData\Local\Temp\ipykernel_7400\861946550.py:2: FutureWarning: The `folium` module has been deprecated and will be removed in the v2.0.0 release. You can generate and explore interactive web maps of graph nodes, edges, and/or routes automatically using GeoPandas.GeoDataFrame.explore instead, for example like: `ox.graph_to_gdfs(G, nodes=False).explore()`. See the OSMnx examples gallery for complete details and demonstrations.
+  route_graph_map = ox.plot_route_folium(G, route, popup_attribute=&#39;length&#39;)
+</pre></div>
+</div>
+<div class="output text_html"><div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-3.7.1.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
+    
+            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
+            &lt;style&gt;
+                #map_f5eae5a3a8c4d4a4c315cf8c3def1ed3 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_f5eae5a3a8c4d4a4c315cf8c3def1ed3&quot; &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_f5eae5a3a8c4d4a4c315cf8c3def1ed3 = L.map(
+                &quot;map_f5eae5a3a8c4d4a4c315cf8c3def1ed3&quot;,
+                {
+                    center: [37.57699875139859, 127.03415788900782],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 1,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_bbf0366834d3ec7b3752754eb9167d70 = L.tileLayer(
+                &quot;https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png&quot;,
+                {&quot;attribution&quot;: &quot;\u0026copy; \u003ca href=\&quot;https://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\&quot;https://carto.com/attributions\&quot;\u003eCARTO\u003c/a\u003e&quot;, &quot;detectRetina&quot;: false, &quot;maxNativeZoom&quot;: 20, &quot;maxZoom&quot;: 20, &quot;minZoom&quot;: 0, &quot;noWrap&quot;: false, &quot;opacity&quot;: 1, &quot;subdomains&quot;: &quot;abcd&quot;, &quot;tms&quot;: false}
+            );
+        
+    
+            tile_layer_bbf0366834d3ec7b3752754eb9167d70.addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+            var poly_line_d35478c42c57e65068e2351cb369f132 = L.polyline(
+                [[37.5805731, 127.0459605], [37.5806956, 127.0460854]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_895bc5232356edc9ad8cd6c46b63cc74 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_fecdc7c759b480db3827141ea984a4b9 = $(`&lt;div id=&quot;html_fecdc7c759b480db3827141ea984a4b9&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;17.512&lt;/div&gt;`)[0];
+                popup_895bc5232356edc9ad8cd6c46b63cc74.setContent(html_fecdc7c759b480db3827141ea984a4b9);
+            
+        
+
+        poly_line_d35478c42c57e65068e2351cb369f132.bindPopup(popup_895bc5232356edc9ad8cd6c46b63cc74)
+        ;
+
+        
+    
+    
+            var poly_line_12d9e06bf7b3209b03c2cde7d17734ed = L.polyline(
+                [[37.5806956, 127.0460854], [37.5809295, 127.0463449]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_cc5488c0170aca1b814951baec4bff5f = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_aaccac38a57efb7cab9e6ad733db1fda = $(`&lt;div id=&quot;html_aaccac38a57efb7cab9e6ad733db1fda&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;34.632&lt;/div&gt;`)[0];
+                popup_cc5488c0170aca1b814951baec4bff5f.setContent(html_aaccac38a57efb7cab9e6ad733db1fda);
+            
+        
+
+        poly_line_12d9e06bf7b3209b03c2cde7d17734ed.bindPopup(popup_cc5488c0170aca1b814951baec4bff5f)
+        ;
+
+        
+    
+    
+            var poly_line_19849d4cf5ed90dd34cb51061c21517c = L.polyline(
+                [[37.5809295, 127.0463449], [37.5811477, 127.0465599]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_a49963d2b34f91b21fc575a7420791fe = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_a2e76f2e48b04695f0b736ac099c639d = $(`&lt;div id=&quot;html_a2e76f2e48b04695f0b736ac099c639d&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;30.784&lt;/div&gt;`)[0];
+                popup_a49963d2b34f91b21fc575a7420791fe.setContent(html_a2e76f2e48b04695f0b736ac099c639d);
+            
+        
+
+        poly_line_19849d4cf5ed90dd34cb51061c21517c.bindPopup(popup_a49963d2b34f91b21fc575a7420791fe)
+        ;
+
+        
+    
+    
+            var poly_line_4ab1aedaa703afaae60f31aec87777bd = L.polyline(
+                [[37.5811477, 127.0465599], [37.5812788, 127.0466701]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_677bc1cfede71366cb6d4fd1801c734a = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_9a0c2ffbd82c6954e037136d53bf001c = $(`&lt;div id=&quot;html_9a0c2ffbd82c6954e037136d53bf001c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;17.516&lt;/div&gt;`)[0];
+                popup_677bc1cfede71366cb6d4fd1801c734a.setContent(html_9a0c2ffbd82c6954e037136d53bf001c);
+            
+        
+
+        poly_line_4ab1aedaa703afaae60f31aec87777bd.bindPopup(popup_677bc1cfede71366cb6d4fd1801c734a)
+        ;
+
+        
+    
+    
+            var poly_line_1a84536ce159f74c812d05ab1efebf8e = L.polyline(
+                [[37.5812788, 127.0466701], [37.5811914, 127.0465372]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_f5be58ec79823087f669481fb1e56316 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_e798f3575ef5ea30d4b80dae24d30b77 = $(`&lt;div id=&quot;html_e798f3575ef5ea30d4b80dae24d30b77&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;15.218&lt;/div&gt;`)[0];
+                popup_f5be58ec79823087f669481fb1e56316.setContent(html_e798f3575ef5ea30d4b80dae24d30b77);
+            
+        
+
+        poly_line_1a84536ce159f74c812d05ab1efebf8e.bindPopup(popup_f5be58ec79823087f669481fb1e56316)
+        ;
+
+        
+    
+    
+            var poly_line_89fe7dfa9c23d7f5cd0d8b91e05d8a89 = L.polyline(
+                [[37.5811914, 127.0465372], [37.5810963, 127.0463886]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d7f6b57be452e72a273902505c58c053 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_2012c479ab49eed387ed5981b2be081b = $(`&lt;div id=&quot;html_2012c479ab49eed387ed5981b2be081b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;16.831&lt;/div&gt;`)[0];
+                popup_d7f6b57be452e72a273902505c58c053.setContent(html_2012c479ab49eed387ed5981b2be081b);
+            
+        
+
+        poly_line_89fe7dfa9c23d7f5cd0d8b91e05d8a89.bindPopup(popup_d7f6b57be452e72a273902505c58c053)
+        ;
+
+        
+    
+    
+            var poly_line_f46e4e055ed213f563b4740177e32ee4 = L.polyline(
+                [[37.5810963, 127.0463886], [37.5809135, 127.0461484]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d5847a38e40b4bbca41d5b9995315f05 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_4fe0c177680f9262e8a6b530c21b764f = $(`&lt;div id=&quot;html_4fe0c177680f9262e8a6b530c21b764f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;29.346&lt;/div&gt;`)[0];
+                popup_d5847a38e40b4bbca41d5b9995315f05.setContent(html_4fe0c177680f9262e8a6b530c21b764f);
+            
+        
+
+        poly_line_f46e4e055ed213f563b4740177e32ee4.bindPopup(popup_d5847a38e40b4bbca41d5b9995315f05)
+        ;
+
+        
+    
+    
+            var poly_line_b11162db7ac98602872ae7f5fbc2c015 = L.polyline(
+                [[37.5809135, 127.0461484], [37.5807824, 127.0459761]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d8344b2f1dd997eb412560cd69a013d9 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_a92cd64515535de16711d96af1c1bf3f = $(`&lt;div id=&quot;html_a92cd64515535de16711d96af1c1bf3f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;21.049&lt;/div&gt;`)[0];
+                popup_d8344b2f1dd997eb412560cd69a013d9.setContent(html_a92cd64515535de16711d96af1c1bf3f);
+            
+        
+
+        poly_line_b11162db7ac98602872ae7f5fbc2c015.bindPopup(popup_d8344b2f1dd997eb412560cd69a013d9)
+        ;
+
+        
+    
+    
+            var poly_line_d0d5102e72bd5ebf9114b3f6102c07cc = L.polyline(
+                [[37.5807824, 127.0459761], [37.5806733, 127.0458297]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_e553d0c663be9257e86bce3551551474 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_01c3e4e63a801acbf653bd777caaa36e = $(`&lt;div id=&quot;html_01c3e4e63a801acbf653bd777caaa36e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;17.709&lt;/div&gt;`)[0];
+                popup_e553d0c663be9257e86bce3551551474.setContent(html_01c3e4e63a801acbf653bd777caaa36e);
+            
+        
+
+        poly_line_d0d5102e72bd5ebf9114b3f6102c07cc.bindPopup(popup_e553d0c663be9257e86bce3551551474)
+        ;
+
+        
+    
+    
+            var poly_line_33f818f1972ad1ccf73531a5d2dcf66a = L.polyline(
+                [[37.5806733, 127.0458297], [37.5805909, 127.045719]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_b3956d1fe714e1d1c99e3223a5249f4b = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_59610f5d6b3896b40be3f2abb90e062c = $(`&lt;div id=&quot;html_59610f5d6b3896b40be3f2abb90e062c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;13.383&lt;/div&gt;`)[0];
+                popup_b3956d1fe714e1d1c99e3223a5249f4b.setContent(html_59610f5d6b3896b40be3f2abb90e062c);
+            
+        
+
+        poly_line_33f818f1972ad1ccf73531a5d2dcf66a.bindPopup(popup_b3956d1fe714e1d1c99e3223a5249f4b)
+        ;
+
+        
+    
+    
+            var poly_line_527441dcd1dddde0a93f3bbce8d3f64d = L.polyline(
+                [[37.5805909, 127.045719], [37.5804178, 127.0454416]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_deea9e4e20951f50828a8b695b7cc66a = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_66d820add33eee4ba93ac56bdaf28388 = $(`&lt;div id=&quot;html_66d820add33eee4ba93ac56bdaf28388&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;31.113&lt;/div&gt;`)[0];
+                popup_deea9e4e20951f50828a8b695b7cc66a.setContent(html_66d820add33eee4ba93ac56bdaf28388);
+            
+        
+
+        poly_line_527441dcd1dddde0a93f3bbce8d3f64d.bindPopup(popup_deea9e4e20951f50828a8b695b7cc66a)
+        ;
+
+        
+    
+    
+            var poly_line_02e334216568aa186fa005db90d5360c = L.polyline(
+                [[37.5804178, 127.0454416], [37.5801631, 127.0449914]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_9b771b2e9e272eb0d302c562242c0957 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_dd12780056343f7f3e319a6341c339d6 = $(`&lt;div id=&quot;html_dd12780056343f7f3e319a6341c339d6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;48.744&lt;/div&gt;`)[0];
+                popup_9b771b2e9e272eb0d302c562242c0957.setContent(html_dd12780056343f7f3e319a6341c339d6);
+            
+        
+
+        poly_line_02e334216568aa186fa005db90d5360c.bindPopup(popup_9b771b2e9e272eb0d302c562242c0957)
+        ;
+
+        
+    
+    
+            var poly_line_ebad07b3b00d3d728574407c75801877 = L.polyline(
+                [[37.5801631, 127.0449914], [37.580119, 127.0448362]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_ba35955bb91b9c5e75f1fdddc4487fa3 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_8667c07d860d7a2f15a8818371e53c00 = $(`&lt;div id=&quot;html_8667c07d860d7a2f15a8818371e53c00&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;14.529&lt;/div&gt;`)[0];
+                popup_ba35955bb91b9c5e75f1fdddc4487fa3.setContent(html_8667c07d860d7a2f15a8818371e53c00);
+            
+        
+
+        poly_line_ebad07b3b00d3d728574407c75801877.bindPopup(popup_ba35955bb91b9c5e75f1fdddc4487fa3)
+        ;
+
+        
+    
+    
+            var poly_line_21256738551ff2304bb82c3c5bb29867 = L.polyline(
+                [[37.580119, 127.0448362], [37.5800737, 127.0446818]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_f234332a8b006998bd1b4f8f498af67e = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_6d03db2def2c1951a1b3bafc1f69a01a = $(`&lt;div id=&quot;html_6d03db2def2c1951a1b3bafc1f69a01a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;14.509&lt;/div&gt;`)[0];
+                popup_f234332a8b006998bd1b4f8f498af67e.setContent(html_6d03db2def2c1951a1b3bafc1f69a01a);
+            
+        
+
+        poly_line_21256738551ff2304bb82c3c5bb29867.bindPopup(popup_f234332a8b006998bd1b4f8f498af67e)
+        ;
+
+        
+    
+    
+            var poly_line_f59fc2a40b07aefe1a737328c0981235 = L.polyline(
+                [[37.5800737, 127.0446818], [37.5799509, 127.0442898]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_acba9cbcab21fe511f14d336ca620f03 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b4974198516ab83ca97120ec4d054c7a = $(`&lt;div id=&quot;html_b4974198516ab83ca97120ec4d054c7a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;37.145&lt;/div&gt;`)[0];
+                popup_acba9cbcab21fe511f14d336ca620f03.setContent(html_b4974198516ab83ca97120ec4d054c7a);
+            
+        
+
+        poly_line_f59fc2a40b07aefe1a737328c0981235.bindPopup(popup_acba9cbcab21fe511f14d336ca620f03)
+        ;
+
+        
+    
+    
+            var poly_line_a65f3653105abeb39c81f42c95ccd9d6 = L.polyline(
+                [[37.5799509, 127.0442898], [37.5797042, 127.0435033]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_3dd0cdb45f12e56dbf0cf7e44c4acc3c = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_3c16304e01357e21aad9f292b0c6bf0c = $(`&lt;div id=&quot;html_3c16304e01357e21aad9f292b0c6bf0c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;74.54&lt;/div&gt;`)[0];
+                popup_3dd0cdb45f12e56dbf0cf7e44c4acc3c.setContent(html_3c16304e01357e21aad9f292b0c6bf0c);
+            
+        
+
+        poly_line_a65f3653105abeb39c81f42c95ccd9d6.bindPopup(popup_3dd0cdb45f12e56dbf0cf7e44c4acc3c)
+        ;
+
+        
+    
+    
+            var poly_line_8fb86fde5f26c493223094025895f93e = L.polyline(
+                [[37.5797042, 127.0435033], [37.5793967, 127.0425549]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_31d76ea035e580fbcf519b10ddbeec82 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_5433e152905e8cc63d37cb08fbf9dfb7 = $(`&lt;div id=&quot;html_5433e152905e8cc63d37cb08fbf9dfb7&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;90.3&lt;/div&gt;`)[0];
+                popup_31d76ea035e580fbcf519b10ddbeec82.setContent(html_5433e152905e8cc63d37cb08fbf9dfb7);
+            
+        
+
+        poly_line_8fb86fde5f26c493223094025895f93e.bindPopup(popup_31d76ea035e580fbcf519b10ddbeec82)
+        ;
+
+        
+    
+    
+            var poly_line_0248a4e11e680e64cbd77c3ad3764ab2 = L.polyline(
+                [[37.5793967, 127.0425549], [37.5793387, 127.0423761]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_4586255243a090cfd67175ddc68f0f32 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_0325360c406a62c2682d44781bf2815b = $(`&lt;div id=&quot;html_0325360c406a62c2682d44781bf2815b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;17.025&lt;/div&gt;`)[0];
+                popup_4586255243a090cfd67175ddc68f0f32.setContent(html_0325360c406a62c2682d44781bf2815b);
+            
+        
+
+        poly_line_0248a4e11e680e64cbd77c3ad3764ab2.bindPopup(popup_4586255243a090cfd67175ddc68f0f32)
+        ;
+
+        
+    
+    
+            var poly_line_c602a21346351efca2731353f5e27641 = L.polyline(
+                [[37.5793387, 127.0423761], [37.5792897, 127.0422126]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_81c2d60a273d8af25aa1a9a22a5fba1f = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_2338a533b5c9d746f94c64fed9d2e90f = $(`&lt;div id=&quot;html_2338a533b5c9d746f94c64fed9d2e90f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;15.404&lt;/div&gt;`)[0];
+                popup_81c2d60a273d8af25aa1a9a22a5fba1f.setContent(html_2338a533b5c9d746f94c64fed9d2e90f);
+            
+        
+
+        poly_line_c602a21346351efca2731353f5e27641.bindPopup(popup_81c2d60a273d8af25aa1a9a22a5fba1f)
+        ;
+
+        
+    
+    
+            var poly_line_c0cb7bbac7e4b49ddba64ea4251cc880 = L.polyline(
+                [[37.5792897, 127.0422126], [37.5790062, 127.0412674]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_235da2f1cd62393889983fccaff5a229 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_2fbf9a0c91ca67495471284e1de7ecfd = $(`&lt;div id=&quot;html_2fbf9a0c91ca67495471284e1de7ecfd&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;89.06&lt;/div&gt;`)[0];
+                popup_235da2f1cd62393889983fccaff5a229.setContent(html_2fbf9a0c91ca67495471284e1de7ecfd);
+            
+        
+
+        poly_line_c0cb7bbac7e4b49ddba64ea4251cc880.bindPopup(popup_235da2f1cd62393889983fccaff5a229)
+        ;
+
+        
+    
+    
+            var poly_line_ed8711b3ee2d0ef733d1e75972deb535 = L.polyline(
+                [[37.5790062, 127.0412674], [37.5788169, 127.040629]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_3f66bd5edc20c2fab26ef15fbbca48cd = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_379d28f1a6bc9206e4159c9654c3db9e = $(`&lt;div id=&quot;html_379d28f1a6bc9206e4159c9654c3db9e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;60.067&lt;/div&gt;`)[0];
+                popup_3f66bd5edc20c2fab26ef15fbbca48cd.setContent(html_379d28f1a6bc9206e4159c9654c3db9e);
+            
+        
+
+        poly_line_ed8711b3ee2d0ef733d1e75972deb535.bindPopup(popup_3f66bd5edc20c2fab26ef15fbbca48cd)
+        ;
+
+        
+    
+    
+            var poly_line_eb687173db01116fe2ab2e17b0918416 = L.polyline(
+                [[37.5788169, 127.040629], [37.5787137, 127.0403199]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_732c5fcbcdd92c4594b2d8b867d25310 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_54c09c2a5c8624731587f5504fd07d58 = $(`&lt;div id=&quot;html_54c09c2a5c8624731587f5504fd07d58&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;29.558&lt;/div&gt;`)[0];
+                popup_732c5fcbcdd92c4594b2d8b867d25310.setContent(html_54c09c2a5c8624731587f5504fd07d58);
+            
+        
+
+        poly_line_eb687173db01116fe2ab2e17b0918416.bindPopup(popup_732c5fcbcdd92c4594b2d8b867d25310)
+        ;
+
+        
+    
+    
+            var poly_line_d5dcd1821a8e38d707ca40e7dd13bcb4 = L.polyline(
+                [[37.5787137, 127.0403199], [37.5784035, 127.0393906]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_19d0cb87753bea00d18ee2ba76b684c4 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_fda0400a3dbe38becc524474c9e7ab59 = $(`&lt;div id=&quot;html_fda0400a3dbe38becc524474c9e7ab59&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;88.861&lt;/div&gt;`)[0];
+                popup_19d0cb87753bea00d18ee2ba76b684c4.setContent(html_fda0400a3dbe38becc524474c9e7ab59);
+            
+        
+
+        poly_line_d5dcd1821a8e38d707ca40e7dd13bcb4.bindPopup(popup_19d0cb87753bea00d18ee2ba76b684c4)
+        ;
+
+        
+    
+    
+            var poly_line_5eb8d3b39342971060ad43a05ebcf9f2 = L.polyline(
+                [[37.5784035, 127.0393906], [37.5783077, 127.0390469]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_6c65d3718d1256de0006122a8d837655 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_3bd7bb251dc1226a4e3f541e4456adcc = $(`&lt;div id=&quot;html_3bd7bb251dc1226a4e3f541e4456adcc&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;32.107&lt;/div&gt;`)[0];
+                popup_6c65d3718d1256de0006122a8d837655.setContent(html_3bd7bb251dc1226a4e3f541e4456adcc);
+            
+        
+
+        poly_line_5eb8d3b39342971060ad43a05ebcf9f2.bindPopup(popup_6c65d3718d1256de0006122a8d837655)
+        ;
+
+        
+    
+    
+            var poly_line_a469fe7c16602b8073f0b2abfe2a5bc1 = L.polyline(
+                [[37.5783077, 127.0390469], [37.5782641, 127.038729]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_a40ad6fb88dd566c99ca79db006c984d = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_79eb2443800853b4c121fb7c179a31da = $(`&lt;div id=&quot;html_79eb2443800853b4c121fb7c179a31da&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;28.431&lt;/div&gt;`)[0];
+                popup_a40ad6fb88dd566c99ca79db006c984d.setContent(html_79eb2443800853b4c121fb7c179a31da);
+            
+        
+
+        poly_line_a469fe7c16602b8073f0b2abfe2a5bc1.bindPopup(popup_a40ad6fb88dd566c99ca79db006c984d)
+        ;
+
+        
+    
+    
+            var poly_line_6db0794536abf75a4a9df7b2b543f68a = L.polyline(
+                [[37.5782641, 127.038729], [37.5782488, 127.0385242]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_88f0db986a6fa2852bf1006a44baca75 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_95f9be1ad39dc1d178b44a4b0345e680 = $(`&lt;div id=&quot;html_95f9be1ad39dc1d178b44a4b0345e680&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;18.128&lt;/div&gt;`)[0];
+                popup_88f0db986a6fa2852bf1006a44baca75.setContent(html_95f9be1ad39dc1d178b44a4b0345e680);
+            
+        
+
+        poly_line_6db0794536abf75a4a9df7b2b543f68a.bindPopup(popup_88f0db986a6fa2852bf1006a44baca75)
+        ;
+
+        
+    
+    
+            var poly_line_e2665fb40dfd630760514635b39be084 = L.polyline(
+                [[37.5782488, 127.0385242], [37.5782433, 127.0383606]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_df8aa1d12c15c6c69845bff40e3d71bc = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_e48abe3b318e96b2ee16dd4861b4640f = $(`&lt;div id=&quot;html_e48abe3b318e96b2ee16dd4861b4640f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;14.43&lt;/div&gt;`)[0];
+                popup_df8aa1d12c15c6c69845bff40e3d71bc.setContent(html_e48abe3b318e96b2ee16dd4861b4640f);
+            
+        
+
+        poly_line_e2665fb40dfd630760514635b39be084.bindPopup(popup_df8aa1d12c15c6c69845bff40e3d71bc)
+        ;
+
+        
+    
+    
+            var poly_line_ab42556853e803243683df34e015fb1f = L.polyline(
+                [[37.5782433, 127.0383606], [37.578242, 127.0381456]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_72a33f91b764b3c2889151d07f70e8b2 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_24018050e846ff18f15bea57aef4ea17 = $(`&lt;div id=&quot;html_24018050e846ff18f15bea57aef4ea17&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;18.947&lt;/div&gt;`)[0];
+                popup_72a33f91b764b3c2889151d07f70e8b2.setContent(html_24018050e846ff18f15bea57aef4ea17);
+            
+        
+
+        poly_line_ab42556853e803243683df34e015fb1f.bindPopup(popup_72a33f91b764b3c2889151d07f70e8b2)
+        ;
+
+        
+    
+    
+            var poly_line_ae609b5bc63c616be9e7b1b8e9cf82e7 = L.polyline(
+                [[37.578242, 127.0381456], [37.5782397, 127.0377604]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_a51d0e412c4cc86fb062b6bd9097d8b1 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_12e7117313638bf1fed74c98ee2ea1ee = $(`&lt;div id=&quot;html_12e7117313638bf1fed74c98ee2ea1ee&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;33.947&lt;/div&gt;`)[0];
+                popup_a51d0e412c4cc86fb062b6bd9097d8b1.setContent(html_12e7117313638bf1fed74c98ee2ea1ee);
+            
+        
+
+        poly_line_ae609b5bc63c616be9e7b1b8e9cf82e7.bindPopup(popup_a51d0e412c4cc86fb062b6bd9097d8b1)
+        ;
+
+        
+    
+    
+            var poly_line_7f3751183b73118230e3cbb09b2afb90 = L.polyline(
+                [[37.5782397, 127.0377604], [37.5782394, 127.0377121]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_eaf6a74e9ead0bc285cb8203e65fad96 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_0ee385244a139b1bc8a4492fad557423 = $(`&lt;div id=&quot;html_0ee385244a139b1bc8a4492fad557423&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;4.257&lt;/div&gt;`)[0];
+                popup_eaf6a74e9ead0bc285cb8203e65fad96.setContent(html_0ee385244a139b1bc8a4492fad557423);
+            
+        
+
+        poly_line_7f3751183b73118230e3cbb09b2afb90.bindPopup(popup_eaf6a74e9ead0bc285cb8203e65fad96)
+        ;
+
+        
+    
+    
+            var poly_line_779e163fd551a3b68e8d30c6969ea819 = L.polyline(
+                [[37.5782394, 127.0377121], [37.5782318, 127.0368042]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_2a9a7683a34d062804ae36031e7346f5 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_da9f52ca384ea3bc25ea5d56485dbe61 = $(`&lt;div id=&quot;html_da9f52ca384ea3bc25ea5d56485dbe61&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;80.013&lt;/div&gt;`)[0];
+                popup_2a9a7683a34d062804ae36031e7346f5.setContent(html_da9f52ca384ea3bc25ea5d56485dbe61);
+            
+        
+
+        poly_line_779e163fd551a3b68e8d30c6969ea819.bindPopup(popup_2a9a7683a34d062804ae36031e7346f5)
+        ;
+
+        
+    
+    
+            var poly_line_439c92fc81dcd9ba839d553a05f0442a = L.polyline(
+                [[37.5782318, 127.0368042], [37.5782299, 127.0362475]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_878b1e357df42f7383b92d7b68118047 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_2b61fec8e6bcd229e4dd444b7dc663ae = $(`&lt;div id=&quot;html_2b61fec8e6bcd229e4dd444b7dc663ae&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;49.059&lt;/div&gt;`)[0];
+                popup_878b1e357df42f7383b92d7b68118047.setContent(html_2b61fec8e6bcd229e4dd444b7dc663ae);
+            
+        
+
+        poly_line_439c92fc81dcd9ba839d553a05f0442a.bindPopup(popup_878b1e357df42f7383b92d7b68118047)
+        ;
+
+        
+    
+    
+            var poly_line_e89c66289a6bb1d4d01b44837b31b1b1 = L.polyline(
+                [[37.5782299, 127.0362475], [37.5782112, 127.0352934]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_baec58f628433545db7f0010fe6babe1 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_3b7a950dbe73ecf02ade8aac1040643c = $(`&lt;div id=&quot;html_3b7a950dbe73ecf02ade8aac1040643c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;84.105&lt;/div&gt;`)[0];
+                popup_baec58f628433545db7f0010fe6babe1.setContent(html_3b7a950dbe73ecf02ade8aac1040643c);
+            
+        
+
+        poly_line_e89c66289a6bb1d4d01b44837b31b1b1.bindPopup(popup_baec58f628433545db7f0010fe6babe1)
+        ;
+
+        
+    
+    
+            var poly_line_a70ae510216aa2d36b0884596fa1a512 = L.polyline(
+                [[37.5782112, 127.0352934], [37.5782103, 127.0351574]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_b543ed0cda1d4effb7bd5d5232fb8e88 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_ced6ad8d12e3109eb67c449b7007afe2 = $(`&lt;div id=&quot;html_ced6ad8d12e3109eb67c449b7007afe2&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;11.985&lt;/div&gt;`)[0];
+                popup_b543ed0cda1d4effb7bd5d5232fb8e88.setContent(html_ced6ad8d12e3109eb67c449b7007afe2);
+            
+        
+
+        poly_line_a70ae510216aa2d36b0884596fa1a512.bindPopup(popup_b543ed0cda1d4effb7bd5d5232fb8e88)
+        ;
+
+        
+    
+    
+            var poly_line_69f98ade602ba2b78b983bbcac1ab87d = L.polyline(
+                [[37.5782103, 127.0351574], [37.5782101, 127.0349293]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_48e2a0f3486fc13309659514e5563530 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_511084c6d6ec37b7c0e0c8088f879044 = $(`&lt;div id=&quot;html_511084c6d6ec37b7c0e0c8088f879044&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;20.101&lt;/div&gt;`)[0];
+                popup_48e2a0f3486fc13309659514e5563530.setContent(html_511084c6d6ec37b7c0e0c8088f879044);
+            
+        
+
+        poly_line_69f98ade602ba2b78b983bbcac1ab87d.bindPopup(popup_48e2a0f3486fc13309659514e5563530)
+        ;
+
+        
+    
+    
+            var poly_line_457a4ed32236a70e6234930bfcb75b68 = L.polyline(
+                [[37.5782101, 127.0349293], [37.5782072, 127.0348239]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_1175ba06279a9affcd45796fba1bdb68 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_51661e5405d666baa9f694e6e780d58a = $(`&lt;div id=&quot;html_51661e5405d666baa9f694e6e780d58a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;9.294&lt;/div&gt;`)[0];
+                popup_1175ba06279a9affcd45796fba1bdb68.setContent(html_51661e5405d666baa9f694e6e780d58a);
+            
+        
+
+        poly_line_457a4ed32236a70e6234930bfcb75b68.bindPopup(popup_1175ba06279a9affcd45796fba1bdb68)
+        ;
+
+        
+    
+    
+            var poly_line_9f83b3107628e81bf62d13847dac40ba = L.polyline(
+                [[37.5782072, 127.0348239], [37.5782015, 127.0342257]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_c5b031c45094221d1d6054065bddcd59 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_7684d96e8df8f294f491499511734e71 = $(`&lt;div id=&quot;html_7684d96e8df8f294f491499511734e71&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;52.72&lt;/div&gt;`)[0];
+                popup_c5b031c45094221d1d6054065bddcd59.setContent(html_7684d96e8df8f294f491499511734e71);
+            
+        
+
+        poly_line_9f83b3107628e81bf62d13847dac40ba.bindPopup(popup_c5b031c45094221d1d6054065bddcd59)
+        ;
+
+        
+    
+    
+            var poly_line_cdb48b3daf3ba6b66ea4668c6d539509 = L.polyline(
+                [[37.5782015, 127.0342257], [37.5782007, 127.0341411]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_bb9a34e2b2f1d082c10ca1671ca3316f = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_075acd9cfab62f6e22183e0c11b6599e = $(`&lt;div id=&quot;html_075acd9cfab62f6e22183e0c11b6599e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;7.456&lt;/div&gt;`)[0];
+                popup_bb9a34e2b2f1d082c10ca1671ca3316f.setContent(html_075acd9cfab62f6e22183e0c11b6599e);
+            
+        
+
+        poly_line_cdb48b3daf3ba6b66ea4668c6d539509.bindPopup(popup_bb9a34e2b2f1d082c10ca1671ca3316f)
+        ;
+
+        
+    
+    
+            var poly_line_b8cc9529939ff83d20e60430af6b09f3 = L.polyline(
+                [[37.5782007, 127.0341411], [37.5782078, 127.0334813]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d42525a31781fccaf7649f3f6622e0f0 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b83122f7291bdc3911d882b46e53cf34 = $(`&lt;div id=&quot;html_b83122f7291bdc3911d882b46e53cf34&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;58.15&lt;/div&gt;`)[0];
+                popup_d42525a31781fccaf7649f3f6622e0f0.setContent(html_b83122f7291bdc3911d882b46e53cf34);
+            
+        
+
+        poly_line_b8cc9529939ff83d20e60430af6b09f3.bindPopup(popup_d42525a31781fccaf7649f3f6622e0f0)
+        ;
+
+        
+    
+    
+            var poly_line_d5ff9c9629353be8599ae436e6f1bee1 = L.polyline(
+                [[37.5782078, 127.0334813], [37.5782077, 127.0333274]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_4e3d3db1ddcbc217bc19618171344b5c = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_1222a20be400e8db8b45e036fed8d570 = $(`&lt;div id=&quot;html_1222a20be400e8db8b45e036fed8d570&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;13.562&lt;/div&gt;`)[0];
+                popup_4e3d3db1ddcbc217bc19618171344b5c.setContent(html_1222a20be400e8db8b45e036fed8d570);
+            
+        
+
+        poly_line_d5ff9c9629353be8599ae436e6f1bee1.bindPopup(popup_4e3d3db1ddcbc217bc19618171344b5c)
+        ;
+
+        
+    
+    
+            var poly_line_0a2d31264972ab0d3feeefa52d5d76fe = L.polyline(
+                [[37.5782077, 127.0333274], [37.5781877, 127.0328322]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_de6dc63a8c93a580927c5cc10d54d516 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_a74d7062abd445b55afe15f68a10420c = $(`&lt;div id=&quot;html_a74d7062abd445b55afe15f68a10420c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;43.696&lt;/div&gt;`)[0];
+                popup_de6dc63a8c93a580927c5cc10d54d516.setContent(html_a74d7062abd445b55afe15f68a10420c);
+            
+        
+
+        poly_line_0a2d31264972ab0d3feeefa52d5d76fe.bindPopup(popup_de6dc63a8c93a580927c5cc10d54d516)
+        ;
+
+        
+    
+    
+            var poly_line_f8840671e562579a7b22b783540050b8 = L.polyline(
+                [[37.5781877, 127.0328322], [37.5781843, 127.0325908]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_b07a0a6be724e78eb7de39c07ac2b537 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_3bd4767891632266135652f8cef26593 = $(`&lt;div id=&quot;html_3bd4767891632266135652f8cef26593&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;21.277&lt;/div&gt;`)[0];
+                popup_b07a0a6be724e78eb7de39c07ac2b537.setContent(html_3bd4767891632266135652f8cef26593);
+            
+        
+
+        poly_line_f8840671e562579a7b22b783540050b8.bindPopup(popup_b07a0a6be724e78eb7de39c07ac2b537)
+        ;
+
+        
+    
+    
+            var poly_line_7ee9d86d925f5f7562b683fe72487271 = L.polyline(
+                [[37.5781843, 127.0325908], [37.5781697, 127.0321176]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d29bc79bc649f7c300f6ffb2fc34f421 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_ce8ea64252c48a98322202e8002b2fca = $(`&lt;div id=&quot;html_ce8ea64252c48a98322202e8002b2fca&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;41.732&lt;/div&gt;`)[0];
+                popup_d29bc79bc649f7c300f6ffb2fc34f421.setContent(html_ce8ea64252c48a98322202e8002b2fca);
+            
+        
+
+        poly_line_7ee9d86d925f5f7562b683fe72487271.bindPopup(popup_d29bc79bc649f7c300f6ffb2fc34f421)
+        ;
+
+        
+    
+    
+            var poly_line_278578f77eeb76da1efcfda59498175a = L.polyline(
+                [[37.5781697, 127.0321176], [37.578148, 127.0318942]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_8902ad85e6b542f64d18836ac6c6f95d = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_7dd9ac6ea0b14355062a7b19a13fc629 = $(`&lt;div id=&quot;html_7dd9ac6ea0b14355062a7b19a13fc629&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;19.834&lt;/div&gt;`)[0];
+                popup_8902ad85e6b542f64d18836ac6c6f95d.setContent(html_7dd9ac6ea0b14355062a7b19a13fc629);
+            
+        
+
+        poly_line_278578f77eeb76da1efcfda59498175a.bindPopup(popup_8902ad85e6b542f64d18836ac6c6f95d)
+        ;
+
+        
+    
+    
+            var poly_line_60b6e43b9d291c181cffab70a553909f = L.polyline(
+                [[37.578148, 127.0318942], [37.5780409, 127.0313657]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_121d7a442af59cd4517d1840175e1112 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_425178abc6c93077305e263338cc6025 = $(`&lt;div id=&quot;html_425178abc6c93077305e263338cc6025&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;48.072&lt;/div&gt;`)[0];
+                popup_121d7a442af59cd4517d1840175e1112.setContent(html_425178abc6c93077305e263338cc6025);
+            
+        
+
+        poly_line_60b6e43b9d291c181cffab70a553909f.bindPopup(popup_121d7a442af59cd4517d1840175e1112)
+        ;
+
+        
+    
+    
+            var poly_line_88adb23bde76b3b69558a54398fd115e = L.polyline(
+                [[37.5780409, 127.0313657], [37.5779058, 127.0308367]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_2ddde8354fd349476cf11c6e4099f446 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b4944b9e9bb85b972978127095e3326f = $(`&lt;div id=&quot;html_b4944b9e9bb85b972978127095e3326f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;48.979&lt;/div&gt;`)[0];
+                popup_2ddde8354fd349476cf11c6e4099f446.setContent(html_b4944b9e9bb85b972978127095e3326f);
+            
+        
+
+        poly_line_88adb23bde76b3b69558a54398fd115e.bindPopup(popup_2ddde8354fd349476cf11c6e4099f446)
+        ;
+
+        
+    
+    
+            var poly_line_766d6a4a5a6cfce165c658001384b93e = L.polyline(
+                [[37.5779058, 127.0308367], [37.5778968, 127.0308043]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_65fdff97bdfcfafa34ae84446221ba72 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_dced17a8e68336dfd21fa7268150819f = $(`&lt;div id=&quot;html_dced17a8e68336dfd21fa7268150819f&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;3.026&lt;/div&gt;`)[0];
+                popup_65fdff97bdfcfafa34ae84446221ba72.setContent(html_dced17a8e68336dfd21fa7268150819f);
+            
+        
+
+        poly_line_766d6a4a5a6cfce165c658001384b93e.bindPopup(popup_65fdff97bdfcfafa34ae84446221ba72)
+        ;
+
+        
+    
+    
+            var poly_line_1e612787c5d9b3db4cfb002b2749aef7 = L.polyline(
+                [[37.5778968, 127.0308043], [37.5778395, 127.0306058]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_aa332ebd430793b5f1804028614271fd = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_c4b550ffeeb3371a9a35033e44913eb6 = $(`&lt;div id=&quot;html_c4b550ffeeb3371a9a35033e44913eb6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;18.617&lt;/div&gt;`)[0];
+                popup_aa332ebd430793b5f1804028614271fd.setContent(html_c4b550ffeeb3371a9a35033e44913eb6);
+            
+        
+
+        poly_line_1e612787c5d9b3db4cfb002b2749aef7.bindPopup(popup_aa332ebd430793b5f1804028614271fd)
+        ;
+
+        
+    
+    
+            var poly_line_cd587c6b932ee09619875bf38af89f79 = L.polyline(
+                [[37.5778395, 127.0306058], [37.5778012, 127.0304611]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d45ade0f0997068524f36df95f91f211 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_f59514b7d5cbc462acee28337e804cba = $(`&lt;div id=&quot;html_f59514b7d5cbc462acee28337e804cba&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;13.444&lt;/div&gt;`)[0];
+                popup_d45ade0f0997068524f36df95f91f211.setContent(html_f59514b7d5cbc462acee28337e804cba);
+            
+        
+
+        poly_line_cd587c6b932ee09619875bf38af89f79.bindPopup(popup_d45ade0f0997068524f36df95f91f211)
+        ;
+
+        
+    
+    
+            var poly_line_1db3f6223a3c970be6bdb90b1bdd8149 = L.polyline(
+                [[37.5778012, 127.0304611], [37.5777451, 127.030468]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_e565d6ff72ca036da4fa6ada863998e9 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_79024f07c6922ffd947472fba4a5b83c = $(`&lt;div id=&quot;html_79024f07c6922ffd947472fba4a5b83c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;6.268&lt;/div&gt;`)[0];
+                popup_e565d6ff72ca036da4fa6ada863998e9.setContent(html_79024f07c6922ffd947472fba4a5b83c);
+            
+        
+
+        poly_line_1db3f6223a3c970be6bdb90b1bdd8149.bindPopup(popup_e565d6ff72ca036da4fa6ada863998e9)
+        ;
+
+        
+    
+    
+            var poly_line_6af016e752824c35cccf038596d4726d = L.polyline(
+                [[37.5777451, 127.030468], [37.5777261, 127.0304703]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_06fa88d8b5246a8667a926b8073a30be = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_f1f86700a44a6fdc71e837031c0c32b6 = $(`&lt;div id=&quot;html_f1f86700a44a6fdc71e837031c0c32b6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;2.122&lt;/div&gt;`)[0];
+                popup_06fa88d8b5246a8667a926b8073a30be.setContent(html_f1f86700a44a6fdc71e837031c0c32b6);
+            
+        
+
+        poly_line_6af016e752824c35cccf038596d4726d.bindPopup(popup_06fa88d8b5246a8667a926b8073a30be)
+        ;
+
+        
+    
+    
+            var poly_line_6b78fb80edf3fd2401ce252cdb8369b9 = L.polyline(
+                [[37.5777261, 127.0304703], [37.5776761, 127.0304765]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d89d87827158090ada1d0c1740e8c054 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_518b114927d65fdad797141a26485387 = $(`&lt;div id=&quot;html_518b114927d65fdad797141a26485387&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;5.587&lt;/div&gt;`)[0];
+                popup_d89d87827158090ada1d0c1740e8c054.setContent(html_518b114927d65fdad797141a26485387);
+            
+        
+
+        poly_line_6b78fb80edf3fd2401ce252cdb8369b9.bindPopup(popup_d89d87827158090ada1d0c1740e8c054)
+        ;
+
+        
+    
+    
+            var poly_line_ebe802f8f1f677ea9ae97519f11d4bc0 = L.polyline(
+                [[37.5776761, 127.0304765], [37.5775519, 127.0304828]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_88d7e5b4e7b1a11b8a93af92c0f0cecf = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_9b96e6c05a71f88f554a3446a5e096f3 = $(`&lt;div id=&quot;html_9b96e6c05a71f88f554a3446a5e096f3&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;13.822&lt;/div&gt;`)[0];
+                popup_88d7e5b4e7b1a11b8a93af92c0f0cecf.setContent(html_9b96e6c05a71f88f554a3446a5e096f3);
+            
+        
+
+        poly_line_ebe802f8f1f677ea9ae97519f11d4bc0.bindPopup(popup_88d7e5b4e7b1a11b8a93af92c0f0cecf)
+        ;
+
+        
+    
+    
+            var poly_line_99f41c212f82eeccead461ead65e6e6d = L.polyline(
+                [[37.5775519, 127.0304828], [37.5774009, 127.0304905]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_32f46b4210930ee72d22240e3c055d41 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b78cc6d0d1dd4c089f4f999bdf49f21e = $(`&lt;div id=&quot;html_b78cc6d0d1dd4c089f4f999bdf49f21e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;16.804&lt;/div&gt;`)[0];
+                popup_32f46b4210930ee72d22240e3c055d41.setContent(html_b78cc6d0d1dd4c089f4f999bdf49f21e);
+            
+        
+
+        poly_line_99f41c212f82eeccead461ead65e6e6d.bindPopup(popup_32f46b4210930ee72d22240e3c055d41)
+        ;
+
+        
+    
+    
+            var poly_line_fe357e30131741ae155031918951324b = L.polyline(
+                [[37.5774009, 127.0304905], [37.5771272, 127.0305067]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_e688c8458287a13c88ddea337f43b0e9 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_74f05976e97c8f1f2f037b4e5ffaa2dc = $(`&lt;div id=&quot;html_74f05976e97c8f1f2f037b4e5ffaa2dc&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;30.468&lt;/div&gt;`)[0];
+                popup_e688c8458287a13c88ddea337f43b0e9.setContent(html_74f05976e97c8f1f2f037b4e5ffaa2dc);
+            
+        
+
+        poly_line_fe357e30131741ae155031918951324b.bindPopup(popup_e688c8458287a13c88ddea337f43b0e9)
+        ;
+
+        
+    
+    
+            var poly_line_ceb7dfbeb80d3811cde7fcff1f4e2134 = L.polyline(
+                [[37.5771272, 127.0305067], [37.5769344, 127.0298449]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d4bd847c6eb9ebc3e9119960e9551050 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_ebbf3a1fa8a77fdd664d77b4833c78e5 = $(`&lt;div id=&quot;html_ebbf3a1fa8a77fdd664d77b4833c78e5&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;62.137&lt;/div&gt;`)[0];
+                popup_d4bd847c6eb9ebc3e9119960e9551050.setContent(html_ebbf3a1fa8a77fdd664d77b4833c78e5);
+            
+        
+
+        poly_line_ceb7dfbeb80d3811cde7fcff1f4e2134.bindPopup(popup_d4bd847c6eb9ebc3e9119960e9551050)
+        ;
+
+        
+    
+    
+            var poly_line_d09275f12f5682673fe26b0380a7eb9b = L.polyline(
+                [[37.5769344, 127.0298449], [37.576833, 127.0294917]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_174bd5533f822c2076cf48a2a7fe4e03 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_cb55d1b13b451242e2e29350edba8a5c = $(`&lt;div id=&quot;html_cb55d1b13b451242e2e29350edba8a5c&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;33.105&lt;/div&gt;`)[0];
+                popup_174bd5533f822c2076cf48a2a7fe4e03.setContent(html_cb55d1b13b451242e2e29350edba8a5c);
+            
+        
+
+        poly_line_d09275f12f5682673fe26b0380a7eb9b.bindPopup(popup_174bd5533f822c2076cf48a2a7fe4e03)
+        ;
+
+        
+    
+    
+            var poly_line_a6fdc3bc9870d8fedd90e4fd19d9516c = L.polyline(
+                [[37.576833, 127.0294917], [37.5767739, 127.0292832]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_b84e108a03459f5439e455bdecc11c49 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_fafbfa7a93651a7995838dee076723be = $(`&lt;div id=&quot;html_fafbfa7a93651a7995838dee076723be&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;19.514&lt;/div&gt;`)[0];
+                popup_b84e108a03459f5439e455bdecc11c49.setContent(html_fafbfa7a93651a7995838dee076723be);
+            
+        
+
+        poly_line_a6fdc3bc9870d8fedd90e4fd19d9516c.bindPopup(popup_b84e108a03459f5439e455bdecc11c49)
+        ;
+
+        
+    
+    
+            var poly_line_6273eee7d81f1a130b718a2204ac358a = L.polyline(
+                [[37.5767739, 127.0292832], [37.5767629, 127.0292444]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_bd9d8c362fdcce8e67fa78e370ed89a6 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_8ca6220efbbe08f609487eb05d1d2047 = $(`&lt;div id=&quot;html_8ca6220efbbe08f609487eb05d1d2047&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;3.631&lt;/div&gt;`)[0];
+                popup_bd9d8c362fdcce8e67fa78e370ed89a6.setContent(html_8ca6220efbbe08f609487eb05d1d2047);
+            
+        
+
+        poly_line_6273eee7d81f1a130b718a2204ac358a.bindPopup(popup_bd9d8c362fdcce8e67fa78e370ed89a6)
+        ;
+
+        
+    
+    
+            var poly_line_772a0dad32e2150c2d7ea0b75fbf28f7 = L.polyline(
+                [[37.5767629, 127.0292444], [37.5767355, 127.0291478]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_647cd89acf4840b7059d796c3503e4ab = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_6029cc2e6c05a8aef623c0470fe46633 = $(`&lt;div id=&quot;html_6029cc2e6c05a8aef623c0470fe46633&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;9.042&lt;/div&gt;`)[0];
+                popup_647cd89acf4840b7059d796c3503e4ab.setContent(html_6029cc2e6c05a8aef623c0470fe46633);
+            
+        
+
+        poly_line_772a0dad32e2150c2d7ea0b75fbf28f7.bindPopup(popup_647cd89acf4840b7059d796c3503e4ab)
+        ;
+
+        
+    
+    
+            var poly_line_b61a674ffcb4ead42c12ab1d6f560e99 = L.polyline(
+                [[37.5767355, 127.0291478], [37.5766774, 127.0289425]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_9677dc402f9c1f747d3695a46c53fb7e = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_5264189a1cc487afd8859032fb7d9cf1 = $(`&lt;div id=&quot;html_5264189a1cc487afd8859032fb7d9cf1&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;19.211&lt;/div&gt;`)[0];
+                popup_9677dc402f9c1f747d3695a46c53fb7e.setContent(html_5264189a1cc487afd8859032fb7d9cf1);
+            
+        
+
+        poly_line_b61a674ffcb4ead42c12ab1d6f560e99.bindPopup(popup_9677dc402f9c1f747d3695a46c53fb7e)
+        ;
+
+        
+    
+    
+            var poly_line_2430ff2b8838c92da7d73640f7686bb0 = L.polyline(
+                [[37.5766774, 127.0289425], [37.5765479, 127.0284854]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_69bb194e40905f01ec2021b816a830ea = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_71c74cb5beacf2ac2a8d516de59c8e20 = $(`&lt;div id=&quot;html_71c74cb5beacf2ac2a8d516de59c8e20&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;42.779&lt;/div&gt;`)[0];
+                popup_69bb194e40905f01ec2021b816a830ea.setContent(html_71c74cb5beacf2ac2a8d516de59c8e20);
+            
+        
+
+        poly_line_2430ff2b8838c92da7d73640f7686bb0.bindPopup(popup_69bb194e40905f01ec2021b816a830ea)
+        ;
+
+        
+    
+    
+            var poly_line_1c3e9354276dcd63b54d9b1336c8910c = L.polyline(
+                [[37.5765479, 127.0284854], [37.5764067, 127.0280469]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_c721ff7dd67c1b985f168234184d105b = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_65e003395cde5a3aed57dee5784c9b29 = $(`&lt;div id=&quot;html_65e003395cde5a3aed57dee5784c9b29&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;41.711&lt;/div&gt;`)[0];
+                popup_c721ff7dd67c1b985f168234184d105b.setContent(html_65e003395cde5a3aed57dee5784c9b29);
+            
+        
+
+        poly_line_1c3e9354276dcd63b54d9b1336c8910c.bindPopup(popup_c721ff7dd67c1b985f168234184d105b)
+        ;
+
+        
+    
+    
+            var poly_line_73a4cee25358d4b8dd37dba24bd1fee1 = L.polyline(
+                [[37.5764067, 127.0280469], [37.5758419, 127.0281122]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_ba3a73a175583e23ffd1731359fa8463 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b3ed54671f8767faad745ac6d564dea3 = $(`&lt;div id=&quot;html_b3ed54671f8767faad745ac6d564dea3&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;63.066&lt;/div&gt;`)[0];
+                popup_ba3a73a175583e23ffd1731359fa8463.setContent(html_b3ed54671f8767faad745ac6d564dea3);
+            
+        
+
+        poly_line_73a4cee25358d4b8dd37dba24bd1fee1.bindPopup(popup_ba3a73a175583e23ffd1731359fa8463)
+        ;
+
+        
+    
+    
+            var poly_line_db734ccfb324a3110f4f84485fa54934 = L.polyline(
+                [[37.5758419, 127.0281122], [37.5753997, 127.0281764]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_feaf7011618303efa0cc1ee983034a1c = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_db6e02f5ce1bb442c73155378d95f512 = $(`&lt;div id=&quot;html_db6e02f5ce1bb442c73155378d95f512&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;49.495&lt;/div&gt;`)[0];
+                popup_feaf7011618303efa0cc1ee983034a1c.setContent(html_db6e02f5ce1bb442c73155378d95f512);
+            
+        
+
+        poly_line_db734ccfb324a3110f4f84485fa54934.bindPopup(popup_feaf7011618303efa0cc1ee983034a1c)
+        ;
+
+        
+    
+    
+            var poly_line_879c935dc96ffea0badd51d7b0af42c1 = L.polyline(
+                [[37.5753997, 127.0281764], [37.5749724, 127.028235]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_f4a890e603f3aadcd44a64c363ab23db = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_be3d90491573be427386b8f24a985c74 = $(`&lt;div id=&quot;html_be3d90491573be427386b8f24a985c74&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;47.793&lt;/div&gt;`)[0];
+                popup_f4a890e603f3aadcd44a64c363ab23db.setContent(html_be3d90491573be427386b8f24a985c74);
+            
+        
+
+        poly_line_879c935dc96ffea0badd51d7b0af42c1.bindPopup(popup_f4a890e603f3aadcd44a64c363ab23db)
+        ;
+
+        
+    
+    
+            var poly_line_7302c4ccc4a5c08847ce7f14dee3a54b = L.polyline(
+                [[37.5749724, 127.028235], [37.5749586, 127.0281812]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_cf26bec2184b602cc544d25d043f7a78 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_652eb55c0d036f7e76cbafac88208b5d = $(`&lt;div id=&quot;html_652eb55c0d036f7e76cbafac88208b5d&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;4.983&lt;/div&gt;`)[0];
+                popup_cf26bec2184b602cc544d25d043f7a78.setContent(html_652eb55c0d036f7e76cbafac88208b5d);
+            
+        
+
+        poly_line_7302c4ccc4a5c08847ce7f14dee3a54b.bindPopup(popup_cf26bec2184b602cc544d25d043f7a78)
+        ;
+
+        
+    
+    
+            var poly_line_2f27f2305013e09a275a12cfdce1ad68 = L.polyline(
+                [[37.5749586, 127.0281812], [37.5748855, 127.0278963]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_897bf3f4f2f3eed38edc2dec81ba041b = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_1220d84f2a436b32dbcf3e44da8cd195 = $(`&lt;div id=&quot;html_1220d84f2a436b32dbcf3e44da8cd195&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;26.391&lt;/div&gt;`)[0];
+                popup_897bf3f4f2f3eed38edc2dec81ba041b.setContent(html_1220d84f2a436b32dbcf3e44da8cd195);
+            
+        
+
+        poly_line_2f27f2305013e09a275a12cfdce1ad68.bindPopup(popup_897bf3f4f2f3eed38edc2dec81ba041b)
+        ;
+
+        
+    
+    
+            var poly_line_8117fd95702dffde6235119acb882b26 = L.polyline(
+                [[37.5748855, 127.0278963], [37.5748678, 127.0278296]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_26aab702deeec7d5494c9629763bc7e7 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_d5ac8747f34b9bb48c666723b344bfda = $(`&lt;div id=&quot;html_d5ac8747f34b9bb48c666723b344bfda&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;6.199&lt;/div&gt;`)[0];
+                popup_26aab702deeec7d5494c9629763bc7e7.setContent(html_d5ac8747f34b9bb48c666723b344bfda);
+            
+        
+
+        poly_line_8117fd95702dffde6235119acb882b26.bindPopup(popup_26aab702deeec7d5494c9629763bc7e7)
+        ;
+
+        
+    
+    
+            var poly_line_195f4f930cabc32787f2e4a7f352a998 = L.polyline(
+                [[37.5748678, 127.0278296], [37.5748572, 127.0277897]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_5cb3b9900486bb2153359d9364ccbd07 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b2241a083c4bbfdd56c57e333d847d7e = $(`&lt;div id=&quot;html_b2241a083c4bbfdd56c57e333d847d7e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;3.709&lt;/div&gt;`)[0];
+                popup_5cb3b9900486bb2153359d9364ccbd07.setContent(html_b2241a083c4bbfdd56c57e333d847d7e);
+            
+        
+
+        poly_line_195f4f930cabc32787f2e4a7f352a998.bindPopup(popup_5cb3b9900486bb2153359d9364ccbd07)
+        ;
+
+        
+    
+    
+            var poly_line_688a8bd779799a9306224b3129e9d9e3 = L.polyline(
+                [[37.5748572, 127.0277897], [37.5740877, 127.0278945]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_eebf9e60eff26efb7ee0070976ff39ae = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_e5a699826185bd13a6af0c3eee294aa8 = $(`&lt;div id=&quot;html_e5a699826185bd13a6af0c3eee294aa8&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;86.062&lt;/div&gt;`)[0];
+                popup_eebf9e60eff26efb7ee0070976ff39ae.setContent(html_e5a699826185bd13a6af0c3eee294aa8);
+            
+        
+
+        poly_line_688a8bd779799a9306224b3129e9d9e3.bindPopup(popup_eebf9e60eff26efb7ee0070976ff39ae)
+        ;
+
+        
+    
+    
+            var poly_line_64ed0ff82afe5c8719559fcfc4055e67 = L.polyline(
+                [[37.5740877, 127.0278945], [37.5739781, 127.0278844]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_6741562d5aef504504345ce5de38a998 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_9f84022dbd08dbe281d20fe9dbbb5590 = $(`&lt;div id=&quot;html_9f84022dbd08dbe281d20fe9dbbb5590&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;12.219&lt;/div&gt;`)[0];
+                popup_6741562d5aef504504345ce5de38a998.setContent(html_9f84022dbd08dbe281d20fe9dbbb5590);
+            
+        
+
+        poly_line_64ed0ff82afe5c8719559fcfc4055e67.bindPopup(popup_6741562d5aef504504345ce5de38a998)
+        ;
+
+        
+    
+    
+            var poly_line_c1834b8f1362fe2c2d1bebe0fa60b584 = L.polyline(
+                [[37.5739781, 127.0278844], [37.5739773, 127.0277017]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_0ac50356847a0959a3f975e4c795bef5 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_bec3d8a5a9bbd1e95ff87e823fe54cf6 = $(`&lt;div id=&quot;html_bec3d8a5a9bbd1e95ff87e823fe54cf6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;16.102&lt;/div&gt;`)[0];
+                popup_0ac50356847a0959a3f975e4c795bef5.setContent(html_bec3d8a5a9bbd1e95ff87e823fe54cf6);
+            
+        
+
+        poly_line_c1834b8f1362fe2c2d1bebe0fa60b584.bindPopup(popup_0ac50356847a0959a3f975e4c795bef5)
+        ;
+
+        
+    
+    
+            var poly_line_3aaee247f12635c38e7e1802b6d0117c = L.polyline(
+                [[37.5739773, 127.0277017], [37.5739733, 127.02735]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_1078f5cf0a0728434e5fa6ec4d42fe6d = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_c1b1f7eea0c4c5d8565de2605f246f91 = $(`&lt;div id=&quot;html_c1b1f7eea0c4c5d8565de2605f246f91&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;30.998&lt;/div&gt;`)[0];
+                popup_1078f5cf0a0728434e5fa6ec4d42fe6d.setContent(html_c1b1f7eea0c4c5d8565de2605f246f91);
+            
+        
+
+        poly_line_3aaee247f12635c38e7e1802b6d0117c.bindPopup(popup_1078f5cf0a0728434e5fa6ec4d42fe6d)
+        ;
+
+        
+    
+    
+            var poly_line_f41545bf64ee350696a381674b50c8eb = L.polyline(
+                [[37.5739733, 127.02735], [37.573967, 127.0268021]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_9d58f5516d040419ac185e8222c7e47e = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_385ec7c157746fe021aae744ab2ac3c3 = $(`&lt;div id=&quot;html_385ec7c157746fe021aae744ab2ac3c3&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;48.291&lt;/div&gt;`)[0];
+                popup_9d58f5516d040419ac185e8222c7e47e.setContent(html_385ec7c157746fe021aae744ab2ac3c3);
+            
+        
+
+        poly_line_f41545bf64ee350696a381674b50c8eb.bindPopup(popup_9d58f5516d040419ac185e8222c7e47e)
+        ;
+
+        
+    
+    
+            var poly_line_b882651cc0775f8a6933043e1aaf77c9 = L.polyline(
+                [[37.573967, 127.0268021], [37.5738335, 127.0267792]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_6899f92aee008bac62214f5ea14f1e1b = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_29962de8a1ff966d8104bd4b6cdc2ea1 = $(`&lt;div id=&quot;html_29962de8a1ff966d8104bd4b6cdc2ea1&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;14.981&lt;/div&gt;`)[0];
+                popup_6899f92aee008bac62214f5ea14f1e1b.setContent(html_29962de8a1ff966d8104bd4b6cdc2ea1);
+            
+        
+
+        poly_line_b882651cc0775f8a6933043e1aaf77c9.bindPopup(popup_6899f92aee008bac62214f5ea14f1e1b)
+        ;
+
+        
+    
+    
+            var poly_line_32825f4bb5ee1ed0bfb64a6aa782905e = L.polyline(
+                [[37.5738335, 127.0267792], [37.573356, 127.0268173]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d4cb744986d9d990a9f0f4531e2d09cf = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_8b7191341e930fd8223055a0002531fc = $(`&lt;div id=&quot;html_8b7191341e930fd8223055a0002531fc&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;53.202&lt;/div&gt;`)[0];
+                popup_d4cb744986d9d990a9f0f4531e2d09cf.setContent(html_8b7191341e930fd8223055a0002531fc);
+            
+        
+
+        poly_line_32825f4bb5ee1ed0bfb64a6aa782905e.bindPopup(popup_d4cb744986d9d990a9f0f4531e2d09cf)
+        ;
+
+        
+    
+    
+            var poly_line_f2ed108c444cb6072bdc72ca62a8373d = L.polyline(
+                [[37.573356, 127.0268173], [37.5728866, 127.0268366]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_f3784c8a9130b0165fa1f9a02212cf1f = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_4c21aff73a487f06cba1dc3a877d52ce = $(`&lt;div id=&quot;html_4c21aff73a487f06cba1dc3a877d52ce&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;52.223&lt;/div&gt;`)[0];
+                popup_f3784c8a9130b0165fa1f9a02212cf1f.setContent(html_4c21aff73a487f06cba1dc3a877d52ce);
+            
+        
+
+        poly_line_f2ed108c444cb6072bdc72ca62a8373d.bindPopup(popup_f3784c8a9130b0165fa1f9a02212cf1f)
+        ;
+
+        
+    
+    
+            var poly_line_4cee4b668e20c62fec18f33ddbd0cd01 = L.polyline(
+                [[37.5728866, 127.0268366], [37.5729059, 127.0261741]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_3f22cefade4b25d2e3ab3f83a13ad1fd = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_f00342bad4f9b34e55b35d0908bbc9d2 = $(`&lt;div id=&quot;html_f00342bad4f9b34e55b35d0908bbc9d2&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;58.426&lt;/div&gt;`)[0];
+                popup_3f22cefade4b25d2e3ab3f83a13ad1fd.setContent(html_f00342bad4f9b34e55b35d0908bbc9d2);
+            
+        
+
+        poly_line_4cee4b668e20c62fec18f33ddbd0cd01.bindPopup(popup_3f22cefade4b25d2e3ab3f83a13ad1fd)
+        ;
+
+        
+    
+    
+            var poly_line_2efc4e1de91190164684959333baefec = L.polyline(
+                [[37.5729059, 127.0261741], [37.5721944, 127.0261988]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_3c6dd157be39bb58300773187905e41a = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_aca79f13c97283ef5a5ca1c7a1f5115b = $(`&lt;div id=&quot;html_aca79f13c97283ef5a5ca1c7a1f5115b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;79.145&lt;/div&gt;`)[0];
+                popup_3c6dd157be39bb58300773187905e41a.setContent(html_aca79f13c97283ef5a5ca1c7a1f5115b);
+            
+        
+
+        poly_line_2efc4e1de91190164684959333baefec.bindPopup(popup_3c6dd157be39bb58300773187905e41a)
+        ;
+
+        
+    
+    
+            var poly_line_758981df3990cc62fdb6da82c3eabb49 = L.polyline(
+                [[37.5721944, 127.0261988], [37.5724363, 127.0253614]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_32162bd483874a3d118a7bcbbb95e5a1 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_e5af615aed44cc06316cf5f21a7b6a2a = $(`&lt;div id=&quot;html_e5af615aed44cc06316cf5f21a7b6a2a&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;78.55&lt;/div&gt;`)[0];
+                popup_32162bd483874a3d118a7bcbbb95e5a1.setContent(html_e5af615aed44cc06316cf5f21a7b6a2a);
+            
+        
+
+        poly_line_758981df3990cc62fdb6da82c3eabb49.bindPopup(popup_32162bd483874a3d118a7bcbbb95e5a1)
+        ;
+
+        
+    
+    
+            var poly_line_a495b7b90fe2605328d5ef2c0227259b = L.polyline(
+                [[37.5724363, 127.0253614], [37.5721602, 127.0252314]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_250582af8e631d43f0fa8c0a847ddc7e = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_b04b2b81f1e726afd737a2db0e1a4c55 = $(`&lt;div id=&quot;html_b04b2b81f1e726afd737a2db0e1a4c55&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;32.769&lt;/div&gt;`)[0];
+                popup_250582af8e631d43f0fa8c0a847ddc7e.setContent(html_b04b2b81f1e726afd737a2db0e1a4c55);
+            
+        
+
+        poly_line_a495b7b90fe2605328d5ef2c0227259b.bindPopup(popup_250582af8e631d43f0fa8c0a847ddc7e)
+        ;
+
+        
+    
+    
+            var poly_line_112eb93531771e9875547cce814a843f = L.polyline(
+                [[37.5721602, 127.0252314], [37.5720499, 127.0251756]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_a254eae106657dfba59edaee70327eec = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_4f8d62bea2fe3bea7197264f92444d72 = $(`&lt;div id=&quot;html_4f8d62bea2fe3bea7197264f92444d72&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;13.214&lt;/div&gt;`)[0];
+                popup_a254eae106657dfba59edaee70327eec.setContent(html_4f8d62bea2fe3bea7197264f92444d72);
+            
+        
+
+        poly_line_112eb93531771e9875547cce814a843f.bindPopup(popup_a254eae106657dfba59edaee70327eec)
+        ;
+
+        
+    
+    
+            var poly_line_04e158a67634fbc49635b3b0b8a23f0f = L.polyline(
+                [[37.5720499, 127.0251756], [37.571833, 127.0250777]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_cc34a31b5e36ef312ebb7a4c7022d2a6 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_bd8373233bfd9345158fb215c98e84b6 = $(`&lt;div id=&quot;html_bd8373233bfd9345158fb215c98e84b6&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;25.615&lt;/div&gt;`)[0];
+                popup_cc34a31b5e36ef312ebb7a4c7022d2a6.setContent(html_bd8373233bfd9345158fb215c98e84b6);
+            
+        
+
+        poly_line_04e158a67634fbc49635b3b0b8a23f0f.bindPopup(popup_cc34a31b5e36ef312ebb7a4c7022d2a6)
+        ;
+
+        
+    
+    
+            var poly_line_db20b533f7ab7086df990156ab8996dd = L.polyline(
+                [[37.571833, 127.0250777], [37.5715434, 127.0249257]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_45c45881f93f03ea36f407058fabcd14 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_6be4459c5043cb367bf02b236ca99c6e = $(`&lt;div id=&quot;html_6be4459c5043cb367bf02b236ca99c6e&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;34.877&lt;/div&gt;`)[0];
+                popup_45c45881f93f03ea36f407058fabcd14.setContent(html_6be4459c5043cb367bf02b236ca99c6e);
+            
+        
+
+        poly_line_db20b533f7ab7086df990156ab8996dd.bindPopup(popup_45c45881f93f03ea36f407058fabcd14)
+        ;
+
+        
+    
+    
+            var poly_line_336e5b5a44128dbbc9304b95a13d3f74 = L.polyline(
+                [[37.5715434, 127.0249257], [37.5718874, 127.0237217]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_bafa0d7ddf6e4f50c09449015a639bc7 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_d4860e23840f2f210634fade26bb2045 = $(`&lt;div id=&quot;html_d4860e23840f2f210634fade26bb2045&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;112.795&lt;/div&gt;`)[0];
+                popup_bafa0d7ddf6e4f50c09449015a639bc7.setContent(html_d4860e23840f2f210634fade26bb2045);
+            
+        
+
+        poly_line_336e5b5a44128dbbc9304b95a13d3f74.bindPopup(popup_bafa0d7ddf6e4f50c09449015a639bc7)
+        ;
+
+        
+    
+    
+            var poly_line_baf4ea44ae6d3a6f4faf8a723ff90742 = L.polyline(
+                [[37.5718874, 127.0237217], [37.5719397, 127.0235255]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_d95c379deb1cc62b1efed4d043eb1829 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_e4eb5b8f3d2b2c465b57952638eb1b81 = $(`&lt;div id=&quot;html_e4eb5b8f3d2b2c465b57952638eb1b81&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;18.243&lt;/div&gt;`)[0];
+                popup_d95c379deb1cc62b1efed4d043eb1829.setContent(html_e4eb5b8f3d2b2c465b57952638eb1b81);
+            
+        
+
+        poly_line_baf4ea44ae6d3a6f4faf8a723ff90742.bindPopup(popup_d95c379deb1cc62b1efed4d043eb1829)
+        ;
+
+        
+    
+    
+            var poly_line_e0dee371f9fa68198e541073b0520dcc = L.polyline(
+                [[37.5719397, 127.0235255], [37.571959, 127.0234527]],
+                {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: false, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;noClip&quot;: false, &quot;opacity&quot;: 1.0, &quot;smoothFactor&quot;: 1.0, &quot;stroke&quot;: true, &quot;weight&quot;: 3}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+        var popup_1ee44514db4ce223975176e599e78dfc = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_713c07101076bba01fce64e82093e910 = $(`&lt;div id=&quot;html_713c07101076bba01fce64e82093e910&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;6.765&lt;/div&gt;`)[0];
+                popup_1ee44514db4ce223975176e599e78dfc.setContent(html_713c07101076bba01fce64e82093e910);
+            
+        
+
+        poly_line_e0dee371f9fa68198e541073b0520dcc.bindPopup(popup_1ee44514db4ce223975176e599e78dfc)
+        ;
+
+        
+    
+    
+            map_f5eae5a3a8c4d4a4c315cf8c3def1ed3.fitBounds(
+                [[37.5715434, 127.0234527], [37.5812788, 127.0466701]],
+                {}
+            );
+        
+    
+            var marker_46d3ff6e0246660f60c174fdd7141ace = L.marker(
+                [37.5805731, 127.0459605],
+                {}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+            var icon_79a59f228e803bfb940c1d31efe506e2 = L.AwesomeMarkers.icon(
+                {&quot;extraClasses&quot;: &quot;fa-rotate-0&quot;, &quot;icon&quot;: &quot;info-sign&quot;, &quot;iconColor&quot;: &quot;white&quot;, &quot;markerColor&quot;: &quot;green&quot;, &quot;prefix&quot;: &quot;glyphicon&quot;}
+            );
+            marker_46d3ff6e0246660f60c174fdd7141ace.setIcon(icon_79a59f228e803bfb940c1d31efe506e2);
+        
+    
+        var popup_54df23a257ad0fe73ef51b9cdf6893a9 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_7ea55fc50b23a98ca94f1d6b758d0d1b = $(`&lt;div id=&quot;html_7ea55fc50b23a98ca94f1d6b758d0d1b&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;출발지&lt;/div&gt;`)[0];
+                popup_54df23a257ad0fe73ef51b9cdf6893a9.setContent(html_7ea55fc50b23a98ca94f1d6b758d0d1b);
+            
+        
+
+        marker_46d3ff6e0246660f60c174fdd7141ace.bindPopup(popup_54df23a257ad0fe73ef51b9cdf6893a9)
+        ;
+
+        
+    
+    
+            var marker_74a7f57df1726cd181d7ade80b0c2d83 = L.marker(
+                [37.571959, 127.0234527],
+                {}
+            ).addTo(map_f5eae5a3a8c4d4a4c315cf8c3def1ed3);
+        
+    
+            var icon_e2302cc342eae3ffce80587d200efefe = L.AwesomeMarkers.icon(
+                {&quot;extraClasses&quot;: &quot;fa-rotate-0&quot;, &quot;icon&quot;: &quot;info-sign&quot;, &quot;iconColor&quot;: &quot;white&quot;, &quot;markerColor&quot;: &quot;red&quot;, &quot;prefix&quot;: &quot;glyphicon&quot;}
+            );
+            marker_74a7f57df1726cd181d7ade80b0c2d83.setIcon(icon_e2302cc342eae3ffce80587d200efefe);
+        
+    
+        var popup_f207a3423bde5fae86bf9dcb4a05b454 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_11a0e778dc749db7a7ab56ec1cf52a39 = $(`&lt;div id=&quot;html_11a0e778dc749db7a7ab56ec1cf52a39&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;목적지&lt;/div&gt;`)[0];
+                popup_f207a3423bde5fae86bf9dcb4a05b454.setContent(html_11a0e778dc749db7a7ab56ec1cf52a39);
+            
+        
+
+        marker_74a7f57df1726cd181d7ade80b0c2d83.bindPopup(popup_f207a3423bde5fae86bf9dcb4a05b454)
+        ;
+
+        
+    
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div></div></div>
+</div>
+</section>
+<section id="id7">
+<h4>[7] 이동 속도 및 시간 영향<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 위의 그래프의 모든 엣지에 속도를 부여</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">add_edge_speeds</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+
+<span class="c1"># 모든 에지에 대한 이동 시간(초) 계산</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">add_edge_travel_times</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 유형별 평균 속도/시간 값 보기</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_to_gdfs</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">edges</span><span class="p">[</span><span class="s2">&quot;highway&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="s2">&quot;highway&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">edges</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;highway&quot;</span><span class="p">)[[</span><span class="s2">&quot;length&quot;</span><span class="p">,</span> <span class="s2">&quot;speed_kph&quot;</span><span class="p">,</span> <span class="s2">&quot;travel_time&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length</th>
+      <th>speed_kph</th>
+      <th>travel_time</th>
+    </tr>
+    <tr>
+      <th>highway</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>living_street</th>
+      <td>22.2</td>
+      <td>44.6</td>
+      <td>1.8</td>
+    </tr>
+    <tr>
+      <th>primary</th>
+      <td>31.5</td>
+      <td>56.2</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>primary_link</th>
+      <td>12.7</td>
+      <td>30.0</td>
+      <td>1.5</td>
+    </tr>
+    <tr>
+      <th>residential</th>
+      <td>27.5</td>
+      <td>30.4</td>
+      <td>3.3</td>
+    </tr>
+    <tr>
+      <th>secondary</th>
+      <td>31.7</td>
+      <td>42.5</td>
+      <td>2.7</td>
+    </tr>
+    <tr>
+      <th>secondary_link</th>
+      <td>16.5</td>
+      <td>46.2</td>
+      <td>1.3</td>
+    </tr>
+    <tr>
+      <th>tertiary</th>
+      <td>34.6</td>
+      <td>30.7</td>
+      <td>4.1</td>
+    </tr>
+    <tr>
+      <th>tertiary_link</th>
+      <td>20.9</td>
+      <td>44.6</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>trunk</th>
+      <td>54.0</td>
+      <td>76.1</td>
+      <td>2.5</td>
+    </tr>
+    <tr>
+      <th>trunk_link</th>
+      <td>24.1</td>
+      <td>44.6</td>
+      <td>1.9</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 별 속도 지정</span>
+<span class="n">hwy_speeds</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;residential&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;secondary&quot;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s2">&quot;tertiary&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">}</span> <span class="c1"># residential : 주거지도로 secondary : 지방도 tertiary: 시도·군도·구도</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">add_edge_speeds</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">hwy_speeds</span><span class="o">=</span><span class="n">hwy_speeds</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">add_edge_travel_times</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 이동 거리와 이동 시간을 최소화한 두 가지 경로를 계산합니다</span>
+
+<span class="c1"># 그래프 내에서 출발지 목적지 가져오기</span>
+<span class="n">orig</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">dest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">111</span><span class="p">]</span>
+<span class="n">route1</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)</span>
+<span class="n">route2</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;travel_time&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph_routes</span><span class="p">(</span>
+    <span class="n">G</span><span class="p">,</span> <span class="n">routes</span><span class="o">=</span><span class="p">[</span><span class="n">route1</span><span class="p">,</span> <span class="n">route2</span><span class="p">],</span> <span class="n">route_colors</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="n">route_linewidth</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/edcf373c6a702d5ec7ae25284dae3bfd1e07c580481461d6378040d9fd91c0f9.png" src="../_images/edcf373c6a702d5ec7ae25284dae3bfd1e07c580481461d6378040d9fd91c0f9.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 두 경로 비교</span>
+
+<span class="c1"># route1의 길이 계산 (거리 기준 최적 경로의 총 길이, 단위: 미터)</span>
+<span class="n">route1_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ox</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">route_to_gdf</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">route1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)[</span><span class="s2">&quot;length&quot;</span><span class="p">]))</span>
+
+<span class="c1"># route2의 길이 계산 (시간 기준 최적 경로의 총 길이, 단위: 미터)</span>
+<span class="n">route2_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ox</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">route_to_gdf</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">route2</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;travel_time&quot;</span><span class="p">)[</span><span class="s2">&quot;length&quot;</span><span class="p">]))</span>
+
+<span class="c1"># route1의 소요 시간 계산 (거리 기준 최적 경로의 총 소요 시간, 단위: 초)</span>
+<span class="n">route1_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ox</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">route_to_gdf</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">route1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)[</span><span class="s2">&quot;travel_time&quot;</span><span class="p">]))</span>
+
+<span class="c1"># route2의 소요 시간 계산 (시간 기준 최적 경로의 총 소요 시간, 단위: 초)</span>
+<span class="n">route2_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ox</span><span class="o">.</span><span class="n">routing</span><span class="o">.</span><span class="n">route_to_gdf</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">route2</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;travel_time&quot;</span><span class="p">)[</span><span class="s2">&quot;travel_time&quot;</span><span class="p">]))</span>
+
+<span class="c1"># 두 경로의 길이와 소요 시간을 출력</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Route 1 is&quot;</span><span class="p">,</span> <span class="n">route1_length</span><span class="p">,</span> <span class="s2">&quot;meters and takes&quot;</span><span class="p">,</span> <span class="n">route1_time</span><span class="p">,</span> <span class="s2">&quot;seconds.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Route 2 is&quot;</span><span class="p">,</span> <span class="n">route2_length</span><span class="p">,</span> <span class="s2">&quot;meters and takes&quot;</span><span class="p">,</span> <span class="n">route2_time</span><span class="p">,</span> <span class="s2">&quot;seconds.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Route 1 is 3897 meters and takes 325 seconds.
+Route 2 is 4942 meters and takes 300 seconds.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id8">
+<h4>[8] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 네트워크 불러오기</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;Gangnam, Seoul, South Korea&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
+
+<span class="c1"># 특정 노드를 선택 (예: 첫 번째 노드를 선택)</span>
+<span class="n">center_node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># 특정 노드를 중심으로 반경 500m 내의 서브그래프를 ego_graph로 추출</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># 반경 (미터 단위)</span>
+<span class="n">ego_G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ego_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">center_node</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+
+<span class="c1"># 서브그래프를 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">ego_G</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c636800b1c4b4f00f56643eead871ce4afa51a4df8dca8e54ce6f74c5b012d99.png" src="../_images/c636800b1c4b4f00f56643eead871ce4afa51a4df8dca8e54ce6f74c5b012d99.png" />
+</div>
+</div>
+</section>
+<section id="simplify">
+<h4>[9] SIMPLIFY<a class="headerlink" href="#simplify" title="Permalink to this heading">#</a></h4>
+<section id="id9">
+<h5>1<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h5>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 중심 위치 지점(위도, 경도) 정의 ( 서울 시청 )</span>
+<span class="n">location_point</span> <span class="o">=</span> <span class="p">(</span><span class="mf">37.5665</span><span class="p">,</span> <span class="mf">126.9780</span><span class="p">)</span>
+
+<span class="c1"># 중심 위치로부터 500미터 거리 내에서 도로 네트워크 생성</span>
+<span class="c1"># simplify=False로 설정하여 네트워크를 아직 단순화하지 않음</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_point</span><span class="p">(</span><span class="n">location_point</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">simplify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 단순화되지 않은 네트워크 그래프를 플로팅. 노드는 빨간색(r)으로 표시됨</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\alstn\AppData\Local\Programs\Python\Python38\lib\site-packages\osmnx\graph.py:191: FutureWarning: The expected order of coordinates in `bbox` will change in the v2.0.0 release to `(left, bottom, right, top)`.
+  G = graph_from_bbox(
+</pre></div>
+</div>
+<img alt="../_images/92e0f297c0cec6eceb7addf84fba6d331fb922b55cd5f071165487ad1c046008.png" src="../_images/92e0f297c0cec6eceb7addf84fba6d331fb922b55cd5f071165487ad1c046008.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 네트워크가 단순화될 때 제거될 노드를 강조</span>
+<span class="c1"># 끝점인 노드는 빨간색(r)으로 남고, 끝점이 아닌 노드는 노란색(y)으로 표시됨</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;r&quot;</span> <span class="k">if</span> <span class="n">ox</span><span class="o">.</span><span class="n">simplification</span><span class="o">.</span><span class="n">_is_endpoint</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;y&quot;</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c06d958131b9b6d1b3ee2cafd14772f7d1dac79b1e50c097a083ecb316343307.png" src="../_images/c06d958131b9b6d1b3ee2cafd14772f7d1dac79b1e50c097a083ecb316343307.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 네트워크를 단순화하여 불필요한 중간 노드를 병합</span>
+<span class="c1"># 위의 노란색 점 제거</span>
+<span class="n">G2</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">simplify_graph</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+
+<span class="c1"># 단순화된 그래프에서 자기 루프(self-loop) 엣지와 연결된 노드를 강조</span>
+<span class="c1"># 자기 루프 엣지는 노드가 자기 자신과 연결되는 엣지임. 이런 노드는 빨간색(r)으로,</span>
+<span class="c1"># 나머지 노드는 노란색(y)으로 표시됨</span>
+<span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">selfloop_edges</span><span class="p">(</span><span class="n">G2</span><span class="p">)]</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;r&quot;</span> <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">loops</span> <span class="k">else</span> <span class="s2">&quot;y&quot;</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">G2</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G2</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/33f77822b604d20acc3667b0d7949ebeda0de9798be298a3ff528765fb18e9a8.png" src="../_images/33f77822b604d20acc3667b0d7949ebeda0de9798be298a3ff528765fb18e9a8.png" />
+</div>
+</div>
+</section>
+<section id="id10">
+<h5>2<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h5>
+<ul class="simple">
+<li><p>strict 모드는 엣지 속성이 서로 다르면 다른 도로로 간주하고 병합하지 않음</p></li>
+<li><p>strict 모드 해제는 일부 엣지 속성의 차이를 무시하고, 엣지가 달라도 연결 가능한 도로로 처리하겠다는 뜻</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 이제 strict 모드를 해제하고, 엣지 속성의 차이를 허용하도록 설정</span>
+<span class="c1"># 엣지 매칭 조건을 완화했을 때 제거될 노드를 확인</span>
+
+<span class="c1"># 각 노드에 대해 끝점 여부를 판단하여, 끝점인 경우 빨간색(r), 끝점이 아닌 경우 노란색(y)으로 표시</span>
+<span class="n">nc</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;r&quot;</span> <span class="k">if</span> <span class="n">ox</span><span class="o">.</span><span class="n">simplification</span><span class="o">.</span><span class="n">_is_endpoint</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;osmid&quot;</span><span class="p">])</span> <span class="k">else</span> <span class="s2">&quot;y&quot;</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span> <span class="c1"># osmid : OpenStreetMap ID -&gt; 도로 판별 기준점</span>
+<span class="p">]</span>
+
+<span class="c1"># 시각화화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7fa9135645f38c9acc7828fc4e6718ca9248eaafa0c60220135c79149730f20b.png" src="../_images/7fa9135645f38c9acc7828fc4e6718ca9248eaafa0c60220135c79149730f20b.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># strict 모드를 해제한 상태로 다시 네트워크 단순화</span>
+<span class="c1"># `edge_attrs_differ` 파라미터를 통해 특정 엣지 속성 차이를 무시하며 단순화함 (예: &#39;osmid&#39;)</span>
+<span class="c1"># 위의 노란색 점 제거</span>
+<span class="n">G3</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">simplify_graph</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">edge_attrs_differ</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;osmid&quot;</span><span class="p">])</span>
+
+<span class="c1"># strict 모드가 해제된 단순화된 네트워크를 플로팅, 모든 노드는 빨간색(r)으로 표시됨</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G3</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e828c91e145d3f0b50b39a8bb3488f69322babd5ceb304fcab01ad34a8a2fd9f.png" src="../_images/e828c91e145d3f0b50b39a8bb3488f69322babd5ceb304fcab01ad34a8a2fd9f.png" />
+</div>
+</div>
+</section>
+</section>
 </section>
 </section>
 <section id="gtfs-general-transit-feed-specification">
@@ -797,8 +3359,8 @@ OSMnx 이용해서 그래프 분석하고, 지난번 세미나 때 했던 간소
 <section id="exercise">
 <h2>2.5 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h2>
 <p>GPT와 같은 AI 툴을 적극 활용해 문제를 풀어봅시다. 다만, 출력된 코드를 보고 이해하고, 코드가 실행되지 않는다면 어디서 실행되지 않는지 파악하고 올바르게 수정할 수 있어야 합니다.</p>
-<section id="id3">
-<h3>2.5.1 통행 수요 데이터 분석 및 시각화<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<section id="id11">
+<h3>2.5.1 통행 수요 데이터 분석 및 시각화<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h3>
 <blockquote>
 <div><p>2.1 Section에서 불러온 2024년 3월 27일 통행 데이터를 가지고 아래와 같은 분석을 수행해보자.</p>
 </div></blockquote>
@@ -806,6 +3368,7 @@ OSMnx 이용해서 그래프 분석하고, 지난번 세미나 때 했던 간소
 <li><p>시간에 따른 통행량을 그래프로 시각화 해보자. 몇시에 통행이 가장 많으며, 그 양은 얼마인가?</p></li>
 <li><p>공간에 따른 통행량의 분포를 읍면동 단위로 시각화 해보자. 어느 지역에서 출발 통행량(Trip Production)이 가장 많으며 어느 지역에서 도착 통행량 (Trip Attraction)이 가장 많은가?</p></li>
 <li><p>통행의 시공간적 분포를 함께 분석해보자. 가장 효과적인 시각화 방안은 무엇일까?</p></li>
+<li><p>출발통행, 도착통행이 아닌, 출발지-목적지간의 통행을 시각화 해보자. O-D pairs의 수가 지나치게 많다면 이를 효과적으로 시각화 할 수 있을까? 어떤 패키지나 소프트웨어를 활용하면 좋을지 고민해보자.</p></li>
 </ol>
 </section>
 </section>
@@ -881,12 +3444,27 @@ OSMnx 이용해서 그래프 분석하고, 지난번 세미나 때 했던 간소
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-time-data">2.2 Travel Time Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.3 Road Network and Geometry</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.3.1 Open Street Map</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.3.1 Open Street Map</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm-pbf">[1] .osm.pbf 파일 다운로드</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">[3] 원하는 지역의 폴리곤을 활용하여 주변 반경 네트워크 시각화</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[4] 여러 네트워크를 한번에 표시</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">[5]  도로망 중심성 시각화</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[6] 최단거리 분석</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">[7] 이동 속도 및 시간 영향</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">[8] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify">[9] SIMPLIFY</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">1</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.4 GTFS (General Transit Feed Specification)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.5 Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.5.1 통행 수요 데이터 분석 및 시각화</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.5.1 통행 수요 데이터 분석 및 시각화</a></li>
 </ul>
 </li>
 </ul>
