@@ -6,7 +6,7 @@ import Splash from "./components/Splash";
 import Trip from "./components/Trip";
 import "./css/app.css";
 
-const fetchData = (FilE_NAME) => {
+/* const fetchData = (FilE_NAME) => {
   const res = axios.get(
     // 자신의 깃허브 주소 입력
     // https://raw.githubusercontent.com/'자신 깃허브 이름'/simulation/main/simulation/src/data/${FilE_NAME}.json
@@ -14,6 +14,11 @@ const fetchData = (FilE_NAME) => {
   );
   const data = res.then((r) => r.data);
   return data;
+}; */
+
+const fetchData = (FilE_NAME) => {
+  return fetch(`${process.env.PUBLIC_URL}/data/${FilE_NAME}.json`)
+    .then(response => response.json());
 };
 
 const App = () => {
