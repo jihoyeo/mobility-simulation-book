@@ -10,6 +10,7 @@ parts:
       - file: ko/chapter1
       - file: ko/chapter2
       - file: ko/chapter3
+      - file: ko/chapter4
 
   # - caption: English Version
   #   chapters:
