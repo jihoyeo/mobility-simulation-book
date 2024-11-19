@@ -1,0 +1,1249 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Simulation &#8212; Digital Twin for Urban Mobility Systems</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'simulation_base/code/trip_data_generation_update';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Digital Twin for Urban Mobility Systems - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Digital Twin for Urban Mobility Systems - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Urban Mobility Simulation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../ko/chapter1.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ko/chapter2.html">2. Data Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ko/chapter3.html">3. Models for Predicting Estimated Time of Arrival</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ko/chapter4.html">4. Construct Digital Twin Simulation for Operating Mobility Systems</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsimulation_base/code/trip_data_generation_update.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/simulation_base/code/trip_data_generation_update.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Simulation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import">Import</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">좌표 거리 생성 함수</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trips">trips 데이터 생성 함수</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#od">od 데이터 생성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">trips 데이터 생성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#car">포인트 데이터 생성 ( CAR를 타기 전 대기 )</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">정류장 위치 아이콘 데이터</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp">데이터에서 TIMESTAMP의 최소, 최대값 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">데이터 저장</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">SCATTERPLOT LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">ICON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">POLYGON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">LINE, PATH LAYER</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="simulation">
+<h1>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading">#</a></h1>
+<section id="import">
+<h2>Import<a class="headerlink" href="#import" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">polyline</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rd</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span>
+
+<span class="kn">from</span> <span class="nn">requests.adapters</span> <span class="kn">import</span> <span class="n">HTTPAdapter</span>
+<span class="kn">from</span> <span class="nn">requests.packages.urllib3.util.retry</span> <span class="kn">import</span> <span class="n">Retry</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span> 
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;numpy&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h2>좌표 거리 생성 함수<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 직선 거리 게산 함수</span>
+<span class="k">def</span> <span class="nf">calculate_straight_distance</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span><span class="p">):</span>
+    <span class="c1"># 지구 반경 (킬로미터 단위)</span>
+    <span class="n">km_constant</span> <span class="o">=</span> <span class="mi">3959</span><span class="o">*</span> <span class="mf">1.609344</span>
+    <span class="c1"># 위도와 경도를 라디안으로 변환</span>
+    <span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">,</span> <span class="p">[</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span><span class="p">])</span>
+    <span class="c1"># 위도 및 경도 차이 계산</span>
+    <span class="n">dlat</span> <span class="o">=</span> <span class="n">lat2</span> <span class="o">-</span> <span class="n">lat1</span> 
+    <span class="n">dlon</span> <span class="o">=</span> <span class="n">lon2</span> <span class="o">-</span> <span class="n">lon1</span>
+    <span class="c1"># Haversine 공식 계산</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlat</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlon</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> 
+    <span class="c1"># 거리 계산 (킬로미터 단위)</span>
+    <span class="n">km</span> <span class="o">=</span> <span class="n">km_constant</span> <span class="o">*</span> <span class="n">c</span>
+    
+    <span class="k">return</span> <span class="n">km</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="trips">
+<h2>trips 데이터 생성 함수<a class="headerlink" href="#trips" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### osrm 페키지로 경로 추출</span>
+<span class="c1"># 입력으로 받은 출발지와 목적지 좌표를 이용하여 경로 정보를 가져오는 함수</span>
+<span class="k">def</span> <span class="nf">get_res</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;foot&#39;</span><span class="p">):</span>
+
+   <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;defined&#39;</span>
+
+   <span class="c1"># 요청을 재시도할 수 있도록 세션 객체 생성 및 설정</span>
+   <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+   <span class="n">retry</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span><span class="n">connect</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+   <span class="n">adapter</span> <span class="o">=</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
+   <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="n">adapter</span><span class="p">)</span>
+   <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s1">&#39;https://&#39;</span><span class="p">,</span> <span class="n">adapter</span><span class="p">)</span>
+
+   <span class="c1">#### url 생성 코드</span>
+   <span class="c1"># 전체 경로 정보를 요청</span>
+   <span class="n">overview</span> <span class="o">=</span> <span class="s1">&#39;?overview=full&#39;</span>
+   <span class="c1"># lon, lat, lon, lat 형식의 출발지 목적지 좌표</span>
+   <span class="n">loc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">point</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+   <span class="c1"># 보행경로 url</span>
+   <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://router.project-osrm.org/route/v1/</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s1">/&#39;</span>
+   <span class="c1"># 경로 정보 요청</span>
+   <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="n">loc</span> <span class="o">+</span> <span class="n">overview</span><span class="p">)</span> 
+   
+   <span class="c1"># 만약 경로가 안뜰 때 대체 결과 생성</span>
+   <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+      
+      <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
+      
+       <span class="c1"># 직선 거리 계산</span>
+      <span class="n">distance</span> <span class="o">=</span> <span class="n">calculate_straight_distance</span><span class="p">(</span><span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="mi">1000</span>
+      
+      <span class="c1"># 경로 정보 생성 (출발지와 목적지 좌표만 포함)</span>
+      <span class="n">route</span> <span class="o">=</span> <span class="p">[[</span><span class="n">point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">point</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">point</span><span class="p">[</span><span class="mi">3</span><span class="p">]]]</span>
+
+      <span class="c1"># 소요 시간 및 타임스탬프 계산 (가정: 보행 속도 10km/h)</span>
+      <span class="n">speed_km</span> <span class="o">=</span> <span class="mi">10</span><span class="c1">#km</span>
+      <span class="n">speed</span> <span class="o">=</span> <span class="p">(</span><span class="n">speed_km</span> <span class="o">*</span> <span class="mi">1000</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>      
+      <span class="n">duration</span> <span class="o">=</span> <span class="n">distance</span><span class="o">/</span><span class="n">speed</span>
+      
+      <span class="n">timestamp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">]</span>
+
+      <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;route&#39;</span><span class="p">:</span> <span class="n">route</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span> <span class="p">:</span> <span class="n">distance</span><span class="p">}</span>
+   
+      <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">status</span>
+   
+   <span class="c1"># 경로 정보를 성공적으로 가져온 경우, JSON 응답을 반환</span>
+   <span class="n">res</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>   
+   <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">status</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 경로를 가는데 걸리는 시간과 거리 추출 함수</span>
+<span class="k">def</span> <span class="nf">extract_duration_distance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">):</span>
+   <span class="c1"># get_res함수에서 추출된 데이터에서 시간과 거리 뽑기</span>
+   
+   <span class="n">distance</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+   <span class="c1"># duration = res[&#39;routes&#39;][0][&#39;duration&#39;]/(60)  # 분 단위로 변환</span>
+   
+   <span class="c1"># 속도 30km/h로 시간 계산</span>
+   <span class="n">speed_kmh</span> <span class="o">=</span> <span class="n">speed_kmh</span>  <span class="c1"># km/h</span>
+   <span class="n">speed_mps</span> <span class="o">=</span> <span class="n">speed_kmh</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># 속도를 m/s로 변환</span>
+   <span class="n">duration</span> <span class="o">=</span> <span class="n">distance</span> <span class="o">/</span> <span class="n">speed_mps</span> <span class="o">/</span> <span class="mi">60</span>  <span class="c1"># 분 단위로 변환</span>
+   
+   <span class="k">return</span> <span class="n">duration</span><span class="p">,</span> <span class="n">distance</span>
+
+<span class="c1"># 경로 추출 함수</span>
+<span class="k">def</span> <span class="nf">extract_route</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+   
+    <span class="c1"># get_res함수에서 추출된 데이터에서 경로 뽑기</span>
+    <span class="c1"># 경로가 인코딩 되어 있기 때문에 아래 함수를 써서 디코딩해주어야지 위경도로 이루어진 경로가 나옴</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">polyline</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">])</span>
+    
+    <span class="c1"># 사용할 형식에 맞춰 위경도 좌표의 위치를 바꿔주는 것</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="p">,</span><span class="n">route</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">route</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 총 걸리는 시간을 경로의 거리 기준으로 쪼개주는 함수</span>
+<span class="k">def</span> <span class="nf">extract_timestamp</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+    
+    <span class="c1"># 리스트를 numpy이 배열로 변경</span>
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">route</span><span class="p">)</span>
+    <span class="c1"># 리스트를 수평 기준으로 합치기</span>
+    <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">rt</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">rt</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]])</span>
+    <span class="c1"># 각각 직선거리 추출(리스트 형태)</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="n">calculate_straight_distance</span><span class="p">(</span><span class="n">rt</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">rt</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">rt</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span> <span class="n">rt</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])</span>
+    <span class="c1"># 각각의 직선거리를 전체 직선거리의 합으로 나누기</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="n">per</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">per</span><span class="p">)</span>
+
+    <span class="c1"># 계산된 비율을 기반으로 각 지점 도착 예상 시간 계산</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">per</span> <span class="o">*</span> <span class="n">duration</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]),</span><span class="n">timestamp</span><span class="p">])</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span> 
+    
+    <span class="k">return</span> <span class="n">timestamp</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="c1"># 모든 함수를 한번에 실행하는 코드(trips 데이터의 형태로 저장)</span>
+<span class="k">def</span> <span class="nf">osrm_routing_machine</span><span class="p">(</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">):</span>
+
+   <span class="c1"># osrm 데이터 생성</span>
+   <span class="n">osrm_base</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">get_res</span><span class="p">([</span><span class="n">O</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">O</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">D</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">D</span><span class="o">.</span><span class="n">y</span><span class="p">],</span> <span class="n">mode</span><span class="p">)</span>
+   
+   <span class="c1"># osrm 데이터가 생성 됬으면 진행</span>
+   <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;defined&#39;</span><span class="p">:</span>
+      <span class="c1"># 거리 및 걸리는 시간 추출</span>
+      <span class="n">duration</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">extract_duration_distance</span><span class="p">(</span><span class="n">osrm_base</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">)</span>
+      <span class="c1"># 경로 추출</span>
+      <span class="n">route</span> <span class="o">=</span> <span class="n">extract_route</span><span class="p">(</span><span class="n">osrm_base</span><span class="p">)</span>
+      <span class="c1"># timestamp 생성</span>
+      <span class="n">timestamp</span> <span class="o">=</span> <span class="n">extract_timestamp</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+      <span class="c1"># 결과 저장</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;route&#39;</span><span class="p">:</span> <span class="n">route</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span> <span class="p">:</span> <span class="n">distance</span><span class="p">}</span>
+      
+      <span class="k">return</span> <span class="n">result</span>
+   <span class="k">else</span><span class="p">:</span> 
+      <span class="k">return</span> <span class="n">osrm_base</span>
+   
+<span class="c1"># OD_data 한쌍일 때 osrm_routing_machine작동함수</span>
+<span class="k">def</span> <span class="nf">osrm_routing_machine_multiprocess</span><span class="p">(</span><span class="n">OD</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">):</span>
+   <span class="n">O</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">OD</span>
+   <span class="n">result</span> <span class="o">=</span> <span class="n">osrm_routing_machine</span><span class="p">(</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">)</span>
+   <span class="k">return</span> <span class="n">result</span>
+<span class="c1"># OD_data 데이터가 리스트쌍 일때의 osrm_routing_machine 작동함수</span>
+<span class="k">def</span> <span class="nf">osrm_routing_machine_multiprocess_all</span><span class="p">(</span><span class="n">OD_data</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">osrm_routing_machine_multiprocess</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">speed_kmh</span><span class="o">=</span><span class="n">speed_kmh</span><span class="p">),</span> <span class="n">OD_data</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="od">
+<h2>od 데이터 생성<a class="headerlink" href="#od" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 랜덤한 쌍의 od 데이터(시작점과 도착점이 같이 않게 뜸)</span>
+<span class="k">def</span> <span class="nf">get_OD_data</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="p">:</span>
+    <span class="n">OD_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 10개의 랜덤쌍 좌표 생성</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+        <span class="c1"># 포인트 좌표의 key값을 이용하여 랜덤 쌍 생성</span>
+        <span class="n">neighborhood1</span><span class="p">,</span> <span class="n">neighborhood2</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># 랜덤쌍의 첫번째 값을 시작점으로 두번째 값을 도착점으로 설정</span>
+        <span class="n">start_point</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="n">neighborhood1</span><span class="p">]</span>
+        <span class="n">end_point</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="n">neighborhood2</span><span class="p">]</span>
+        
+        <span class="c1"># 시작점과 끝점을 포인트 좌표로 변경 </span>
+        <span class="n">O</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">start_point</span><span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">end_point</span><span class="p">)</span>
+        <span class="c1"># 시작점과 출발점을 리스트로 만들어 리스트에 추가</span>
+        <span class="n">OD_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">OD_data</span>
+
+<span class="c1"># 초 단위 변환 함수</span>
+<span class="k">def</span> <span class="nf">convert_to_minutes</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">hour</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">minute</span> <span class="o">+</span> <span class="n">time</span><span class="o">.</span><span class="n">second</span> <span class="o">/</span> <span class="mi">60</span>
+
+<span class="c1"># 랜덤한 시간 생성</span>
+<span class="k">def</span> <span class="nf">generate_start_times</span><span class="p">(</span><span class="n">num_passengers</span><span class="p">,</span> <span class="n">start_hour</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">end_hour</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">start_times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_passengers</span><span class="p">):</span>
+        <span class="c1"># 랜덤한 출발 시간 (분 단위)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">start_hour</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span>
+            <span class="n">minutes</span><span class="o">=</span><span class="n">rd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">end_hour</span> <span class="o">-</span> <span class="n">start_hour</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">),</span> <span class="n">seconds</span><span class="o">=</span><span class="n">rd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">59</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># 시간을 분 단위로 변환</span>
+        <span class="n">start_time_minutes</span> <span class="o">=</span> <span class="n">convert_to_minutes</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="n">start_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_time_minutes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">start_times</span>
+
+<span class="c1"># 출발시간 기반으로 탑승시간 계산 함수</span>
+<span class="k">def</span> <span class="nf">calculate_boarding_time</span><span class="p">(</span><span class="n">start_times</span><span class="p">):</span>
+    <span class="n">boarding_times</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">start_time</span> <span class="ow">in</span> <span class="n">start_times</span><span class="p">:</span>
+        <span class="c1"># 버스는 10분 간격으로 출발한다고 가정</span>
+        <span class="n">boarding_time</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">start_time</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
+        <span class="n">boarding_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boarding_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">boarding_times</span>
+
+<span class="c1"># OD 데이터와 출발 시간, 탑승 시간 데이터프레임 생성</span>
+<span class="k">def</span> <span class="nf">create_od_dataframe</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num_passengers</span><span class="p">,</span> <span class="n">start_hour</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">end_hour</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1"># OD 데이터 생성</span>
+    <span class="n">OD_data</span> <span class="o">=</span> <span class="n">get_OD_data</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num_passengers</span><span class="p">)</span>
+    <span class="c1"># 랜덤 출발 시간 생성</span>
+    <span class="n">start_times</span> <span class="o">=</span> <span class="n">generate_start_times</span><span class="p">(</span><span class="n">num_passengers</span><span class="p">,</span> <span class="n">start_hour</span><span class="p">,</span> <span class="n">end_hour</span><span class="p">)</span>
+    <span class="c1"># 탑승 시간 계산</span>
+    <span class="n">boarding_times</span> <span class="o">=</span> <span class="n">calculate_boarding_time</span><span class="p">(</span><span class="n">start_times</span><span class="p">)</span>
+    
+    <span class="c1"># 데이터프레임 생성</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">start_station</span><span class="p">,</span> <span class="n">end_station</span><span class="p">),</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">boarding_time</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">OD_data</span><span class="p">,</span> <span class="n">start_times</span><span class="p">,</span> <span class="n">boarding_times</span><span class="p">):</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&quot;출발시간&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span>
+            <span class="s2">&quot;탑승시간&quot;</span><span class="p">:</span> <span class="n">boarding_time</span><span class="p">,</span>
+            <span class="s2">&quot;탑승위치(Station_id)&quot;</span><span class="p">:</span> <span class="n">start_station</span><span class="p">,</span>
+            <span class="s2">&quot;하차위치(Station_id)&quot;</span><span class="p">:</span> <span class="n">end_station</span><span class="p">,</span>
+        <span class="p">})</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="k">def</span> <span class="nf">extract_od_and_start_time</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="c1"># OD 데이터를 추출</span>
+    <span class="n">od_data</span> <span class="o">=</span> <span class="p">[[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;탑승위치(Station_id)&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;하차위치(Station_id)&#39;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()]</span>
+    <span class="c1"># 출발시간 데이터를 추출</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;출발시간&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">boarding_time</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;탑승시간&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">od_data</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">boarding_time</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 데이터 좌표</span>
+<span class="n">point</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;중앙시장사거리&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.131770</span><span class="p">,</span> <span class="mf">37.440888</span><span class="p">],</span>
+    <span class="s2">&quot;숯골사거리&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.142398</span> <span class="p">,</span> <span class="mf">37.444055</span><span class="p">],</span>
+    <span class="s2">&quot;동부센트레빌2단지아파트&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.129460</span> <span class="p">,</span> <span class="mf">37.447540</span><span class="p">],</span>
+    <span class="s2">&quot;수진역&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.140851</span> <span class="p">,</span> <span class="mf">37.437443</span><span class="p">],</span>
+    <span class="s2">&quot;개별용달&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.139292</span> <span class="p">,</span> <span class="mf">37.446605</span><span class="p">],</span>
+    <span class="s2">&quot;버거킹&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">127.150505</span> <span class="p">,</span> <span class="mf">37.442235</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">create_od_dataframe</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="n">start_hour</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">end_hour</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>출발시간</th>
+      <th>탑승시간</th>
+      <th>탑승위치(Station_id)</th>
+      <th>하차위치(Station_id)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>589.783333</td>
+      <td>590</td>
+      <td>POINT (127.139292 37.446605)</td>
+      <td>POINT (127.142398 37.444055)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>559.033333</td>
+      <td>560</td>
+      <td>POINT (127.13177 37.440888)</td>
+      <td>POINT (127.140851 37.437443)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>582.916667</td>
+      <td>590</td>
+      <td>POINT (127.140851 37.437443)</td>
+      <td>POINT (127.13177 37.440888)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>568.700000</td>
+      <td>570</td>
+      <td>POINT (127.140851 37.437443)</td>
+      <td>POINT (127.142398 37.444055)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>563.766667</td>
+      <td>570</td>
+      <td>POINT (127.142398 37.444055)</td>
+      <td>POINT (127.139292 37.446605)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 사용할 수 있는 형태로 변경</span>
+<span class="n">OD_data</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">boarding_time</span> <span class="o">=</span> <span class="n">extract_od_and_start_time</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h2>trips 데이터 생성<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>뒤의 20명은 OSRM을 통해 목적지까지 라우팅하되, 통행속도를 5km/h로 가정</p></li>
+<li><p>탑승시간이란 컬럼 없이, 출발시간에 바로 출발</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## 뒤의 20명은 OSRM을 통해 목적지까지 라우팅하되, 통행속도를 5km/h로 가정.</span>
+<span class="c1">## 여기선 탑승시간이란 컬럼 없이, 출발시간에 바로 출발할 수 있도록</span>
+<span class="c1"># OD, DO 포인트에 대해서 각각의 trips데이터를 생성</span>
+<span class="n">OD_data_foot</span> <span class="o">=</span> <span class="n">OD_data</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span>
+<span class="n">OD_results_foot</span> <span class="o">=</span> <span class="n">osrm_routing_machine_multiprocess_all</span><span class="p">(</span><span class="n">OD_data</span><span class="p">,</span> <span class="s1">&#39;foot&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 생성된 트립 데이터에 출발시간을 변경</span>
+<span class="k">def</span> <span class="nf">update_timestamps_with_start_time</span><span class="p">(</span><span class="n">OD_results</span><span class="p">,</span> <span class="n">start_times</span><span class="p">):</span>
+    <span class="c1"># OD_results와 start_times를 순회하며 타임스탬프 갱신</span>
+    <span class="n">updated_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">result</span><span class="p">,</span> <span class="n">start_time</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">OD_results</span><span class="p">,</span> <span class="n">start_times</span><span class="p">):</span>
+        <span class="c1"># 기존 timestamp를 start_time과 합산</span>
+        <span class="n">updated_timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">start_time</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]]</span>
+        <span class="c1"># 기존 결과를 복사하고 timestamp를 업데이트</span>
+        <span class="n">updated_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">updated_result</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_timestamps</span>
+        <span class="n">updated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">updated_result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">updated_results</span>
+
+<span class="n">start_time_foot</span> <span class="o">=</span> <span class="n">start_time</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span>
+<span class="n">updated_OD_results_foot</span> <span class="o">=</span> <span class="n">update_timestamps_with_start_time</span><span class="p">(</span><span class="n">OD_results_foot</span><span class="p">,</span> <span class="n">start_time_foot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">start_time_foot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">OD_results_foot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">updated_OD_results_foot</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>586.3946666666666
+586.3946666666666
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>앞의 20명은 OSRM을 통해 목적지까지 라우팅. 통행속도 30km/h로 주행</p></li>
+<li><p>배차간격을 10분이라고 가정하고, 이에 맞춰서 탑승시간이라는 컬럼을 생성하는 코드 추가.
+모든 정류소에서 10분마다 차가 출발한다고 가정.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">OD_data_car</span> <span class="o">=</span> <span class="n">OD_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span>
+<span class="n">OD_results_car</span> <span class="o">=</span> <span class="n">osrm_routing_machine_multiprocess_all</span><span class="p">(</span><span class="n">OD_data_car</span><span class="p">,</span> <span class="s1">&#39;car&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 생성된 트립 데이터에 출발시간을 변경</span>
+<span class="k">def</span> <span class="nf">update_timestamps_route</span><span class="p">(</span><span class="n">OD_results</span><span class="p">,</span> <span class="n">start_times</span><span class="p">,</span> <span class="n">boarding_time</span><span class="p">):</span>
+    <span class="c1"># OD_results와 start_times를 순회하며 타임스탬프 갱신</span>
+    <span class="n">updated_results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">result</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">boarding_time</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">OD_results</span><span class="p">,</span> <span class="n">start_times</span><span class="p">,</span> <span class="n">boarding_time</span><span class="p">):</span>
+        <span class="c1"># 기존 timestamp를 boarding_time으로 조정하고, start_time을 맨 앞에 추가</span>
+        <span class="n">updated_timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">start_time</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">boarding_time</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]]</span>
+        <span class="c1"># 기존 결과를 복사하고 timestamp를 업데이트</span>
+        <span class="n">updated_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">updated_result</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_timestamps</span>
+        
+        <span class="c1"># route의 첫 번째 항목 복제 후 맨 앞에 추가</span>
+        <span class="n">updated_result</span><span class="p">[</span><span class="s1">&#39;route&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">updated_result</span><span class="p">[</span><span class="s1">&#39;route&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="n">updated_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">updated_result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">updated_results</span>
+
+<span class="n">start_time_car</span> <span class="o">=</span> <span class="n">start_time</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span>
+<span class="n">boarding_time_car</span> <span class="o">=</span> <span class="n">boarding_time</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span>
+
+<span class="n">updated_OD_results_car</span> <span class="o">=</span> <span class="n">update_timestamps_route</span><span class="p">(</span><span class="n">OD_results_car</span><span class="p">,</span> <span class="n">start_time_car</span><span class="p">,</span> <span class="n">boarding_time_car</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="car">
+<h2>포인트 데이터 생성 ( CAR를 타기 전 대기 )<a class="headerlink" href="#car" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시뮬레이션에서 사람이 대기하다가 이동하는 것을 위해서 포인트 데이터 생성</span>
+<span class="c1"># ScatterplotLayer에 필요한 데이터 생성 함수</span>
+<span class="k">def</span> <span class="nf">create_scatterplot_data</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">scatterplot_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;route&quot;</span> <span class="ow">in</span> <span class="n">item</span> <span class="ow">and</span> <span class="s2">&quot;timestamp&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+            <span class="n">start_point</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;route&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 첫 번째 좌표</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 타임스탬프 시작</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">start_time</span>  <span class="c1"># 타임스탬프 종료</span>
+            <span class="n">scatterplot_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="n">start_point</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">],</span>
+            <span class="p">})</span>
+    <span class="k">return</span> <span class="n">scatterplot_data</span>
+
+<span class="c1"># 데이터 생성</span>
+<span class="n">scatterplot_data</span> <span class="o">=</span> <span class="n">create_scatterplot_data</span><span class="p">(</span><span class="n">updated_OD_results_car</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scatterplot_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;coordinates&#39;: [127.13177, 37.44088], &#39;timestamp&#39;: [559.0333333333333, 560.0]}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h2>정류장 위치 아이콘 데이터<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">icon_data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">&quot;coordinates&quot;</span><span class="p">:</span> <span class="n">coordinates</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">coordinates</span> <span class="ow">in</span> <span class="n">point</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+<span class="n">icon_data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;name&#39;: &#39;중앙시장사거리&#39;, &#39;coordinates&#39;: [127.13177, 37.440888]},
+ {&#39;name&#39;: &#39;숯골사거리&#39;, &#39;coordinates&#39;: [127.142398, 37.444055]},
+ {&#39;name&#39;: &#39;동부센트레빌2단지아파트&#39;, &#39;coordinates&#39;: [127.12946, 37.44754]},
+ {&#39;name&#39;: &#39;수진역&#39;, &#39;coordinates&#39;: [127.140851, 37.437443]},
+ {&#39;name&#39;: &#39;개별용달&#39;, &#39;coordinates&#39;: [127.139292, 37.446605]},
+ {&#39;name&#39;: &#39;버거킹&#39;, &#39;coordinates&#39;: [127.150505, 37.442235]}]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="timestamp">
+<h2>데이터에서 TIMESTAMP의 최소, 최대값 확인<a class="headerlink" href="#timestamp" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">###### 최대 시간을 봐서 시뮬레이션의 min, max 시간에 활용( 안 짤리도록 )</span>
+<span class="c1"># all_timestamps = []</span>
+
+<span class="c1"># for item in updated_OD_results_car + updated_OD_results_foot:</span>
+<span class="c1">#     all_timestamps.extend(item[&#39;timestamp&#39;])</span>
+
+<span class="c1"># 리스트 컴프리헨션 쓰면 아주 편합니다.</span>
+<span class="n">all_timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">updated_OD_results_car</span> <span class="o">+</span> <span class="n">updated_OD_results_foot</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]]</span>
+<span class="c1"># 최대값 계산</span>
+<span class="n">max_timestamp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_timestamps</span><span class="p">)</span>
+<span class="n">min_timestamp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">all_timestamps</span><span class="p">)</span>
+
+<span class="n">min_timestamp</span><span class="p">,</span> <span class="n">max_timestamp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(540.3, 626.9428)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id4">
+<h2>데이터 저장<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 데이터 저장</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;../simulation_modify/public/data/&#39;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;trips_foot.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">updated_OD_results_foot</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+    
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;trips_car.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">updated_OD_results_car</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+    
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;icon_data.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">icon_data</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+    
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;trips_car_point.json&#39;</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">scatterplot_data</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="deckgl-layer">
+<h2>DECKGL LAYER<a class="headerlink" href="#deckgl-layer" title="Permalink to this heading">#</a></h2>
+<section id="scatterplot-layer">
+<h3>SCATTERPLOT LAYER<a class="headerlink" href="#scatterplot-layer" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>DECKGL에서 점을 표시할 때 사용</p></li>
+</ul>
+<div class="highlight-JS notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="ow">new</span><span class="w"> </span><span class="nx">ScatterplotLayer</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;scatterplot-layer&#39;</span><span class="p">,</span><span class="w">  </span><span class="c1">// LAYER ID</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">point_car</span><span class="p">,</span><span class="w"> </span><span class="c1">// DATA</span>
+<span class="w">      </span><span class="nx">getPosition</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">coordinates</span><span class="p">,</span><span class="w"> </span><span class="c1">// 위치</span>
+<span class="w">      </span><span class="nx">getFillColor</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">255</span><span class="p">],</span><span class="w"> </span><span class="c1">// 색</span>
+<span class="w">      </span><span class="nx">getRadius</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="c1">// 점의 반지름</span>
+<span class="w">      </span><span class="nx">getLineWidth</span><span class="o">:</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="c1">//선의 두께</span>
+<span class="w">      </span><span class="nx">radiusScale</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="c1">//반지름 값의 스케일( 확대, 축소)</span>
+<span class="w">      </span><span class="nx">pickable</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// 상호작용 여부 ( 클릭, 마우스 오버 )</span>
+<span class="w">      </span><span class="nx">opacity</span><span class="o">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="c1">// 투명도</span>
+<span class="w">    </span><span class="p">}),</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>만약 시뮬레이션에서 ScatterplotLayer이 나타낫다가 사라지게 하고 싶다면 아래 코드를 사용</p></li>
+<li><p>ScatterplotLayer에 사용하는 데이터에도 TIMESTAMP가 있어야 함</p></li>
+<li><p>입력 데이터에서 특정 시간 범위에 속하는 데이터만 포함된 배열을 반환하여 시각화 가능</p></li>
+</ul>
+<div class="highlight-JS notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">currData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">time</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 필터링된 데이터를 저장할 배열</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="w">    </span><span class="c1">// 데이터 배열을 순회하며 각 항목에 대해 처리</span>
+<span class="w">    </span><span class="nx">data</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">v</span><span class="p">.</span><span class="nx">timestamp</span><span class="p">;</span><span class="w"> </span><span class="c1">// 데이터의 타임스탬프 배열</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">s_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">timestamp</span><span class="p">[</span><span class="mf">0</span><span class="p">];</span><span class="w"> </span><span class="c1">// 타임스탬프 시작 시간</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">e_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">timestamp</span><span class="p">[</span><span class="nx">timestamp</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">];</span><span class="w"> </span><span class="c1">// 타임스탬프 종료 시간</span>
+
+<span class="w">      </span><span class="c1">// 현재 시간(time)이 타임스탬프 범위(s_t, e_t) 내에 있는 경우</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">s_t</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">time</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">e_t</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nx">time</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span><span class="w"> </span><span class="c1">// 해당 데이터를 결과 배열에 추가</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// 필터링된 데이터 배열 반환</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">arr</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="icon-layer">
+<h3>ICON LAYER<a class="headerlink" href="#icon-layer" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>DECKGL에서 아이콘( EX. MARKER ) 표시할 때 사용</p></li>
+</ul>
+<div class="highlight-JS notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="ow">new</span><span class="w"> </span><span class="nx">IconLayer</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;location&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// LAYER ID</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">stop</span><span class="p">,</span><span class="w"> </span><span class="c1">// DATA</span>
+<span class="w">      </span><span class="nx">sizeScale</span><span class="o">:</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="c1">// ICON 크기 스케일 개수</span>
+<span class="w">      </span><span class="nx">iconAtlas</span><span class="o">:</span><span class="w"> </span><span class="c1">// ICON 주소</span>
+<span class="w">        </span><span class="s2">&quot;https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">iconMapping</span><span class="o">:</span><span class="w"> </span><span class="nx">ICON_MAPPING</span><span class="p">,</span><span class="w"> </span><span class="c1">// 스프라이트 시트 내 아이콘 위치 및 크키</span>
+<span class="w">      </span><span class="nx">getIcon</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s2">&quot;marker&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// ICON 이름</span>
+<span class="w">      </span><span class="nx">getSize</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="c1">// ICON 크기</span>
+<span class="w">      </span><span class="nx">getPosition</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">coordinates</span><span class="p">,</span><span class="w"> </span><span class="c1">// 위치( 위경도 )</span>
+<span class="w">      </span><span class="nx">getColor</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">],</span><span class="w"> </span><span class="c1">// 색</span>
+<span class="w">      </span><span class="nx">opacity</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// 투명도</span>
+<span class="w">      </span><span class="nx">mipmaps</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="c1">// 텍스처 품질 및 메모리 최적화 사용 여부</span>
+<span class="w">      </span><span class="nx">pickable</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// ICON 상호작용 여부</span>
+<span class="w">      </span><span class="nx">radiusMinPixels</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="c1">// 아이콘 최소 반지름</span>
+<span class="w">      </span><span class="nx">radiusMaxPixels</span><span class="o">:</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="c1">// 아이콘 최대 반지름</span>
+<span class="w">    </span><span class="p">}),</span>
+</pre></div>
+</div>
+</section>
+<section id="polygon-layer">
+<h3>POLYGON LAYER<a class="headerlink" href="#polygon-layer" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>3D 입체를 표시할 때 사용</p></li>
+</ul>
+<div class="highlight-JS notranslate"><div class="highlight"><pre><span></span><span class="w">      </span>
+<span class="w">    </span><span class="ow">new</span><span class="w"> </span><span class="nx">PolygonLayer</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;buildings&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// LAYER ID</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">building</span><span class="p">,</span><span class="w"> </span><span class="c1">// DATA</span>
+<span class="w">      </span><span class="nx">extruded</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// 다각형을 3D로 할지의 여부 ( TRUE : 높이 값을 사용하여 렌더링 )</span>
+<span class="w">      </span><span class="nx">wireframe</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="c1">//다각형의 와이어 프레임 ( TRUE : 선만 보이게 렌더링 )</span>
+<span class="w">      </span><span class="nx">opacity</span><span class="o">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="c1">// 투명도</span>
+<span class="w">      </span><span class="nx">getPolygon</span><span class="o">:</span><span class="w"> </span><span class="nx">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">coordinates</span><span class="p">,</span><span class="w"> </span><span class="c1">// 위경도</span>
+<span class="w">      </span><span class="nx">getElevation</span><span class="o">:</span><span class="w"> </span><span class="nx">f</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span><span class="w"> </span><span class="c1">// 높이</span>
+<span class="w">      </span><span class="nx">getFillColor</span><span class="o">:</span><span class="w"> </span><span class="nx">DEFAULT_THEME</span><span class="p">.</span><span class="nx">buildingColor</span><span class="p">,</span><span class="w"> </span><span class="c1">// 색</span>
+<span class="w">      </span><span class="nx">material</span><span class="o">:</span><span class="w"> </span><span class="nx">DEFAULT_THEME</span><span class="p">.</span><span class="nx">material</span><span class="w"> </span><span class="c1">// 다각형의 재질</span>
+<span class="w">    </span><span class="p">}),</span>
+</pre></div>
+</div>
+</section>
+<section id="line-path-layer">
+<h3>LINE, PATH LAYER<a class="headerlink" href="#line-path-layer" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>선을 그을 때 사용</p></li>
+<li><p>LINE LAYER는 NODE( 점 데이터 ) 사용하여 이어서 표시 ( 시작점과 끝점을 연결하는 방식)</p></li>
+<li><p>PATH LAYER는 이미 이어진 선( 여러 점으로 이어진 ) 데이터를 넣어서 표시</p></li>
+</ul>
+<div class="highlight-JS notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="ow">new</span><span class="w"> </span><span class="nx">LineLayer</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;line-layer&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// LAYER ID</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">links</span><span class="p">,</span><span class="w"> </span><span class="c1">// DATA</span>
+<span class="w">      </span><span class="nx">getSourcePosition</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">nodes</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">node</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">node</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">source</span><span class="p">).</span><span class="nx">coordinates</span><span class="p">,</span><span class="w"> </span><span class="c1">// 시작점 위경도</span>
+<span class="w">      </span><span class="nx">getTargetPosition</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">nodes</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">node</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">node</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">coordinates</span><span class="p">,</span><span class="w"> </span><span class="c1">// 끝점 위경도</span>
+<span class="w">      </span><span class="nx">getColor</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">255</span><span class="w"> </span><span class="p">,</span><span class="mf">255</span><span class="p">],</span><span class="w"> </span><span class="c1">// 색</span>
+<span class="w">      </span><span class="nx">opacity</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">0.4</span><span class="p">,</span><span class="w"> </span><span class="c1">// 투명도</span>
+<span class="w">      </span><span class="nx">auto_highlight</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// 사용자가 마우스를 올리면 하이라이트 활성화</span>
+<span class="w">      </span><span class="nx">highlight_color</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">255</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">],</span><span class="w"> </span><span class="c1">// 하이라이트 시 선의 색상</span>
+<span class="w">      </span><span class="c1">// picking_radius: 10,</span>
+<span class="w">      </span><span class="nx">widthMinPixels</span><span class="o">:</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="c1">// 선의 최소 두께 설정</span>
+<span class="w">    </span><span class="p">}),</span>
+
+
+<span class="w">    </span>
+<span class="w">    </span><span class="ow">new</span><span class="w"> </span><span class="nx">PathLayer</span><span class="p">({</span><span class="w">  </span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;lines&#39;</span><span class="p">,</span><span class="w"> </span><span class="c1">// LAYER ID</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">slinks</span><span class="p">,</span><span class="w"> </span><span class="c1">// DATA</span>
+<span class="w">      </span><span class="nx">getPath</span><span class="o">:</span><span class="w"> </span><span class="nx">d</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">d</span><span class="p">.</span><span class="nx">lines</span><span class="p">,</span><span class="w"> </span><span class="c1">// 위경도</span>
+<span class="w">      </span><span class="nx">getColor</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="mf">255</span><span class="w"> </span><span class="p">,</span><span class="mf">255</span><span class="p">],</span><span class="w"> </span><span class="c1">// 색</span>
+<span class="w">      </span><span class="nx">opacity</span><span class="o">:</span><span class="w"> </span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="c1">// 투명도</span>
+<span class="w">      </span><span class="nx">widthMinPixels</span><span class="o">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="c1">// 선의 최소 두께. 최대 두께 : widthMaxPixels</span>
+<span class="w">      </span><span class="nx">widthScale</span><span class="o">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="c1">// 경로 두께를 조절하는 스케일</span>
+<span class="w">      </span><span class="nx">pickable</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// 경로 상호작용 여부</span>
+<span class="w">      </span><span class="nx">rounded</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// 경로의 끝과 꺾인 부분을 둥글게 렌더링</span>
+<span class="w">      </span><span class="cm">/* 최근 아래와 같이 나누어서 사용</span>
+<span class="cm">      capRounded : true,        </span>
+<span class="cm">      jointRounded : true</span>
+<span class="cm">      ============================================ */</span>
+<span class="w">      </span><span class="nx">shadowEnabled</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="c1">// 그림자 효과 비활성화</span>
+
+<span class="w">    </span><span class="p">}),</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./simulation_base/code"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import">Import</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">좌표 거리 생성 함수</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trips">trips 데이터 생성 함수</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#od">od 데이터 생성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">trips 데이터 생성</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#car">포인트 데이터 생성 ( CAR를 타기 전 대기 )</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">정류장 위치 아이콘 데이터</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp">데이터에서 TIMESTAMP의 최소, 최대값 확인</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">데이터 저장</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">SCATTERPLOT LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">ICON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">POLYGON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">LINE, PATH LAYER</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jiho Yeo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
