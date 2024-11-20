@@ -7,12 +7,17 @@ import Trip from "./components/Trip";
 import "./css/app.css";
 
 
-const fetchData = (FilE_NAME) => {
-  const baseURL = process.env.NODE_ENV === "production"
-    ? `https://raw.githubusercontent.com/HNU209/simulation-class/main/simulation/src/data/${FilE_NAME}.json`
-    : `${process.env.PUBLIC_URL}/data/`;
+// const fetchData = (FilE_NAME) => {
+//   const baseURL = process.env.NODE_ENV === "production"
+//     ? `https://raw.githubusercontent.com/HNU209/simulation-class/main/simulation/src/data/${FilE_NAME}.json`
+//     : `${process.env.PUBLIC_URL}/data/`;
   
-  return axios.get(`${baseURL}${FilE_NAME}.json`).then((r) => r.data);
+//   return axios.get(`${baseURL}${FilE_NAME}.json`).then((r) => r.data);
+// };
+
+const fetchData = (FilE_NAME) => {
+  return fetch(`${process.env.PUBLIC_URL}/data/${FilE_NAME}.json`)
+    .then(response => response.json());
 };
 
 const App = () => {
