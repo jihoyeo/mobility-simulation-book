@@ -402,7 +402,10 @@ document.write(`
 <ul class="simple">
 <li><p>아래 데이터는 가천대학교 학생들이 하루동안 이동한 예시 데이터입니다. 이 데이터는 다음과 같은 항목을 포함하고 있습니다.</p>
 <ul>
-<li><p>출발시간, 출발위치, 도착위치</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stops_point.json</span></code> : 무당이가 정차하는 Station들의 위치</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">station_schedule.json</span></code> : Station 마다 무당이가 출발하는 시간</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OD_data_ladybug.shp</span></code> : 가천대학교 학생 300명의 가상의 이동데이터</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distance_by_stops_geo</span></code>: 무당이 정류장 사이의 거리 및 이동시간 (무당이 탑승 기준)</p></li>
 </ul>
 </li>
 <li><p>출발위치와 도착위치는 가천대학교에서 운영하는 무당이의 정류소 기준이며, 각 정류소의 좌표는 <code class="docutils literal notranslate"><span class="pre">station_info.csv</span></code>에서 확인할 수 있습니다.</p></li>
@@ -412,6 +415,7 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 </pre></div>
 </div>
 </div>
@@ -422,6 +426,7 @@ document.write(`
 <span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">json</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">os</span>
 <span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
 
 <span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
 </pre></div>
@@ -527,8 +532,9 @@ document.write(`
 </div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">OD_data_ladybug.csv</span></code>은 가천대학교 학생들의 가상의 이동데이터 입니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OD_data_ladybug.shp</span></code>은 가천대학교 학생들 300명의 가상의 이동데이터 입니다.</p></li>
 <li><p>출발시간과, 탑승위치(Origin), 하차위치(Destination) 정보를 포함하고 있습니다.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ladybug_path</span></code>와 <code class="docutils literal notranslate"><span class="pre">geometry</span></code>컬럼은 이들이 만약 무당이를 탄다고 했을 때 거쳐가는 정류장과 그 Linestring을 나타냅니다.</p></li>
 <li><p>하지만, 이들은 아직 무당이를 탈지, 그냥 걸어서 갈지 결정하지 못한 상황입니다.</p>
 <ul>
 <li><p>도보를 선택한다면 출발시간에 바로 목적지로 출발하면 됩니다.</p></li>
@@ -538,12 +544,180 @@ document.write(`
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;./data_final/&#39;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span>
 
-<span class="n">OD_data_ladybug</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;OD_data_ladybug.csv&#39;</span><span class="p">),</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;./data_final/OD_data_ladybug&#39;</span>
+
+<span class="c1"># GeoDataFrame으로 Shapefile 읽기</span>
+<span class="n">OD_data_ladybug</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;euckr&#39;</span><span class="p">)</span>
+
+<span class="c1"># 컬러명 수정</span>
+<span class="n">OD_data_ladybug</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+    <span class="s1">&#39;start_time&#39;</span><span class="p">:</span> <span class="s1">&#39;start_time&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;start_poin&#39;</span><span class="p">:</span> <span class="s1">&#39;start_point&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;start_stat&#39;</span><span class="p">:</span> <span class="s1">&#39;start_station&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;end_point&#39;</span><span class="p">:</span> <span class="s1">&#39;end_point&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;end_statio&#39;</span><span class="p">:</span> <span class="s1">&#39;end_station&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ladybug_pa&#39;</span><span class="p">:</span> <span class="s1">&#39;ladybug_path&#39;</span>
+<span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 문자열을 Point 객체로 변환하는 함수</span>
+<span class="k">def</span> <span class="nf">convert_to_point</span><span class="p">(</span><span class="n">point_str</span><span class="p">):</span>
+    <span class="c1"># &#39;POINT (127.127384 37.45091)&#39; -&gt; [127.127384, 37.45091]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">point_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;POINT (&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="c1"># &#39;start_point&#39;와 &#39;end_point&#39;를 Point 객체로 변환</span>
+<span class="n">OD_data_ladybug</span><span class="p">[</span><span class="s1">&#39;start_point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OD_data_ladybug</span><span class="p">[</span><span class="s1">&#39;start_point&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">convert_to_point</span><span class="p">)</span>
+<span class="n">OD_data_ladybug</span><span class="p">[</span><span class="s1">&#39;end_point&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OD_data_ladybug</span><span class="p">[</span><span class="s1">&#39;end_point&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">convert_to_point</span><span class="p">)</span>
+
+<span class="n">OD_data_ladybug</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start_time</th>
+      <th>start_point</th>
+      <th>start_station</th>
+      <th>end_point</th>
+      <th>end_station</th>
+      <th>ladybug_path</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>661.050000</td>
+      <td>POINT (127.127384 37.45091)</td>
+      <td>가천대_반도체대학</td>
+      <td>POINT (127.130121 37.450268)</td>
+      <td>가천대_학생회관</td>
+      <td>가천대_반도체대학 -&gt; 가천대_학생회관</td>
+      <td>LINESTRING (127.12748 37.45091, 127.12749 37.4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>679.083333</td>
+      <td>POINT (127.133923 37.453348)</td>
+      <td>가천대_총학생회</td>
+      <td>POINT (127.127384 37.45091)</td>
+      <td>가천대_반도체대학</td>
+      <td>가천대_총학생회 -&gt; 가천대_일반대학원 -&gt; 가천대_반도체대학</td>
+      <td>LINESTRING (127.13390 37.45337, 127.13375 37.4...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>641.350000</td>
+      <td>POINT (127.127384 37.45091)</td>
+      <td>가천대_반도체대학</td>
+      <td>POINT (127.130112 37.452589)</td>
+      <td>가천대_일반대학원</td>
+      <td>가천대_반도체대학 -&gt; 가천대_학생회관 -&gt; 가천대_교육대학원 -&gt; 가천대_ai공학...</td>
+      <td>LINESTRING (127.12748 37.45091, 127.12749 37.4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>632.150000</td>
+      <td>POINT (127.127384 37.45091)</td>
+      <td>가천대_반도체대학</td>
+      <td>POINT (127.133374 37.455009)</td>
+      <td>가천대_ai공학관</td>
+      <td>가천대_반도체대학 -&gt; 가천대_학생회관 -&gt; 가천대_교육대학원 -&gt; 가천대_ai공학관</td>
+      <td>LINESTRING (127.12748 37.45091, 127.12749 37.4...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>618.350000</td>
+      <td>POINT (127.127384 37.45091)</td>
+      <td>가천대_반도체대학</td>
+      <td>POINT (127.131698 37.452066)</td>
+      <td>가천대_교육대학원</td>
+      <td>가천대_반도체대학 -&gt; 가천대_학생회관 -&gt; 가천대_교육대학원</td>
+      <td>LINESTRING (127.12748 37.45091, 127.12749 37.4...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>999.450000</td>
+      <td>POINT (127.131698 37.452066)</td>
+      <td>가천대_교육대학원</td>
+      <td>POINT (127.130112 37.452589)</td>
+      <td>가천대_일반대학원</td>
+      <td>가천대_교육대학원 -&gt; 가천대_ai공학관 -&gt; 가천대_총학생회 -&gt; 가천대_일반대학원</td>
+      <td>LINESTRING (127.13181 37.45222, 127.13176 37.4...</td>
+    </tr>
+    <tr>
+      <th>296</th>
+      <td>988.933333</td>
+      <td>POINT (127.130121 37.450268)</td>
+      <td>가천대_학생회관</td>
+      <td>POINT (127.133374 37.455009)</td>
+      <td>가천대_ai공학관</td>
+      <td>가천대_학생회관 -&gt; 가천대_교육대학원 -&gt; 가천대_ai공학관</td>
+      <td>LINESTRING (127.13001 37.45030, 127.13007 37.4...</td>
+    </tr>
+    <tr>
+      <th>297</th>
+      <td>1002.350000</td>
+      <td>POINT (127.131698 37.452066)</td>
+      <td>가천대_교육대학원</td>
+      <td>POINT (127.133374 37.455009)</td>
+      <td>가천대_ai공학관</td>
+      <td>가천대_교육대학원 -&gt; 가천대_ai공학관</td>
+      <td>LINESTRING (127.13181 37.45222, 127.13176 37.4...</td>
+    </tr>
+    <tr>
+      <th>298</th>
+      <td>1024.083333</td>
+      <td>POINT (127.133374 37.455009)</td>
+      <td>가천대_ai공학관</td>
+      <td>POINT (127.131698 37.452066)</td>
+      <td>가천대_교육대학원</td>
+      <td>가천대_ai공학관 -&gt; 가천대_총학생회 -&gt; 가천대_일반대학원 -&gt; 가천대_반도체대...</td>
+      <td>LINESTRING (127.13322 37.45500, 127.13325 37.4...</td>
+    </tr>
+    <tr>
+      <th>299</th>
+      <td>945.933333</td>
+      <td>POINT (127.131698 37.452066)</td>
+      <td>가천대_교육대학원</td>
+      <td>POINT (127.130121 37.450268)</td>
+      <td>가천대_학생회관</td>
+      <td>가천대_교육대학원 -&gt; 가천대_ai공학관 -&gt; 가천대_총학생회 -&gt; 가천대_일반대학...</td>
+      <td>LINESTRING (127.13181 37.45222, 127.13176 37.4...</td>
+    </tr>
+  </tbody>
+</table>
+<p>300 rows × 7 columns</p>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -671,6 +845,100 @@ document.write(`
 <p>300 rows × 5 columns</p>
 </div></div></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">distance_by_stops_geo</span></code>은 무당이의 정류장간 이동 경로와 걸리는 시간을 나타낸 데이터입니다. 속도는 17로 가정하였습니다.</p>
+<ul class="simple">
+<li><p>여기서 time의 단위는 ‘분’ 이고 distance_m의 단위는 ‘m’입니다.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;./data_final/distance_by_stops_geo&#39;</span>
+
+<span class="c1"># GeoDataFrame으로 Shapefile 읽기</span>
+<span class="n">distance_by_stops_geo</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;euckr&#39;</span><span class="p">)</span>
+
+<span class="n">distance_by_stops_geo</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start</th>
+      <th>end</th>
+      <th>distance_m</th>
+      <th>time</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>가천대_ai공학관</td>
+      <td>가천대_총학생회</td>
+      <td>204.3</td>
+      <td>0.721059</td>
+      <td>LINESTRING (127.13322 37.45500, 127.13325 37.4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>가천대_총학생회</td>
+      <td>가천대_일반대학원</td>
+      <td>424.5</td>
+      <td>1.498235</td>
+      <td>LINESTRING (127.13390 37.45337, 127.13375 37.4...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>가천대_일반대학원</td>
+      <td>가천대_반도체대학</td>
+      <td>352.9</td>
+      <td>1.245529</td>
+      <td>LINESTRING (127.13017 37.45249, 127.13004 37.4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>가천대_반도체대학</td>
+      <td>가천대_학생회관</td>
+      <td>298.0</td>
+      <td>1.051765</td>
+      <td>LINESTRING (127.12748 37.45091, 127.12749 37.4...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>가천대_학생회관</td>
+      <td>가천대_교육대학원</td>
+      <td>299.6</td>
+      <td>1.057412</td>
+      <td>LINESTRING (127.13001 37.45030, 127.13007 37.4...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>가천대_교육대학원</td>
+      <td>가천대_ai공학관</td>
+      <td>445.3</td>
+      <td>1.571647</td>
+      <td>LINESTRING (127.13181 37.45222, 127.13176 37.4...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
 </section>
 <section id="id4">
 <h2>1.2 분석 주제<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
@@ -679,6 +947,7 @@ document.write(`
 <li><p>개별 통행마다, 무당이를 타는 것이 시간이 절약될지, 걸어가는 것이 시간이 절약될지 판단해주세요. (10점)</p>
 <ul class="simple">
 <li><p>OD_data_ladybug에 <code class="docutils literal notranslate"><span class="pre">교통수단</span></code>이라는 컬럼을 만들어서 ‘무당이’, ‘도보’를 구분해주세요.</p></li>
+<li><p>앞서 언급하였듯이 무당이의 속도는 17km/h 입니다. 도보는 5km/h로 가정합시다. 도보의 Route는 제공되지 않았습니다. OSRM API를 사용해 도보의 경로 및 시간을 뽑아야 합니다.</p></li>
 </ul>
 </li>
 <li><p>학생들은 통행시간이 적게 걸리는 통행을 선택할겁니다. 무당이를 타는 학생과, 걸어가는 학생들을 Simulation 프레임워크를 이용해서 시각화 해보세요. (10점)</p>
