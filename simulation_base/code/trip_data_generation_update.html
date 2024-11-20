@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Simulation &#8212; Digital Twin for Urban Mobility Systems</title>
+    <title>Simulation Update &#8212; Digital Twin for Urban Mobility Systems</title>
   
   
   
@@ -358,7 +358,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Simulation</h1>
+    <h1>Simulation Update</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -368,7 +368,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Simulation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import">Import</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">좌표 거리 생성 함수</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trips">trips 데이터 생성 함수</a></li>
@@ -378,17 +377,14 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">정류장 위치 아이콘 데이터</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp">데이터에서 TIMESTAMP의 최소, 최대값 확인</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">데이터 저장</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">[1] SCATTERPLOT LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">[2] ICON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">[3] POLYGON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">[4] LINE, PATH LAYER</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">[1] SCATTERPLOT LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">[2] ICON LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">[3] POLYGON LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">[4] LINE, PATH LAYER</a></li>
 </ul>
-</li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -399,8 +395,13 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="simulation">
-<h1>Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading">#</a></h1>
+  <section id="simulation-update">
+<h1>Simulation Update<a class="headerlink" href="#simulation-update" title="Permalink to this heading">#</a></h1>
+<p>이전 파일에 비해 아래 항목들이 추가가 되었습니다.</p>
+<ul class="simple">
+<li><p>OSRM을 사용하여 차량 경로를 뽑아올 때, 교통수단을 선택할 수 있도록 했습니다. 차량의 경우 <code class="docutils literal notranslate"><span class="pre">car</span></code>, 도보의 경우 <code class="docutils literal notranslate"><span class="pre">foot</span></code>을 입력하면 됩니다.</p></li>
+<li></li>
+</ul>
 <section id="import">
 <h2>Import<a class="headerlink" href="#import" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
@@ -1063,11 +1064,10 @@ document.write(`
 </div>
 </div>
 </section>
-</section>
 <section id="deckgl-layer">
-<h1>DECKGL LAYER<a class="headerlink" href="#deckgl-layer" title="Permalink to this heading">#</a></h1>
+<h2>DECKGL LAYER<a class="headerlink" href="#deckgl-layer" title="Permalink to this heading">#</a></h2>
 <section id="scatterplot-layer">
-<h2>[1] SCATTERPLOT LAYER<a class="headerlink" href="#scatterplot-layer" title="Permalink to this heading">#</a></h2>
+<h3>[1] SCATTERPLOT LAYER<a class="headerlink" href="#scatterplot-layer" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>DECKGL에서 점을 표시할 때 사용</p></li>
 </ul>
@@ -1112,7 +1112,7 @@ document.write(`
 </div>
 </section>
 <section id="icon-layer">
-<h2>[2] ICON LAYER<a class="headerlink" href="#icon-layer" title="Permalink to this heading">#</a></h2>
+<h3>[2] ICON LAYER<a class="headerlink" href="#icon-layer" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>DECKGL에서 아이콘( EX. MARKER ) 표시할 때 사용</p></li>
 </ul>
@@ -1137,7 +1137,7 @@ document.write(`
 </div>
 </section>
 <section id="polygon-layer">
-<h2>[3] POLYGON LAYER<a class="headerlink" href="#polygon-layer" title="Permalink to this heading">#</a></h2>
+<h3>[3] POLYGON LAYER<a class="headerlink" href="#polygon-layer" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>3D 입체를 표시할 때 사용</p></li>
 </ul>
@@ -1157,7 +1157,7 @@ document.write(`
 </div>
 </section>
 <section id="line-path-layer">
-<h2>[4] LINE, PATH LAYER<a class="headerlink" href="#line-path-layer" title="Permalink to this heading">#</a></h2>
+<h3>[4] LINE, PATH LAYER<a class="headerlink" href="#line-path-layer" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>선을 그을 때 사용</p></li>
 <li><p>LINE LAYER는 NODE( 점 데이터 ) 사용하여 이어서 표시 ( 시작점과 끝점을 연결하는 방식)</p></li>
@@ -1197,6 +1197,7 @@ document.write(`
 <span class="w">    </span><span class="p">}),</span>
 </pre></div>
 </div>
+</section>
 </section>
 </section>
 
@@ -1245,7 +1246,6 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Simulation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import">Import</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">좌표 거리 생성 함수</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trips">trips 데이터 생성 함수</a></li>
@@ -1255,17 +1255,14 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">정류장 위치 아이콘 데이터</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timestamp">데이터에서 TIMESTAMP의 최소, 최대값 확인</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">데이터 저장</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">[1] SCATTERPLOT LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">[2] ICON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">[3] POLYGON LAYER</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">[4] LINE, PATH LAYER</a></li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#deckgl-layer">DECKGL LAYER</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scatterplot-layer">[1] SCATTERPLOT LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icon-layer">[2] ICON LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polygon-layer">[3] POLYGON LAYER</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#line-path-layer">[4] LINE, PATH LAYER</a></li>
 </ul>
-</li>
-</ul>
-
   </nav></div>
 
 </div></div>
