@@ -400,22 +400,22 @@ document.write(`
 <h2>Import<a class="headerlink" href="#import" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">polyline</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polyline</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rd</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Point</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span>
 
-<span class="kn">from</span> <span class="nn">requests.adapters</span> <span class="kn">import</span> <span class="n">HTTPAdapter</span>
-<span class="kn">from</span> <span class="nn">requests.packages.urllib3.util.retry</span> <span class="kn">import</span> <span class="n">Retry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTTPAdapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests.packages.urllib3.util.retry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Retry</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span> 
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 </pre></div>
@@ -425,9 +425,9 @@ document.write(`
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">requests</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="ne">ModuleNotFoundError</span>: No module named &#39;numpy&#39;
 </pre></div>
@@ -440,7 +440,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 직선 거리 게산 함수</span>
-<span class="k">def</span> <span class="nf">calculate_straight_distance</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_straight_distance</span><span class="p">(</span><span class="n">lat1</span><span class="p">,</span> <span class="n">lon1</span><span class="p">,</span> <span class="n">lat2</span><span class="p">,</span> <span class="n">lon2</span><span class="p">):</span>
     <span class="c1"># 지구 반경 (킬로미터 단위)</span>
     <span class="n">km_constant</span> <span class="o">=</span> <span class="mi">3959</span><span class="o">*</span> <span class="mf">1.609344</span>
     <span class="c1"># 위도와 경도를 라디안으로 변환</span>
@@ -466,7 +466,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### osrm 페키지로 경로 추출</span>
 <span class="c1"># 입력으로 받은 출발지와 목적지 좌표를 이용하여 경로 정보를 가져오는 함수</span>
-<span class="k">def</span> <span class="nf">get_res</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_res</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
 
    <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;defined&#39;</span>
 
@@ -519,7 +519,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 경로를 가는데 걸리는 시간과 거리 추출 함수</span>
-<span class="k">def</span> <span class="nf">extract_duration_distance</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_duration_distance</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
    <span class="c1"># get_res함수에서 추출된 데이터에서 시간과 거리 뽑기</span>
    
    <span class="n">duration</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>  <span class="c1"># 분 단위로 변환</span>
@@ -528,7 +528,7 @@ document.write(`
    <span class="k">return</span> <span class="n">duration</span><span class="p">,</span> <span class="n">distance</span>
 
 <span class="c1"># 경로 추출 함수</span>
-<span class="k">def</span> <span class="nf">extract_route</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_route</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
    
     <span class="c1"># get_res함수에서 추출된 데이터에서 경로 뽑기</span>
     <span class="c1"># 경로가 인코딩 되어 있기 때문에 아래 함수를 써서 디코딩해주어야지 위경도로 이루어진 경로가 나옴</span>
@@ -545,7 +545,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 총 걸리는 시간을 경로의 거리 기준으로 쪼개주는 함수</span>
-<span class="k">def</span> <span class="nf">extract_timestamp</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_timestamp</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
     
     <span class="c1"># 리스트를 numpy이 배열로 변경</span>
     <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">route</span><span class="p">)</span>
@@ -569,7 +569,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 모든 함수를 한번에 실행하는 코드(trips 데이터의 형태로 저장)</span>
-<span class="k">def</span> <span class="nf">osrm_routing_machine</span><span class="p">(</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">osrm_routing_machine</span><span class="p">(</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
 
    <span class="c1"># osrm 데이터 생성</span>
    <span class="n">osrm_base</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">get_res</span><span class="p">([</span><span class="n">O</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">O</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">D</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">D</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
@@ -589,12 +589,12 @@ document.write(`
    <span class="k">else</span><span class="p">:</span> 
       <span class="k">return</span> <span class="n">osrm_base</span>
 <span class="c1"># OD_data 한쌍일 때 osrm_routing_machine작동함수</span>
-<span class="k">def</span> <span class="nf">osrm_routing_machine_multiprocess</span><span class="p">(</span><span class="n">OD</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">osrm_routing_machine_multiprocess</span><span class="p">(</span><span class="n">OD</span><span class="p">):</span>
    <span class="n">O</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">OD</span>
    <span class="n">result</span> <span class="o">=</span> <span class="n">osrm_routing_machine</span><span class="p">(</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
    <span class="k">return</span> <span class="n">result</span>
 <span class="c1"># OD_data 데이터가 리스트쌍 일때의 osrm_routing_machine 작동함수</span>
-<span class="k">def</span> <span class="nf">osrm_routing_machine_multiprocess_all</span><span class="p">(</span><span class="n">OD_data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">osrm_routing_machine_multiprocess_all</span><span class="p">(</span><span class="n">OD_data</span><span class="p">):</span>
     <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">osrm_routing_machine_multiprocess</span><span class="p">,</span> <span class="n">OD_data</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">results</span>
 </pre></div>
@@ -606,7 +606,7 @@ document.write(`
 <h2>od 데이터 생성<a class="headerlink" href="#od" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_OD_data</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_OD_data</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate random origin-destination pairs from given points</span>
 <span class="sd">    </span>
@@ -2476,7 +2476,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 원하는 범위에서 랜덤함 숫자를 원하는 만큼 뽑아내는 함수</span>
-<span class="k">def</span> <span class="nf">sample_interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_interval</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">):</span>
     <span class="c1"># 시작과 끝을 count만 큼 나눔(최종 : 나눈 만큼의 숫자가 생성됨)</span>
     <span class="n">interval_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">count</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2504,7 +2504,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시각화 할때 겹치지 않기 하기 위해서 임의의 시간을 더해주는 함수</span>
 <span class="c1"># 시간 범위를 정하고 싶으면 아래의  sample_interval의 앞의 두개의 인풋값 바꿔주기!</span>
-<span class="k">def</span> <span class="nf">timestamp_change</span><span class="p">(</span><span class="n">OD_results</span><span class="p">)</span> <span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">timestamp_change</span><span class="p">(</span><span class="n">OD_results</span><span class="p">)</span> <span class="p">:</span>
     <span class="n">random_numbers</span> <span class="o">=</span> <span class="n">sample_interval</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">OD_results</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">OD_results</span><span class="p">))</span> <span class="p">:</span>
         <span class="c1"># (i+1)*3을 더해주는 이유는 출발 시간이 겹치지 않기 하기 위해서</span>
