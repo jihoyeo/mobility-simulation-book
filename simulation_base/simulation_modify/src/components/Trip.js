@@ -75,7 +75,7 @@ const ICON_MAPPING = {
 
 const minTime = 540;
 const maxTime = 630;
-const animationSpeed = 0.5;
+const animationSpeed = 10;
 const mapStyle = "mapbox://styles/spear5306/ckzcz5m8w002814o2coz02sjc";
 
 const MAPBOX_TOKEN = `pk.eyJ1Ijoic2hlcnJ5MTAyNCIsImEiOiJjbG00dmtic3YwbGNoM2Zxb3V5NmhxZDZ6In0.ZBrAsHLwNihh7xqTify5hQ`;
