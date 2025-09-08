@@ -4,3 +4,6 @@ simulation_base/simulation/node_modules/
 simulation_base/simulation_modify/node_modules/
 simulation_base/simulation/package-lock.json
 simulation_base/simulation_modify/package-lock.json
+
+# Final folder (not tracked)
+final/
