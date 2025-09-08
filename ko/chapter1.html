@@ -382,13 +382,13 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mobility-simulation-framework">1.4 Mobility Simulation Framework</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data">[1] Data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">[2] Calibration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">[3] Calibration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.4.1 구현 시 주요 도전과제와 해결방안</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operate-mobility-service-in-digital-twin">[3] Operate Mobility Service in Digital Twin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.4.1 구현 시 주요 도전과제와 해결방안</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">[4] Outputs</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-and-practical-exercises">1.5 Discussion and Practical Exercises</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">1.5.1 팀별 토의 주제</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.5.1 팀별 토의 주제</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#homework">1.5.2 실습 과제 (Homework)</a></li>
 </ul>
 </li>
@@ -407,26 +407,70 @@ document.write(`
 <h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h1>
 <section id="what-is-good-mobility-systems">
 <h2>1.1 What is Good Mobility Systems?<a class="headerlink" href="#what-is-good-mobility-systems" title="Permalink to this heading">#</a></h2>
-<p>우리가 살아가는 도시는 끊임없이 변화하고, 발전하며, 때로는 쇠퇴한다. “무엇이 좋은 도시인가?”, “도시는 어떤 방향으로 변화해야 하는가?” 이러한 질문들은 깊이 고민해볼 가치가 있다. 이 책에서는 도시를 구성하는 다양한 요소들 중 ‘모빌리티’, 즉 ‘이동’에 초점을 맞춘다. 특히 우리의 ‘이동’을 돕는 시스템에 대해 심도 있게 다룬다.</p>
-<p>모빌리티 시스템은 우리 일상 곳곳에 존재한다. 출퇴근과 등하교 시 이용하는 자동차, 버스, 지하철부터 자전거, 전동킥보드, 그리고 우리의 두 발까지 모두가 이동수단이자 모빌리티 시스템의 일부다. 더 나아가, 음식 배달 서비스나 택배 시스템을 통해 우리 집 문 앞까지 도착하는 물품의 이동 또한 모빌리티 시스템에 포함된다.</p>
-<p>그렇다면, 과연 ‘좋은 모빌리티 시스템’이란 무엇일까? 이는 단순히 빠르고 편리한 이동만을 의미하는 것일까, 아니면 그 이상의 가치를 내포하고 있을까? 이 책은 이러한 근본적인 질문에 답하기 위한 도구와 관점을 제공한다. 우리는 모빌리티 시스템을 분석하고 평가하는 방법을 학습함으로써, 더 나은 도시 환경과 삶의 질 향상을 위한 통찰을 얻을 수 있을 것이다.</p>
+<p>우리가 살아가는 도시는 끊임없이 변화하고, 발전하며, 때로는 쇠퇴한다. “무엇이 좋은 도시인가?”, “도시는 어떤 방향으로 변화해야 하는가?” 이러한 질문들은 깊이 고민해볼 가치가 있다. 이 책에서는 도시를 구성하는 다양한 요소들 중 <strong>‘모빌리티’</strong>, 즉 **’이동’**에 초점을 맞춘다. 특히 우리의 ‘이동’을 돕는 시스템에 대해 심도 있게 다룬다.</p>
+<p><strong>모빌리티 시스템</strong>은 우리 일상 곳곳에 존재한다. 출퇴근과 등하교 시 이용하는 자동차, 버스, 지하철부터 자전거, 전동킥보드, 그리고 우리의 두 발까지 모두가 이동수단이자 <strong>모빌리티 시스템</strong>의 일부다. 더 나아가, 음식 배달 서비스나 택배 시스템을 통해 우리 집 문 앞까지 도착하는 물품의 이동 또한 <strong>모빌리티 시스템</strong>에 포함된다.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>핵심 질문: <u>과연 ‘좋은 모빌리티 시스템’이란 무엇일까?</u> 이는 단순히 빠르고 편리한 이동만을 의미하는 것일까, 아니면 그 이상의 가치를 내포하고 있을까?</p>
+</div>
+<p>이 책은 이러한 근본적인 질문에 답하기 위한 도구와 관점을 제공한다. 우리는 <strong>모빌리티 시스템을 분석하고 평가하는 방법</strong>을 학습함으로써, 더 나은 도시 환경과 삶의 질 향상을 위한 통찰을 얻을 수 있을 것이다.</p>
 </section>
 <section id="the-necessity-of-simulation">
 <h2>1.2 The Necessity of Simulation<a class="headerlink" href="#the-necessity-of-simulation" title="Permalink to this heading">#</a></h2>
-<p>좋은 모빌리티 시스템이 무엇인지 고민하고 평가하는 데 시뮬레이션은 필수적인 도구이다. 실제 도시 환경에서 새로운 모빌리티 시스템을 테스트하는 것은 비용, 시간, 안전 등의 문제로 매우 제한적이다. 시뮬레이션을 통해 우리는 이러한 한계를 극복하고 다양한 시나리오를 안전하게 테스트할 수 있다. 또한, 도시 모빌리티 시스템의 복잡성과 수많은 변수들의 상호작용을 컴퓨터 모델을 통해 효과적으로 관리하고 분석할 수 있다.</p>
-<p>그러나 현재 존재하는 여러 가상 환경은 모빌리티 시스템 운영에 완전히 적합하지 않다. 예를 들어, 테슬라의 자율주행 시뮬레이션은 자율주행 차량 훈련을 위한 디지털 트윈에 중점을 둔다. 테슬라의 autopilot은 영상 기반으로 알고리즘을 학습하기 때문에 시뮬레이션의 렌더링 퀄러티가 매우 중요하지만, 이는 전체 모빌리티 시스템의 운영 측면에서는 과도한 자원 소모일 수 있다.</p>
-<p>VISSIM, SUMO, AIMSUN과 같은 기존의 교통 시뮬레이션 툴도 활용 가능하지만, 이들은 주로 소규모 영역에 최적화되어 있다. 몇 개의 교차로나 작은 도시 단위로는 구현이 가능하지만, 서울이나 뉴욕과 같은 대규모 도시 수준에서 다양한 모빌리티 서비스를 구현하기에는 한계가 있다.</p>
-<p>이러한 배경에서 오픈소스 기반의 대규모 모빌리티 시뮬레이션 툴의 필요성이 대두된다. 오픈소스의 힘은 이미 여러 분야에서 입증되었다. 구글의 Transformer, 우리가 일상적으로 사용하는 Python, 그리고 Python 생태계의 핵심인 Pandas, Numpy와 같은 패키지들 모두 오픈소스의 성공 사례이다. 모빌리티 분야에서도 누구나 사용 가능한 시뮬레이션 플랫폼을 만들고, 그 안에서 활발한 논의와 협업이 이루어질 수 있는 환경이 필요하다. 알고리즘과 데이터를 공유하며, 집단 지성을 활용해 더 나은 모빌리티 시스템을 설계하고 평가할 수 있는 기반을 마련해야 한다.</p>
-<p>이러한 시뮬레이션 툴은 단순히 현재의 모빌리티 시스템을 모방하는 데 그치지 않고, 미래의 혁신적인 모빌리티 솔루션을 실험하고 검증할 수 있는 플랫폼이 되어야 한다. 자율주행 차량, 드론 택시, 하이퍼루프 등 미래의 교통수단과 기존 시스템의 통합, 그리고 이에 따른 도시 구조의 변화까지 시뮬레이션할 수 있는 유연성과 확장성이 요구된다. 이를 통해 우리는 더 효율적이고, 지속 가능하며, 모든 이용자에게 공평한 모빌리티 시스템을 설계하고 구현하는 데 한 걸음 더 다가갈 수 있을 것이다.</p>
+<p><u>좋은 모빌리티 시스템이 무엇인지 고민하고 평가하는 데 <strong>시뮬레이션</strong>은 필수적인 도구이다.</u> 실제 도시 환경에서 새로운 모빌리티 시스템을 테스트하는 것은 <strong>비용, 시간, 안전 등의 문제로 매우 제한적</strong>이다. <strong>시뮬레이션을 통해 우리는 이러한 한계를 극복하고 다양한 시나리오를 안전하게 테스트</strong>할 수 있다. 또한, 도시 모빌리티 시스템의 복잡성과 수많은 변수들의 상호작용을 <strong>컴퓨터 모델</strong>을 통해 효과적으로 관리하고 분석할 수 있다.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>현재 존재하는 여러 가상 환경의 한계점</p>
+<p><strong>현재 존재하는 여러 가상 환경은 모빌리티 시스템 운영에 완전히 적합하지 않다.</strong></p>
+</div>
+<p>예를 들어, <strong>테슬라의 자율주행 시뮬레이션</strong>은 자율주행 차량 훈련을 위한 <strong>디지털 트윈</strong>에 중점을 둔다. 테슬라의 <strong>autopilot</strong>은 영상 기반으로 알고리즘을 학습하기 때문에 시뮬레이션의 렌더링 퀄러티가 매우 중요하지만, 이는 전체 모빌리티 시스템의 운영 측면에서는 <strong>과도한 자원 소모</strong>일 수 있다.</p>
+<p><strong>VISSIM, SUMO, AIMSUN</strong>과 같은 기존의 교통 시뮬레이션 툴도 활용 가능하지만, 이들은 주로 <strong>소규모 영역에 최적화</strong>되어 있다. 몇 개의 교차로나 작은 도시 단위로는 구현이 가능하지만, <u>서울이나 뉴욕과 같은 대규모 도시 수준에서 다양한 모빌리티 서비스를 구현하기에는 한계가 있다.</u></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>이러한 배경에서 <strong>오픈소스 기반의 대규모 모빌리티 시뮬레이션 툴의 필요성</strong>이 대두된다.</p>
+<p><strong>오픈소스의 힘</strong>은 이미 여러 분야에서 입증되었다:</p>
+<ul class="simple">
+<li><p>구글의 <strong>Transformer</strong></p></li>
+<li><p><strong>Python</strong> (우리가 일상적으로 사용하는)</p></li>
+<li><p><strong>Pandas, Numpy</strong> (Python 생태계의 핵심)</p></li>
+</ul>
+</div>
+<p>모빌리티 분야에서도 <u>누구나 사용 가능한 시뮬레이션 플랫폼을 만들고, 그 안에서 활발한 논의와 협업이 이루어질 수 있는 환경이 필요하다.</u> <strong>알고리즘과 데이터를 공유</strong>하며, <strong>집단 지성</strong>을 활용해 더 나은 모빌리티 시스템을 설계하고 평가할 수 있는 기반을 마련해야 한다.</p>
+<p>이러한 시뮬레이션 툴은 단순히 현재의 모빌리티 시스템을 모방하는 데 그치지 않고, 미래의 혁신적인 모빌리티 솔루션을 실험하고 검증할 수 있는 플랫폼이 되어야 한다. 자율주행 차량, 드론 택시, 하이퍼루프 등 미래의 교통수단과 기존 시스템의 통합, 그리고 이에 따른 도시 구조의 변화까지 시뮬레이션할 수 있는 유연성과 확장성이 요구된다. 이를 통해 우리는 <strong>더 효율적이고, 지속 가능하며, 모든 이용자에게 공평한 모빌리티 시스템</strong>을 설계하고 구현하는 데 한 걸음 더 다가갈 수 있을 것이다.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>핵심 메시지</strong>: 시뮬레이션은 단순한 분석 도구가 아닌, <u>미래의 혁신적인 모빌리티 솔루션을 실험하고 검증할 수 있는 플랫폼</u>이다.</p>
+</div>
 <section id="id1">
 <h3>1.2.1 기존 시뮬레이션 도구들의 한계와 사례 분석<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
-<p>현재 시장에서 활용되고 있는 주요 모빌리티 시뮬레이션 도구들의 특징과 한계를 구체적으로 살펴보자.</p>
+<div class="tip admonition">
+<p class="admonition-title">학습 목표</p>
+<p><u>현재 시장에서 활용되고 있는 주요 모빌리티 시뮬레이션 도구들의 특징과 한계를 구체적으로 살펴보자.</u></p>
+</div>
 <p><strong>상용 교통 시뮬레이션 소프트웨어의 현황</strong></p>
-<p>VISSIM은 독일 PTV Group에서 개발한 미시적 교통 시뮬레이션 도구로, 전 세계적으로 가장 널리 사용되는 교통 시뮬레이션 소프트웨어 중 하나이다. 개별 차량의 움직임을 세밀하게 모델링할 수 있어 교차로 신호 최적화, 고속도로 병목구간 분석 등에 강점을 보인다. 하지만 라이선스 비용이 매우 높고, 대규모 도시 단위의 시뮬레이션에는 컴퓨팅 자원의 한계로 실용성이 떨어진다.</p>
-<p>SUMO(Simulation of Urban Mobility)는 독일 DLR(German Aerospace Center)에서 개발한 오픈소스 교통 시뮬레이션 플랫폼이다. 무료로 사용할 수 있다는 장점이 있지만, 복잡한 설정 과정과 제한적인 사용자 인터페이스로 인해 진입 장벽이 높다. 또한 동적 수요 응답형 서비스(예: 온디맨드 라이드쉐어링)의 구현에는 상당한 프로그래밍 지식이 요구된다.</p>
-<p>AIMSUN은 스페인 TSS사에서 개발한 종합적인 교통 시뮬레이션 플랫폼으로, 거시적, 중시적, 미시적 모델링을 모두 지원한다. 하지만 높은 라이선스 비용과 복잡한 학습 곡선이 단점으로 지적된다. 특히 한국의 교통 환경에 특화된 기능이 부족하여 현지화 작업이 필요한 경우가 많다.</p>
+<p><strong>VISSIM</strong>은 독일 PTV Group에서 개발한 <strong>미시적 교통 시뮬레이션 도구</strong>로, 전 세계적으로 가장 널리 사용되는 교통 시뮬레이션 소프트웨어 중 하나이다.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>장점</strong>: 개별 차량의 움직임을 세밀하게 모델링, 교차로 신호 최적화</p>
+<p><strong>단점</strong>: 라이선스 비용 매우 높음, 대규모 도시에서 컴퓨팅 자원 한계</p>
+</div>
+<p>**SUMO(Simulation of Urban Mobility)**는 독일 DLR(German Aerospace Center)에서 개발한 <strong>오픈소스 교통 시뮬레이션 플랫폼</strong>이다.</p>
+<ul class="simple">
+<li><p><strong>장점</strong>: 무료 사용 가능</p></li>
+<li><p><strong>단점</strong>: 복잡한 설정, 제한적 UI, 동적 서비스 구현에 프로그래밍 지식 필요</p></li>
+</ul>
+<p><strong>AIMSUN</strong>은 스페인 TSS사에서 개발한 <strong>종합적인 교통 시뮬레이션 플랫폼</strong>으로, <strong>거시적, 중시적, 미시적 모델링을 모두 지원</strong>한다.</p>
+<p>하지만 <strong>높은 라이선스 비용과 복잡한 학습 곡선</strong>이 단점으로 지적된다. 특히 <u>한국의 교통 환경에 특화된 기능이 부족하여 현지화 작업이 필요</u>한 경우가 많다.</p>
+<figure class="align-default">
+<img alt="ko/#vissim-aimsun-comparison" src="ko/#vissim-aimsun-comparison" />
+</figure>
+<p style="text-align: center;"><strong>[상용 교통 시뮬레이션 소프트웨어 비교: VISSIM vs AIMSUN]</strong></p>
 <p><strong>자율주행 시뮬레이션 플랫폼의 한계</strong></p>
 <p>테슬라의 autopilot 시뮬레이션 환경은 실제 주행 영상과 유사한 고품질 렌더링에 중점을 둔다. 이는 컴퓨터 비전 기반의 자율주행 알고리즘 훈련에는 적합하지만, 도시 전체의 모빌리티 시스템 운영 관점에서는 과도한 자원 소모를 야기한다. 예를 들어, 서울시 전체의 택시 서비스를 시뮬레이션하는 데 굳이 실사와 같은 그래픽 품질이 필요하지 않다.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>테슬라 자율주행 시뮬레이션에 대한 더 자세한 내용은 다음 영상을 참고하세요: <a class="reference external" href="https://youtu.be/YRznFJWbW08?si=u80z2wVk0nuNxOsb">Tesla Autopilot Simulation</a></p>
+</div>
 <p>Waymo의 시뮬레이션 환경 역시 자율주행 차량의 안전성 검증에 특화되어 있어, 다양한 모빌리티 서비스의 통합 운영을 시뮬레이션하기에는 유연성이 부족하다. 또한 이러한 상용 플랫폼들은 대부분 폐쇄적인 구조로 되어 있어 연구자나 정책 입안자들이 자유롭게 활용하기 어렵다.</p>
 <p><strong>오픈소스 시뮬레이션 도구의 가능성과 한계</strong></p>
 <p>오픈소스 생태계는 혁신적인 도구들을 배출해왔다. OpenAI Gym은 강화학습 연구의 표준 플랫폼이 되었고, MuJoCo는 로보틱스 시뮬레이션의 핵심 도구로 자리잡았다. 이들의 성공 요인은 명확한 API 설계, 활발한 커뮤니티 참여, 그리고 지속적인 업데이트에 있다.</p>
@@ -436,11 +480,18 @@ document.write(`
 </section>
 <section id="what-is-urban-mobility-simulation">
 <h2>1.3 What is Urban Mobility Simulation?<a class="headerlink" href="#what-is-urban-mobility-simulation" title="Permalink to this heading">#</a></h2>
-<p>Urban Mobility Simulation은 도시의 교통 및 이동 시스템을 가상으로 모델링하고 시뮬레이션하는 기술이다. 이는 실제 도시 환경에서 다양한 교통 수단과 사람들의 이동 패턴을 컴퓨터상에서 재현하는 것을 목표로 한다.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Urban Mobility Simulation</strong> 정의</p>
+<p><u><strong>Urban Mobility Simulation</strong>은 도시의 교통 및 이동 시스템을 가상으로 모델링하고 시뮬레이션하는 기술이다.</u> 이는 실제 도시 환경에서 다양한 교통 수단과 사람들의 이동 패턴을 컴퓨터상에서 재현하는 것을 목표로 한다.</p>
+</div>
 <p>현실 세계에서 다양한 모빌리티 서비스를 테스트하는 것은 비용, 이해관계 충돌, 안전 문제 등으로 인해 불가능하다. 따라서 로보틱스 분야에서 사용되는 OpenAI gym, Mujoco와 같은 가상 환경처럼 모빌리티 시스템 운영에 특화된 가상 환경을 만들 필요가 있다.</p>
 <section id="id2">
 <h3>1.3.1 전통적 교통 분석 방법론과의 비교<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
-<p>도시 교통 계획과 분석에는 오랫동안 전통적인 방법론들이 사용되어 왔다. 이러한 기존 접근법과 현대적인 Urban Mobility Simulation의 차이점을 이해하는 것은 시뮬레이션의 가치와 필요성을 명확히 하는 데 중요하다.</p>
+<div class="important admonition">
+<p class="admonition-title">학습 목표</p>
+<p><u>도시 교통 계획과 분석에는 오랫동안 전통적인 방법론들이 사용되어 왔다. 이러한 기존 접근법과 현대적인 Urban Mobility Simulation의 차이점을 이해하는 것은 시뮬레이션의 가치와 필요성을 명확히 하는 데 중요하다.</u></p>
+</div>
 <p><strong>전통적 4단계 교통수요 예측 모델 (Four-Step Model)</strong></p>
 <p>기존의 교통 계획에서는 주로 4단계 모델이 활용되어 왔다. 이 모델은 1) 통행 발생 (Trip Generation), 2) 통행 분포 (Trip Distribution), 3) 수단 선택 (Mode Choice), 4) 통행 배정 (Trip Assignment)의 순차적 단계로 구성된다. 각 단계는 독립적으로 처리되며, 주로 통계적 회귀 모델이나 중력 모델 등을 활용한다.</p>
 <p>하지만 이러한 접근법은 몇 가지 근본적인 한계를 가진다. 첫째, 각 단계가 순차적으로 처리되어 단계 간 피드백이 제한적이다. 예를 들어, 교통 혼잡으로 인한 통행시간 증가가 수단 선택에 미치는 영향을 실시간으로 반영하기 어렵다. 둘째, 집계된 데이터(aggregate data)를 기반으로 하기 때문에 개별 이용자의 행동 변화나 새로운 모빌리티 서비스의 영향을 세밀하게 분석하기 어렵다.</p>
@@ -460,21 +511,45 @@ document.write(`
 </section>
 <section id="mobility-simulation-framework">
 <h2>1.4 Mobility Simulation Framework<a class="headerlink" href="#mobility-simulation-framework" title="Permalink to this heading">#</a></h2>
-<p>이러한 문제를 해결하기 위해 DTUMOS(Digital Twin for Urban Mobility Operating System)라는 프레임워크를 제시하였다. DTUMOS는 도시 모빌리티 운영 시스템을 위한 디지털 트윈으로, 경량화되고 오픈소스 기반의 프레임워크이다. 아래 그림에서 확인할 수 있듯이 모든 기능을 개별 모듈로 분리하여 높은 확장성과 유연성을 제공한다.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>이러한 문제를 해결하기 위해 **DTUMOS(Digital Twin for Urban Mobility Operating System)**라는 프레임워크를 제시하였다.</p>
+<p><strong>DTUMOS</strong>는 <u>도시 모빌리티 운영 시스템을 위한 디지털 트윈</u>으로, <strong>경량화</strong>되고 <strong>오픈소스 기반</strong>의 프레임워크이다.</p>
+</div>
+<p>아래 그림에서 확인할 수 있듯이 <strong>모든 기능을 개별 모듈로 분리</strong>하여 <strong>높은 확장성과 유연성</strong>을 제공한다.</p>
 <a class="reference internal image-reference" href="../_images/ch01_framework.png"><img alt="Framework of Mobility Simulation" class="align-center" src="../_images/ch01_framework.png" style="width: 70%;" /></a>
 <p style="text-align: center;"><strong>[Framework of Mobility Simulation]</strong></p>
 <section id="data">
 <h3>[1] Data<a class="headerlink" href="#data" title="Permalink to this heading">#</a></h3>
-<p>먼저 가장 첫번째에 위치한 <strong>Data</strong>에서는 시뮬레이션을 구동하기 위한 필수적인 입력데이터를 나타낸다. <code class="docutils literal notranslate"><span class="pre">Historical</span> <span class="pre">Trip</span> <span class="pre">Record</span></code>는 승객 혹은 물품배송에 대한 요청 데이터를 의미한다. 택시를 예로 들자면, 승객들이 언제, 어디에서 택시를 호출해서 어디로 가고자 하는지를 담고 있는 정보일 것이며, 물품 배송 문제라면 물건을 싣는 곳과 배송하는 곳의 위치 정보를 포함할 것이다. 모빌리티 시스템 역시 수요와 공급의 원칙에 의하여 작동되며, 따라서 이 데이터는 모빌리티 서비스를 이용하고자 하는 ‘수요’를 나타낸다. <code class="docutils literal notranslate"><span class="pre">Work</span> <span class="pre">Schedule</span> <span class="pre">Table</span></code>은 반면 공급을 의미한다. 서비스를 구성하는 전체 차량의 대수는 몇대인지, 그리고 해당 차량 운전사들의 근무 테이블에 대한 정보를 담고 있다. 이 데이터를 통해 전체적인 Fleet size가 결정이 될 것이고, 또 시간대별 서비스 중인 차량의 대수가 결정될 것이다.</p>
-<p>마지막으로 <code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code>는 차량이 움직이는 도로의 네트워크를 나타낸다. 여기서 네트워크는 다양할 수 있다. 택시나 버스처럼 도로위를 다니는 경우 일반 도로 네트워크를 사용할 것이고, 반면 지하철이나 UAM과 같이 특정한 노선이나 항로를 다니는 경우 이에 맞는 네트워크 구조가 필요할 것이다. 여기서의 네트워크는 점과 선으로 이루어진, 즉 Node와 Edge로 이루어진 Graph를 의미한다. 일반 도로망의 경우 Node는 보통 교차로를 나타내며 Edge는 교차로 사이를 잇는 도로망으로 표현된다. 지하철의 경우 Node는 지하철 역사가 될 것이고, Edge는 지하철 역 사이의 철로가 될 것이다. <code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code> 데이터는 모빌리티 시뮬레이션이 현실과 유사하게 작동되는데 매우 핵심적이며, 향후 다루게 될 <code class="docutils literal notranslate"><span class="pre">Vehicle</span> <span class="pre">Router</span></code> 알고리즘에 중요한 입력자료로 활용된다.</p>
+<p>먼저 가장 첫번째에 위치한 <strong>Data</strong>에서는 <u>시뮬레이션을 구동하기 위한 필수적인 입력데이터</u>를 나타낸다.</p>
+<p>**<code class="docutils literal notranslate"><span class="pre">Historical</span> <span class="pre">Trip</span> <span class="pre">Record</span></code>**는 <strong>승객 혹은 물품배송에 대한 요청 데이터</strong>를 의미한다. 택시를 예로 들자면, 승객들이 <strong>언제, 어디에서 택시를 호출해서 어디로 가고자 하는지</strong>를 담고 있는 정보일 것이며, 물품 배송 문제라면 물건을 싣는 곳과 배송하는 곳의 위치 정보를 포함할 것이다.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>모빌리티 시스템 역시 <strong>수요와 공급의 원칙</strong>에 의하여 작동되며, 따라서 이 데이터는 모빌리티 서비스를 이용하고자 하는 ‘<strong>수요</strong>’를 나타낸다.</p>
+</div>
+<p>**<code class="docutils literal notranslate"><span class="pre">Work</span> <span class="pre">Schedule</span> <span class="pre">Table</span></code>**은 반면 <strong>공급</strong>을 의미한다. 서비스를 구성하는 전체 차량의 대수는 몇대인지, 그리고 해당 차량 운전사들의 근무 테이블에 대한 정보를 담고 있다. 이 데이터를 통해 전체적인 <strong>Fleet size</strong>가 결정이 될 것이고, 또 시간대별 서비스 중인 차량의 대수가 결정될 것이다.</p>
+<p>마지막으로 **<code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code>**는 <u>차량이 움직이는 도로의 네트워크</u>를 나타낸다.</p>
+<p>여기서의 네트워크는 <strong>점과 선으로 이루어진</strong>, 즉 <strong>Node와 Edge로 이루어진 Graph</strong>를 의미한다:</p>
+<ul class="simple">
+<li><p><strong>일반 도로망</strong>: Node = 교차로, Edge = 도로망</p></li>
+<li><p><strong>지하철</strong>: Node = 역사, Edge = 철로</p></li>
+</ul>
+<p><u><code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code> 데이터는 모빌리티 시뮬레이션이 현실과 유사하게 작동되는데 매우 핵심적</u>이며, 향후 다루게 될 <strong><code class="docutils literal notranslate"><span class="pre">Vehicle</span> <span class="pre">Router</span></code> 알고리즘</strong>에 중요한 입력자료로 활용된다.</p>
 </section>
 <section id="calibration">
 <h3>[2] Calibration<a class="headerlink" href="#calibration" title="Permalink to this heading">#</a></h3>
-<p>두번째 레이어인 <strong>Calibration</strong>에서는 모빌리티 시뮬레이션이 현실과 유사하게 작동하기 위한 보정작업에 필요한 모듈을 담고 있다. 여기서는 <code class="docutils literal notranslate"><span class="pre">Estimated</span> <span class="pre">Time</span> <span class="pre">of</span> <span class="pre">Arrival</span> <span class="pre">(ETA)</span> <span class="pre">model</span></code>이 핵심적인 역할을 한다. 이 모델은 Historical Trip Record와 Road Network 데이터를 입력으로 받아, 특정 경로의 예상 도착 시간을 계산한다. 이를 통해 시뮬레이션의 시간 추정 정확도를 높이고, 현실적인 이동 시간을 반영할 수 있다.</p>
+<p>두번째 레이어인 <strong>Calibration</strong>에서는 <u>모빌리티 시뮬레이션이 현실과 유사하게 작동하기 위한 보정작업</u>에 필요한 모듈을 담고 있다.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>여기서는 **<code class="docutils literal notranslate"><span class="pre">Estimated</span> <span class="pre">Time</span> <span class="pre">of</span> <span class="pre">Arrival</span> <span class="pre">(ETA)</span> <span class="pre">model</span></code>**이 핵심적인 역할을 한다.</p>
+</div>
+<p>이 모델은 <strong>Historical Trip Record</strong>와 <strong>Road Network</strong> 데이터를 입력으로 받아, <strong>특정 경로의 예상 도착 시간을 계산</strong>한다. 이를 통해 시뮬레이션의 <strong>시간 추정 정확도</strong>를 높이고, 현실적인 이동 시간을 반영할 수 있다.</p>
 </section>
-<section id="id3">
-<h3>[3] Calibration<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
-<p>세번째 레이어인 <strong>Operate Mobility service in Digital Twin</strong>은 모빌리티 서비스를 운영하고 시뮬레이션을 구동할 때 필요한 핵심적인 알고리즘들을 포함한다. <code class="docutils literal notranslate"><span class="pre">Demand</span> <span class="pre">&amp;</span> <span class="pre">Supply</span> <span class="pre">Generator</span></code>는 앞서 입력으로 사용한 Trip Record 데이터와 Work Schedule 데이터를 사용해 공간상에 수요(e.g., 승객)와 공급(e.g., 차량)을 생성하는 과정이다. 이 과정이 왜 필요한지 의문이 들 수 있으나, 시뮬레이션에 랜덤성을 줄 필요가 있다. 매번 같은 결과가 나온다면 시뮬레이션이 아닐것이다. 따라서 이 모듈에서는 우리가 가지고 있는 데이터를 사용해 랜덤한 수요와 공급을 생성하는 다양한 통계적 기법이 활용된다. 예를 들어, 포아송 프로세스나 몬테카를로 시뮬레이션 등이 사용될 수 있다.</p>
+<section id="operate-mobility-service-in-digital-twin">
+<h3>[3] Operate Mobility Service in Digital Twin<a class="headerlink" href="#operate-mobility-service-in-digital-twin" title="Permalink to this heading">#</a></h3>
+<p>세번째 레이어인 <strong>Operate Mobility service in Digital Twin</strong>은 <u>모빌리티 서비스를 운영하고 시뮬레이션을 구동할 때 필요한 핵심적인 알고리즘들</u>을 포함한다.</p>
+<p>**<code class="docutils literal notranslate"><span class="pre">Demand</span> <span class="pre">&amp;</span> <span class="pre">Supply</span> <span class="pre">Generator</span></code>**는 앞서 입력으로 사용한 <strong>Trip Record 데이터</strong>와 <strong>Work Schedule 데이터</strong>를 사용해 공간상에 <strong>수요(e.g., 승객)와 공급(e.g., 차량)을 생성</strong>하는 과정이다.</p>
+<p>따라서 이 모듈에서는 우리가 가지고 있는 데이터를 사용해 <strong>랜덤한 수요와 공급을 생성</strong>하는 다양한 통계적 기법이 활용된다. 예를 들어, <strong>포아송 프로세스</strong>나 <strong>몬테카를로 시뮬레이션</strong> 등이 사용될 수 있다.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>몬테카를로 시뮬레이션이란 확률적 알고리즘을 사용하여 복잡한 시스템의 행동을 시뮬레이션하는 기법이다. 이 방법은 랜덤 샘플링을 반복적으로 수행하여 결과의 분포를 추정하며, 불확실성이 높은 상황에서 유용하게 사용된다.</p>
@@ -487,16 +562,24 @@ document.write(`
 18:59-19:00: 1명</p>
 <p>이렇게 생성된 숫자의 총합은 대략 30명 근처가 되지만, 매번 시뮬레이션할 때마다 다른 결과가 나오게 되며, 따라서 우리는 시뮬레이션을 여러번 돌려 더 안정적이고 신뢰할 수 있는 결과를 얻을 수 있다.</p>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Vehicle</span> <span class="pre">Router</span> <span class="pre">Algorithm</span></code>은 Road Network 데이터를 기반으로 최적 경로를 계산한다. 이 알고리즘은 그래프 이론을 바탕으로 한 다양한 최단 경로 알고리즘을 활용한다. 대표적으로 다익스트라(Dijkstra) 알고리즘과 A* 알고리즘이 널리 사용된다. 다익스트라 알고리즘은 모든 노드에 대한 최단 경로를 찾는 데 효과적이지만, 대규모 네트워크에서는 계산 시간이 길어질 수 있다. 반면 A* 알고리즘은 휴리스틱 함수를 사용하여 목표 지점으로의 방향성을 고려하므로, 더 빠르게 최적 경로를 찾을 수 있다.</p>
-<p>우리가 일상적으로 사용하는 Naver, Kakao, Google 지도의 길찾기 서비스나 네비게이션 시스템도 이와 유사한 알고리즘을 기반으로 작동한다. 이들 서비스는 실시간 교통 정보와 결합하여 더욱 정확하고 효율적인 경로를 제시한다. 본 강의에서는 이러한 상용 API를 활용하여 경로를 추출하는 방법을 학습할 예정이다. 또한, 앞서 구축한 <code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code>에서 직접 그래프를 추출하여 경로를 산출하는 알고리즘을 실습함으로써, 알고리즘의 작동 원리를 깊이 이해하고 실제 적용 능력을 기를 것이다.</p>
+<p>**<code class="docutils literal notranslate"><span class="pre">Vehicle</span> <span class="pre">Router</span> <span class="pre">Algorithm</span></code>**은 <strong>Road Network 데이터</strong>를 기반으로 <u>최적 경로를 계산</u>한다. 이 알고리즘은 <strong>그래프 이론</strong>을 바탕으로 한 다양한 최단 경로 알고리즘을 활용한다.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>대표적인 알고리즘 비교:</p>
+<ul class="simple">
+<li><p><strong>다익스트라(Dijkstra)</strong>: 모든 노드에 대한 최단 경로, 대규모에서 <strong>계산 시간 길어짐</strong></p></li>
+<li><p><strong>A알고리즘</strong>: 휴리스틱 함수 사용, <strong>더 빠르게 최적 경로 찾기</strong></p></li>
+</ul>
+</div>
+<p>이들 서비스는 <strong>실시간 교통 정보</strong>와 결합하여 <strong>더욱 정확하고 효율적인 경로</strong>를 제시한다. 본 강의에서는 이러한 <strong>상용 API</strong>를 활용하여 경로를 추출하는 방법을 학습할 예정이다. 또한, 앞서 구축한 **<code class="docutils literal notranslate"><span class="pre">Road</span> <span class="pre">Network</span></code>**에서 직접 그래프를 추출하여 경로를 산출하는 알고리즘을 실습함으로써, <u>알고리즘의 작동 원리를 깊이 이해하고 실제 적용 능력을 기를 것</u>이다.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Dispatch</span> <span class="pre">Algorithm</span></code>은 수요와 공급을 효율적으로 매칭하는 핵심 알고리즘이다. 택시 서비스를 예로 들면, 승객의 호출이 들어왔을 때 어떤 택시를 배정할지 결정하는 역할을 한다. 현재 한국의 택시 시스템에서는 주로 택시 기사들에게 호출 정보(콜)를 제공하고, 기사가 수락 여부를 결정하는 방식을 채택하고 있다. 그러나 이는 효율성 측면에서 한계가 있을 수 있다.</p>
 <p>최근 학계와 업계에서는 다양한 최적화(Optimization) 알고리즘을 적용하여 승객과 차량을 더욱 효율적으로 매칭하는 방법을 연구하고 있다. 이러한 알고리즘의 목표는 상황에 따라 다르지만, 일반적으로 승객의 대기 시간 최소화, 차량의 공차 시간 감소, 전체 시스템의 운영 효율성 증대 등을 포함한다. 예를 들어, 헝가리안 알고리즘(Hungarian Algorithm)이나 유전 알고리즘(Genetic Algorithm) 등이 이러한 최적화 문제에 적용될 수 있다.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Vehicle</span> <span class="pre">Relocation</span> <span class="pre">Algorithm</span></code>은 ETA 모델의 결과를 바탕으로 차량의 재배치 전략을 수립하는 중요한 알고리즘이다. 이는 특히 수요와 공급의 불균형이 발생하는 도시 환경에서 중요한 역할을 한다. 전통적으로 버스는 정해진 노선과 배차 간격에 따라 운행되었고, 택시의 경우 기사의 경험에 의존하여 이동했다. 그러나 빅데이터와 인공지능 기술의 발전으로, 보다 과학적이고 효율적인 차량 재배치가 가능해졌다.</p>
 <p>데이터 기반의 차량 재배치는 여러 가지 이점을 제공한다. 첫째, 수요 예측을 통해 특정 지역과 시간대의 수요 패턴을 파악하고, 이에 맞춰 사전에 차량을 배치할 수 있다. 둘째, 실시간 교통 상황과 이벤트 정보를 고려하여 동적으로 차량을 재배치함으로써 긴급 상황에 더 빠르게 대응할 수 있다. 셋째, 차량의 공차 시간을 줄이고 운행 효율성을 높여 전체 시스템의 경제성을 개선할 수 있다.</p>
 <p>더욱이, 자율주행 차량과 배달 로봇 등 새로운 모빌리티 수단의 등장은 Vehicle Relocation Algorithm의 중요성을 더욱 부각시킨다. 이러한 무인 시스템은 인간 운전자의 직관이나 경험에 의존할 수 없기 때문에, 데이터 기반의 과학적인 재배치 전략이 필수적이다. 따라서 앞으로 Vehicle Relocation Algorithm은 스마트 시티와 미래 모빌리티 시스템의 핵심 요소로 자리잡을 것으로 예상된다.</p>
 </section>
-<section id="id4">
-<h3>1.4.1 구현 시 주요 도전과제와 해결방안<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
+<section id="id3">
+<h3>1.4.1 구현 시 주요 도전과제와 해결방안<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
 <p>DTUMOS와 같은 대규모 모빌리티 시뮬레이션 플랫폼을 구현하는 과정에서는 여러 기술적, 방법론적 도전과제들이 존재한다. 이러한 문제들을 사전에 이해하고 대응 방안을 마련하는 것은 성공적인 시뮬레이션 구축의 핵심이다.</p>
 <p><strong>확장성과 성능 최적화</strong></p>
 <p>도시 규모의 모빌리티 시뮬레이션에서 가장 큰 도전은 확장성(scalability) 문제이다. 서울시와 같은 대도시에는 수백만 명의 시민과 수만 대의 차량이 동시에 움직인다. 이를 실시간으로 시뮬레이션하려면 막대한 컴퓨팅 자원이 필요하다.</p>
@@ -538,14 +621,17 @@ document.write(`
 </section>
 <section id="discussion-and-practical-exercises">
 <h2>1.5 Discussion and Practical Exercises<a class="headerlink" href="#discussion-and-practical-exercises" title="Permalink to this heading">#</a></h2>
-<section id="id5">
-<h3>1.5.1 팀별 토의 주제<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
-<p>아래 주제에 대해 팀별로 토의하고 발표해봅시다.</p>
+<section id="id4">
+<h3>1.5.1 팀별 토의 주제<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>아래 주제에 대해 <strong>팀별로 토의하고 발표</strong>해봅시다.</p>
+</div>
 <p><strong>토의 주제 1: 모빌리티 시스템 문제점 분석</strong></p>
 <ul class="simple">
-<li><p>현재 우리가 이용하는 모빌리티 시스템에서 가장 개선이 필요한 부분은 무엇인가?</p></li>
-<li><p>해당 문제점을 해결하기 위한 구체적인 방안을 제시해보자.</p></li>
-<li><p>시뮬레이션을 통해 이러한 개선 방안의 효과를 어떻게 검증할 수 있을까?</p></li>
+<li><p><u>현재 우리가 이용하는 모빌리티 시스템에서 가장 개선이 필요한 부분은 무엇인가?</u></p></li>
+<li><p>해당 문제점을 해결하기 위한 <strong>구체적인 방안</strong>을 제시해보자.</p></li>
+<li><p><strong>시뮬레이션을 통해 이러한 개선 방안의 효과를 어떻게 검증할 수 있을까?</strong></p></li>
 </ul>
 <p><strong>토의 주제 2: 혁신적 모빌리티 서비스 기획</strong></p>
 <ul class="simple">
@@ -664,13 +750,13 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mobility-simulation-framework">1.4 Mobility Simulation Framework</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data">[1] Data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">[2] Calibration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">[3] Calibration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.4.1 구현 시 주요 도전과제와 해결방안</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#operate-mobility-service-in-digital-twin">[3] Operate Mobility Service in Digital Twin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.4.1 구현 시 주요 도전과제와 해결방안</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">[4] Outputs</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-and-practical-exercises">1.5 Discussion and Practical Exercises</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">1.5.1 팀별 토의 주제</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.5.1 팀별 토의 주제</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#homework">1.5.2 실습 과제 (Homework)</a></li>
 </ul>
 </li>
