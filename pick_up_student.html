@@ -381,6 +381,107 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <p>랜덤 학생 뽑기</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+<span class="c1"># 학생 목록과 가중치</span>
+<span class="n">students</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;최의진&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;최승준&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;장호성&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;정일태&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;김현우&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;김재경&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;김수빈&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;권찬영&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;민문정&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;송명신&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;유병욱&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="s2">&quot;윤서진&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pick_random_student</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    가중치를 고려하여 랜덤으로 학생을 선택하는 함수</span>
+<span class="sd">    한번 뽑힌 학생은 가중치가 절반으로 줄어듭니다.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 가중치 기반 선택</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">students</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+    
+    <span class="c1"># 가중치에 따라 랜덤 선택</span>
+    <span class="n">selected_name</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># 선택된 학생의 가중치를 절반으로 줄임</span>
+    <span class="n">students</span><span class="p">[</span><span class="n">selected_name</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="mf">0.5</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🎯 선택된 학생: </span><span class="si">{</span><span class="n">selected_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📊 현재 가중치: </span><span class="si">{</span><span class="n">students</span><span class="p">[</span><span class="n">selected_name</span><span class="p">][</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">selected_name</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show_current_weights</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;현재 모든 학생들의 가중치를 보여주는 함수&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">📈 현재 학생별 가중치:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">students</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">reset_weights</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;모든 학생의 가중치를 초기값(1.0)으로 리셋하는 함수&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">students</span><span class="p">:</span>
+        <span class="n">students</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="s2">&quot;weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🔄 모든 가중치가 초기화되었습니다!&quot;</span><span class="p">)</span>
+
+<span class="c1"># 사용 예시</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🎲 랜덤 학생 뽑기 시스템&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># 학생 뽑기</span>
+<span class="n">pick_random_student</span><span class="p">()</span>
+<span class="n">show_current_weights</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>🎲 랜덤 학생 뽑기 시스템
+==============================
+🎯 선택된 학생: 권찬영
+📊 현재 가중치: 0.500
+
+📈 현재 학생별 가중치:
+  최의진: 1.000
+  최승준: 1.000
+  장호성: 1.000
+  정일태: 1.000
+  김현우: 1.000
+  김재경: 1.000
+  김수빈: 1.000
+  권찬영: 0.500
+  민문정: 1.000
+  송명신: 1.000
+  유병욱: 1.000
+  윤서진: 1.000
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pick_random_student</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>🎯 선택된 학생: 송명신
+📊 현재 가중치: 0.500
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;송명신&#39;
+</pre></div>
+</div>
+</div>
+</div>
 
     <script type="text/x-thebe-config">
     {
