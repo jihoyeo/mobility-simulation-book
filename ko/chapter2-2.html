@@ -1,0 +1,1231 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>2.2 스마트카드 데이터 분석 &#8212; Digital Twin for Urban Mobility Systems</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ko/chapter2-2';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.3 Travel Time Data (Taxi Trip Record)" href="chapter2-3.html" />
+    <link rel="prev" title="2. Data Preparation" href="chapter2-1.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Digital Twin for Urban Mobility Systems - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Digital Twin for Urban Mobility Systems - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Urban Mobility Simulation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="chapter1.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2-1.html">2. Data Preparation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">2.2 스마트카드 데이터 분석</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter2-3.html">2.3 Travel Time Data (Taxi Trip Record)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3.html">3. Models for Predicting Estimated Time of Arrival</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter4.html">4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fko/chapter2-2.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/ko/chapter2-2.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>2.2 스마트카드 데이터 분석</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.2.1 데이터 읽기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#o-d">2.2.2 O-D 데이터 만들기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.2.3 기초 통계 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.2.4 공간 분석</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <table align="left">
+  <td>
+    <a target="_blank" href="https://colab.research.google.com/github/jihoyeo/mobility-simulation-book/blob/main/ko/chapter2.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />구글 코랩에서 실행하기</a>
+  </td>
+</table>
+<br><section id="id1">
+<h1>2.2 스마트카드 데이터 분석<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
+<ul class="simple">
+<li><p>대중교통 이용자들의 승하차 정보를 담고 있는 스마트카드 데이터는 도시 교통 패턴을 이해하는 데 핵심적인 자료이다.</p></li>
+<li><p>본 섹션에서는 수도권의 버스 및및 지하철 승하차 데이터를 활용하여 기본적인 분석 및 시각화를 수행한다.</p></li>
+<li><p>본 분석에서 사용하는 데이터는 정류소 위치는 실제 위치지만 이용내역은 실제 데이터에 Noise를 입힌 가상의 데이터이다.</p></li>
+<li><p>본 섹션에서는 <code class="docutils literal notranslate"><span class="pre">교통약자</span></code>에 집중하여 분석을 수행합니다. 교통약자란 누구일까요? 스마트카드 데이터에서 해당 정보를 추출할 수 있을까요?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시각화 라이브러리</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="c1"># 한글 폰트 설정 (Windows 환경)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Malgun Gothic&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.unicode_minus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># 마이너스 기호 깨짐 방지</span>
+
+<span class="c1"># seaborn 스타일 적용</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font</span><span class="o">=</span><span class="s1">&#39;Malgun Gothic&#39;</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+
+<span class="c1"># 그래프 크기 기본 설정</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id2">
+<h2>2.2.1 데이터 읽기<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_trip_data</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    특정 날짜의 TCD 데이터를 불러오는 함수</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        date (str): 날짜 문자열 (예: &#39;20240923&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: 데이터프레임</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;../data/smartcard/TCD_</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">_modify.parquet&#39;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+
+<span class="c1"># 날짜 설정 및 데이터 로드</span>
+<span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;20240923&#39;</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">load_trip_data</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>운행일자</th>
+      <th>교통카드 사용자 구분 코드</th>
+      <th>환승 건수</th>
+      <th>지역 1 코드</th>
+      <th>지역 2 코드</th>
+      <th>지역 3 코드</th>
+      <th>지역 4 코드</th>
+      <th>지역 5 코드</th>
+      <th>지역 6 코드</th>
+      <th>지역 7 코드</th>
+      <th>...</th>
+      <th>종료 하차 역 ID</th>
+      <th>총 이용객 수</th>
+      <th>총 이용 금액</th>
+      <th>총 통행 거리</th>
+      <th>총 탑승 시간</th>
+      <th>총 소요 시간</th>
+      <th>승차버스정류장명</th>
+      <th>승차시군구코드</th>
+      <th>하차버스정류장명</th>
+      <th>하차시군구코드</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113310100</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>1857</td>
+      <td>1</td>
+      <td>0</td>
+      <td>8100</td>
+      <td>1007</td>
+      <td>1007.0</td>
+      <td>모란</td>
+      <td>41133.0</td>
+      <td>정자</td>
+      <td>41135.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20240923</td>
+      <td>4</td>
+      <td>0</td>
+      <td>4113310100</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>2827</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1000</td>
+      <td>468</td>
+      <td>468.0</td>
+      <td>수진</td>
+      <td>41133.0</td>
+      <td>모란</td>
+      <td>41133.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>20240923</td>
+      <td>4</td>
+      <td>0</td>
+      <td>4113310300</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>2827</td>
+      <td>1</td>
+      <td>0</td>
+      <td>3500</td>
+      <td>530</td>
+      <td>530.0</td>
+      <td>남한산성입구(성남법원검찰청)</td>
+      <td>41133.0</td>
+      <td>모란</td>
+      <td>41133.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>20240923</td>
+      <td>2</td>
+      <td>0</td>
+      <td>4113510500</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>1856</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1100</td>
+      <td>423</td>
+      <td>423.0</td>
+      <td>서현</td>
+      <td>41135.0</td>
+      <td>수내</td>
+      <td>41135.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113310100</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>2821</td>
+      <td>1</td>
+      <td>0</td>
+      <td>5300</td>
+      <td>1185</td>
+      <td>1185.0</td>
+      <td>수진</td>
+      <td>41133.0</td>
+      <td>복정</td>
+      <td>11710.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>770450</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>2</td>
+      <td>4113110700</td>
+      <td>4143010800.0</td>
+      <td>4141010400.0</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>4118191</td>
+      <td>1</td>
+      <td>2800</td>
+      <td>24657</td>
+      <td>1826</td>
+      <td>2992.0</td>
+      <td>가천대</td>
+      <td>41131.0</td>
+      <td>14단지매화</td>
+      <td>41410.0</td>
+    </tr>
+    <tr>
+      <th>770451</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113110600</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>4100415</td>
+      <td>1</td>
+      <td>1350</td>
+      <td>3221</td>
+      <td>517</td>
+      <td>517.0</td>
+      <td>상원초등학교.양지동청소년문화의집</td>
+      <td>41131.0</td>
+      <td>수정구청</td>
+      <td>41131.0</td>
+    </tr>
+    <tr>
+      <th>770452</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113110200</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>1854</td>
+      <td>1</td>
+      <td>1400</td>
+      <td>4200</td>
+      <td>808</td>
+      <td>808.0</td>
+      <td>가천대</td>
+      <td>41131.0</td>
+      <td>야탑</td>
+      <td>41135.0</td>
+    </tr>
+    <tr>
+      <th>770453</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113510700</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>1852</td>
+      <td>1</td>
+      <td>1400</td>
+      <td>3200</td>
+      <td>768</td>
+      <td>768.0</td>
+      <td>야탑</td>
+      <td>41135.0</td>
+      <td>태평</td>
+      <td>41131.0</td>
+    </tr>
+    <tr>
+      <th>770454</th>
+      <td>20240923</td>
+      <td>1</td>
+      <td>0</td>
+      <td>4113110200</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>nan</td>
+      <td>...</td>
+      <td>4115021</td>
+      <td>1</td>
+      <td>1350</td>
+      <td>918</td>
+      <td>284</td>
+      <td>284.0</td>
+      <td>중앙시장(마을)</td>
+      <td>41131.0</td>
+      <td>태평고개(마을)</td>
+      <td>41131.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>770455 rows × 123 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📊 스마트카드 승하차 이력 데이터 (TCD) 정보&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- 데이터 크기: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">건의 승하차 이력&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- 컬럼 수: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">개&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 설명: 대중교통(버스, 지하철) 이용자들의 승차/하차 정보를 담고 있는 교통카드 이용 내역&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 포함 정보: 승하차 시간, 정류장/역 정보, 요금, 이동거리, 환승정보, 이용자 구분 등&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 주요 컬럼:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 교통카드 사용자 구분 코드: 1(일반), 2(어린이), 3(청소년), 4(경로), 5(장애인)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 환승 건수: 해당 통행에서의 환승 횟수&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 총 통행 거리: 미터 단위&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 총 소요 시간: 초 단위&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>==================================================
+📊 스마트카드 승하차 이력 데이터 (TCD) 정보
+==================================================
+- 데이터 크기: 770,455건의 승하차 이력
+- 컬럼 수: 123개
+- 설명: 대중교통(버스, 지하철) 이용자들의 승차/하차 정보를 담고 있는 교통카드 이용 내역
+- 포함 정보: 승하차 시간, 정류장/역 정보, 요금, 이동거리, 환승정보, 이용자 구분 등
+- 주요 컬럼:
+  * 교통카드 사용자 구분 코드: 1(일반), 2(어린이), 3(청소년), 4(경로), 5(장애인)
+  * 환승 건수: 해당 통행에서의 환승 횟수
+  * 총 통행 거리: 미터 단위
+  * 총 소요 시간: 초 단위
+==================================================
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># STTN 파일 불러오기 (20240923 데이터만)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_sttn_data</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    특정 날짜의 STTN 데이터를 불러오는 함수</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        date (str): 날짜 문자열 (예: &#39;20240923&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: 정류장 데이터프레임</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;../data/smartcard/STTN_</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">.parquet&#39;</span>
+    <span class="n">sttn_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sttn_df</span>
+
+<span class="c1"># STTN 데이터 로드</span>
+<span class="n">sttn_df</span> <span class="o">=</span> <span class="n">load_sttn_data</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+
+<span class="c1"># 필요한 컬럼들의 고유값만 남기기</span>
+<span class="n">sttn_unique</span> <span class="o">=</span> <span class="n">sttn_df</span><span class="p">[[</span><span class="s1">&#39;정류장 ID&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 명칭&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 ARS번호&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 X 좌표&#39;</span><span class="p">,</span> 
+                       <span class="s1">&#39;정류장 Y 좌표&#39;</span><span class="p">,</span> <span class="s1">&#39;시도코드&#39;</span><span class="p">,</span> <span class="s1">&#39;시도명&#39;</span><span class="p">,</span> <span class="s1">&#39;시군구코드&#39;</span><span class="p">,</span> <span class="s1">&#39;시군구명&#39;</span><span class="p">,</span> 
+                       <span class="s1">&#39;읍면동코드&#39;</span><span class="p">,</span> <span class="s1">&#39;읍면동명&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+<span class="n">sttn_unique</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>정류장 ID</th>
+      <th>정류장 명칭</th>
+      <th>정류장 ARS번호</th>
+      <th>정류장 X 좌표</th>
+      <th>정류장 Y 좌표</th>
+      <th>시도코드</th>
+      <th>시도명</th>
+      <th>시군구코드</th>
+      <th>시군구명</th>
+      <th>읍면동코드</th>
+      <th>읍면동명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3100001</td>
+      <td>동울산우체국</td>
+      <td>~</td>
+      <td>35.51093</td>
+      <td>129.4297</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31170</td>
+      <td>동구</td>
+      <td>3117010400</td>
+      <td>전하동</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>3100002</td>
+      <td>청량초등학교</td>
+      <td>~</td>
+      <td>35.48747</td>
+      <td>129.2983</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31710</td>
+      <td>울주군</td>
+      <td>3171026221</td>
+      <td>청량읍</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3100003</td>
+      <td>청량초등학교</td>
+      <td>~</td>
+      <td>35.48757</td>
+      <td>129.29838</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31710</td>
+      <td>울주군</td>
+      <td>3171026221</td>
+      <td>청량읍</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3100004</td>
+      <td>화봉쌍용예가</td>
+      <td>~</td>
+      <td>35.5938</td>
+      <td>129.3676</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31200</td>
+      <td>북구</td>
+      <td>3120012500</td>
+      <td>화봉동</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3100005</td>
+      <td>화봉휴먼시아2단지</td>
+      <td>~</td>
+      <td>35.59398</td>
+      <td>129.3677</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31200</td>
+      <td>북구</td>
+      <td>3120012500</td>
+      <td>화봉동</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>129824</th>
+      <td>8019</td>
+      <td>남창</td>
+      <td>~</td>
+      <td>35.418539</td>
+      <td>129.28289</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31710</td>
+      <td>울주군</td>
+      <td>3171025624</td>
+      <td>온양읍</td>
+    </tr>
+    <tr>
+      <th>129825</th>
+      <td>8020</td>
+      <td>망양</td>
+      <td>~</td>
+      <td>35.456522</td>
+      <td>129.287872</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31710</td>
+      <td>울주군</td>
+      <td>3171025623</td>
+      <td>온양읍</td>
+    </tr>
+    <tr>
+      <th>129826</th>
+      <td>8021</td>
+      <td>덕하</td>
+      <td>~</td>
+      <td>35.493964</td>
+      <td>129.303064</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31710</td>
+      <td>울주군</td>
+      <td>3171026224</td>
+      <td>청량읍</td>
+    </tr>
+    <tr>
+      <th>129827</th>
+      <td>8022</td>
+      <td>개운포</td>
+      <td>~</td>
+      <td>35.507907</td>
+      <td>129.321188</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31140</td>
+      <td>남구</td>
+      <td>3114011000</td>
+      <td>상개동</td>
+    </tr>
+    <tr>
+      <th>129828</th>
+      <td>8023</td>
+      <td>태화강</td>
+      <td>~</td>
+      <td>35.53844</td>
+      <td>129.353792</td>
+      <td>31</td>
+      <td>울산광역시</td>
+      <td>31140</td>
+      <td>남구</td>
+      <td>3114010600</td>
+      <td>삼산동</td>
+    </tr>
+  </tbody>
+</table>
+<p>128554 rows × 11 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;🚏 정류장 정보 데이터 (STTN) 정보&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- 데이터 크기: </span><span class="si">{</span><span class="n">sttn_unique</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">개의 고유 정류장&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- 컬럼 수: </span><span class="si">{</span><span class="n">sttn_unique</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">개&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 설명: 대중교통 정류장 및 지하철역의 위치 정보와 행정구역 정보를 담고 있는 데이터&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 포함 정보: 정류장 ID, 명칭, 좌표, 행정구역코드, 행정구역명 등&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 주요 컬럼:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 정류장 ID: 각 정류장의 고유 식별번호&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 정류장 X/Y 좌표: 위경도 좌표 (WGS84)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  * 시도/시군구/읍면동: 행정구역 코드 및 명칭&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;- 활용: TCD 데이터의 승하차 정류장 정보와 매핑하여 공간분석 수행&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>==================================================
+🚏 정류장 정보 데이터 (STTN) 정보
+==================================================
+- 데이터 크기: 128,554개의 고유 정류장
+- 컬럼 수: 11개
+- 설명: 대중교통 정류장 및 지하철역의 위치 정보와 행정구역 정보를 담고 있는 데이터
+- 포함 정보: 정류장 ID, 명칭, 좌표, 행정구역코드, 행정구역명 등
+- 주요 컬럼:
+  * 정류장 ID: 각 정류장의 고유 식별번호
+  * 정류장 X/Y 좌표: 위경도 좌표 (WGS84)
+  * 시도/시군구/읍면동: 행정구역 코드 및 명칭
+- 활용: TCD 데이터의 승하차 정류장 정보와 매핑하여 공간분석 수행
+==================================================
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="o-d">
+<h2>2.2.2 O-D 데이터 만들기<a class="headerlink" href="#o-d" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>현재의 데이터는 O-D 데이터라고는 할 수 없습니다. 개인의 통행이 여러번에 걸쳐서 발생하기 때문에 개별 Trip 마다 컬럼의 수가 달라지는 문제가 있습니다.</p></li>
+<li><p>이 문제를 어떻게 해결할 수 있을까요?</p></li>
+<li><p>완결성 있는 정류소 단위의 출발지-목적지 데이터를 만들어 봅시다.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>2.2.3 기초 통계 분석<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>요일별 승하차 패턴의 차이를 분석해보자. 주중과 주말의 패턴이 어떻게 다른가요??</p></li>
+<li><p>비교통약자, 어린이, 경로, 장애인별로 평균탑승시간 및 평균이동거리, 환승횟수수를 시각화 해보고 해석해 봅시다.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>2.2.4 공간 분석<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>스마트카드 데이터에는 위치 정보 (위도 및 경도)가 존재하지 않습니다.</p></li>
+<li><p>어떻게 하면 스마트카드 데이터를 공간상에 시각화 할 수 있을까요? 아래 작업을 수행해 봅시다.</p>
+<ul>
+<li><p>승차량이 많은 지역을 읍면동 단위로 공간상에 나타내봅시다</p></li>
+<li><p>하차량이 많은 지역을 읍면동 단위로 공간상에 나타내봅시다</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./ko"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chapter2-1.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">2. Data Preparation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="chapter2-3.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">2.3 Travel Time Data (Taxi Trip Record)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.2.1 데이터 읽기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#o-d">2.2.2 O-D 데이터 만들기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.2.3 기초 통계 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.2.4 공간 분석</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jiho Yeo
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
