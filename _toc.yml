@@ -8,7 +8,9 @@ parts:
     numbered: false
     chapters:
       - file: ko/chapter1
-      - file: ko/chapter2
+      - file: ko/chapter2-1
+      - file: ko/chapter2-2
+      - file: ko/chapter2-3
       - file: ko/chapter3
       - file: ko/chapter4
 
