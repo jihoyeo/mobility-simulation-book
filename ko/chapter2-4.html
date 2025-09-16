@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>2. Data Preparation &#8212; Digital Twin for Urban Mobility Systems</title>
+    <title>2.4 Road Network and Geometry &#8212; Digital Twin for Urban Mobility Systems</title>
   
   
   
@@ -360,7 +360,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>2. Data Preparation</h1>
+    <h1>2.4 Road Network and Geometry</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -370,51 +370,41 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.1 수도권 생활이동 데이터 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1.1 활용 데이터</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1.2 데이터 읽기 및 간단한 전처리</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-visualization">2.1.3 Basic visualization</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">2.4 Road Network and Geometry</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.4.1 Open Street Map 데이터 살펴보기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map-osm-pbf">[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">[3] 여러 네트워크를 한번에 표시</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">[4]  기초적인 도로네트워크 속성 파악 및 시각화</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-time-data-taxi-trip-record">2.3 Travel Time Data (Taxi Trip Record)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3.1 데이터 읽기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.3.2 Basic Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.4.2 최단거리 분석</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-distance">[1] 두 지점간 Network Distance 구하기 실습</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[2] 이동 속도 및 시간 영향을 고려한 경로 산출</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.4 Road Network and Geometry</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.4.1 Open Street Map 데이터 살펴보기</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map-osm-pbf">[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[3] 여러 네트워크를 한번에 표시</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">[4]  기초적인 도로네트워크 속성 파악 및 시각화</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.4.2 최단거리 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#network-distance">[1] 두 지점간 Network Distance 구하기 실습</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">[2] 이동 속도 및 시간 영향을 고려한 경로 산출</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph">2.4.3 Graph 간소화</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osmnx">[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-graph">[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graph">2.4.3 Graph 간소화</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#osmnx">[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-graph">[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.2 스마트카드 데이터 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">2.2.1 활용 데이터</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">2.2.2 시간대별 승하차 패턴 분석</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">2.2.4 출퇴근 시간대 집중도 분석</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 스마트카드 데이터 분석</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.2.1 활용 데이터</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.2.2 시간대별 승하차 패턴 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.2.4 출퇴근 시간대 집중도 분석</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">[1] 도로네트워크 분석</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">[1] 도로네트워크 분석</a></li>
 </ul>
 </li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -430,563 +420,17 @@ document.write(`
     <a target="_blank" href="https://colab.research.google.com/github/jihoyeo/mobility-simulation-book/blob/main/ko/chapter2.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />구글 코랩에서 실행하기</a>
   </td>
 </table>
-<br><section class="tex2jax_ignore mathjax_ignore" id="data-preparation">
-<h1>2. Data Preparation<a class="headerlink" href="#data-preparation" title="Permalink to this heading">#</a></h1>
-<p>본 챕터에서는 모빌리티 시뮬레이션을 구축하는데 필요한 기본적인 입력데이터들을 살펴본다. 단순히 데이터를 살펴보는데서 끝나지 않고 간단한 데이터의 전처리 및 시각화의 실습과정도 포함하고 있다.</p>
-<p>매우 다양한 형태의 모빌리티 데이터가 존재하며, 이들을 분류하는 기준 역시 분석자의 목표에 따라 여려가지로 구분할 수 있지만 본 책에서는 크게 아래와 같은 형태의 데이터를 살펴볼 것이다.</p>
-<ol class="arabic simple">
-<li><p>통행수요 데이터 (Travel Demand)</p>
-<ul class="simple">
-<li><p>시뮬레이션을 하기 위한 승객의 수요를 생성하는 기초자료로 활용됨</p></li>
-</ul>
-</li>
-<li><p>통행시간 데이터 (Travel Time)</p>
-<ul class="simple">
-<li><p>시뮬레이션을 Calibration 하는데 활용</p></li>
-<li><p>e.g., 출퇴근 시간의 교통 정체, 새벽시간대의 빠른 속도를 시뮬레이션에 반영 가능함</p></li>
-</ul>
-</li>
-<li><p>도로 네트워크 데이터 (Road Network)</p>
-<ul class="simple">
-<li><p>도로 위를 움직이는 차량 구현 (Vehicle Router)</p></li>
-</ul>
-</li>
-<li><p>대중교통 네트워크 데이터 (Public Transit Network)</p>
-<ul class="simple">
-<li><p>버스, 지하철과 같은 노선과 배차간격이 정해진 모빌리티 시스템을 구현하는데 사용</p></li>
-</ul>
-</li>
-</ol>
-<section id="id1">
-<h2>2.1 수도권 생활이동 데이터 분석<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
-<section id="id2">
-<h3>2.1.1 활용 데이터<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p>통행수요는 특정지역에서 출발(Trip Production)하거나, 특정지역으로 도착하는 통행(Trip Attraction) 형태로 존재할 수도 있고, 혹은 더 세분화 한다면 출발지-목적지 단위의 통행수요(Origin-Destination (OD) Travel Demand)로 나타낼 수 있다.</p></li>
-<li><p>최근 많은 사람들이 스마트폰을 사용하고 따라서 통신사 기지국 기반으로 세밀한 통행패턴이 수집 가능하며, O-D 단위의 통행수요 데이터를 구득하기가 수월해졌다. 따라서 본 교재에서는 O-D 단위의 통행 데이터를 주로 활용하는 실습을 진행할 예정이다.</p></li>
-<li><p>본 예제에서는 서울시에서 제공하는 수도권 생활이동 데이터를 활용하였다.</p>
-<ul>
-<li><p><a class="reference external" href="https://data.seoul.go.kr/dataVisual/seoul/capitalRegionLivingMigration.do">https://data.seoul.go.kr/dataVisual/seoul/capitalRegionLivingMigration.do</a></p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="id3">
-<h3>2.1.2 데이터 읽기 및 간단한 전처리<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p>간단한 예제를 위해 서울시에서 제공하는 <a class="reference external" href="https://data.seoul.go.kr/dataVisual/seoul/capitalRegionLivingMigration.do">수도권 생활이동</a> 데이터 중, 2024년 3월 27일 하루치의 데이터만을 예제로 사용하였다.</p></li>
-<li><p>원활한 실습을 위해 모든 데이터는 Google Drive에 업로드 하였으며, <code class="docutils literal notranslate"><span class="pre">gdown</span></code> 패키지를 사용해 데이터를 다운로드 받은 후 로드하는 방식을 사용하였다.</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gdown</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">topojson</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tp</span> <span class="c1"># 공간정보를 간소화 해주는 패키지 (분석속도 &amp; 결과물 용량에 영향을 미침)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pydeck</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pdk</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">gdown</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;gdown&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">download_and_read_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;../data/chp2_od_data_2.parquet&quot;</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Google Drive에서 파일 다운로드</span>
-        <span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        
-        <span class="c1"># Parquet 파일을 DataFrame으로 읽기</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-        
-        <span class="c1"># 임시 파일 삭제 (데이터 용량이 매우 큰 경우 사용)</span>
-        <span class="c1"># os.remove(output_path) # 다운로드 받은 데이터를 삭제하고 싶지 않을 때는 해당 라인을 주석처리</span>
-        
-        <span class="k">return</span> <span class="n">df</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;오류 발생: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 파일 불러오기</span>
-<span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;1uJX9MuNX2J6J5SpE-RQy05XPsae6Fg4x&quot;</span> <span class="c1"># 구글 드라이브에 업로드 된 파일의 ID</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">download_and_read_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading...
-From: https://drive.google.com/uc?id=1uJX9MuNX2J6J5SpE-RQy05XPsae6Fg4x
-To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
-100%|██████████| 56.6M/56.6M [00:05&lt;00:00, 11.3MB/s]
-</pre></div>
-</div>
-</div>
-</div>
-<p>인터넷 환경으로 인해 파일을 불러오는게 느리다면, github에서 clone 할 때 가지고 온 data 폴더에 있는 파일을 직접 열 수 있다.<br />
-아래 코드를 실행해 보자.</p>
-<div class="highlight-code-cell notranslate"><div class="highlight"><pre><span></span>df = pd.read_parquet(&quot;../data/chp2_od_data.parquet&quot;)
-</pre></div>
-</div>
-<p>데이터 자동 로딩 함수를 아래와 같이 구현할 수도 있다.
-매번 데이터를 다운로드하는 것은 시간이 오래 걸리므로, 로컬에 파일이 있는지 먼저 확인하고 없을 때만 구글 드라이브에서 다운로드하는 함수를 만들어보자.</p>
-<p>이 함수는 다음과 같이 동작합니다:</p>
-<ol class="arabic simple">
-<li><p>먼저 지정된 경로에 파일이 있는지 확인</p></li>
-<li><p>파일이 있으면 로컬 파일을 불러옴</p></li>
-<li><p>파일이 없으면 구글 드라이브에서 자동으로 다운로드 후 불러옴</p></li>
-</ol>
-<p>이렇게 하면 처음에는 다운로드가 필요하지만, 그 다음부터는 로컬 파일을 빠르게 불러올 수 있습니다.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">load_or_download_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;../data/chp2_od_data_2.parquet&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    로컬 파일이 존재하면 불러오고, 없으면 구글 드라이브에서 다운로드하는 함수</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        file_id (str): 구글 드라이브 파일 ID</span>
-<span class="sd">        file_path (str): 로컬 파일 경로</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        pandas.DataFrame: 불러온 데이터프레임</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;로컬 파일이 존재합니다: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;로컬 파일을 성공적으로 불러왔습니다.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;로컬 파일이 존재하지 않습니다. 구글 드라이브에서 다운로드합니다.&quot;</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">download_and_read_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;구글 드라이브에서 파일을 성공적으로 다운로드하고 불러왔습니다.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">df</span>
-
-<span class="c1"># 함수를 사용하여 데이터 불러오기</span>
-<span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;1uJX9MuNX2J6J5SpE-RQy05XPsae6Fg4x&quot;</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">load_or_download_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span>
-</pre></div>
-</div>
-</div>
-</div>
-<ul class="simple">
-<li><p>컬럼의 명세는 아래와 같다. 행정동 단위의 O-D 통행량 및 통행시간 정보를 제공해주고 있다. 더 상세하게는 내/외국인 구분, 국적, 이동목적과 같은 정보도 제공을 해준다.</p></li>
-</ul>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>순번</p></th>
-<th class="head"><p>영문 컬럼명</p></th>
-<th class="head"><p>컬럼 설명</p></th>
-<th class="head"><p>NULL 여부</p></th>
-<th class="head"><p>NULL 대체값</p></th>
-<th class="head"><p>형식</p></th>
-<th class="head"><p>규칙</p></th>
-<th class="head"><p>데이터 허용범위</p></th>
-<th class="head"><p>비고</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>1</p></td>
-<td><p>O_ADMDONG_CD</p></td>
-<td><p>출발 행정동</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>행안부 8자리 코드체계</p></td>
-</tr>
-<tr class="row-odd"><td><p>2</p></td>
-<td><p>D_ADMDONG_CD</p></td>
-<td><p>도착 행정동</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>행안부 8자리 코드체계</p></td>
-</tr>
-<tr class="row-even"><td><p>3</p></td>
-<td><p>ST_TIME_CD</p></td>
-<td><p>출발 시간</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>7-9시/17시-19시는 20분단위, 그 외 1시간 단위</p></td>
-</tr>
-<tr class="row-odd"><td><p>4</p></td>
-<td><p>FNS_TIME_CD</p></td>
-<td><p>도착 시간</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>7-9시/17시-19시는 20분단위, 그 외 1시간 단위</p></td>
-</tr>
-<tr class="row-even"><td><p>5</p></td>
-<td><p>IN_FORN_DIV_NM</p></td>
-<td><p>내/외국인 구분</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>내국인, 단기외국인, 장기외국인</p></td>
-</tr>
-<tr class="row-odd"><td><p>6</p></td>
-<td><p>FORN_CITIZ_NM</p></td>
-<td><p>국적</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-</tr>
-<tr class="row-even"><td><p>7</p></td>
-<td><p>MOVE_PURPOSE</p></td>
-<td><p>이동 목적</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>1: 출근, 2 : 등교, 3: 귀가, 4: 쇼핑, 5: 관광, 6: 병원, 7: 기타</p></td>
-</tr>
-<tr class="row-odd"><td><p>8</p></td>
-<td><p>MOVE_DIST</p></td>
-<td><p>평균 이동 거리(m)</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>DOUBLE</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-</tr>
-<tr class="row-even"><td><p>9</p></td>
-<td><p>MOVE_TIME</p></td>
-<td><p>평균 이동 시간(분)</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>DOUBLE</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-</tr>
-<tr class="row-odd"><td><p>10</p></td>
-<td><p>CNT</p></td>
-<td><p>이동인구 수</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>DOUBLE</p></td>
-<td><p>(18,2)</p></td>
-<td><p>-</p></td>
-<td><p>-</p></td>
-</tr>
-<tr class="row-even"><td><p>11</p></td>
-<td><p>ETL_YMD</p></td>
-<td><p>기준 년월 일</p></td>
-<td><p>X</p></td>
-<td><p>-</p></td>
-<td><p>STRING</p></td>
-<td><p>yyyyMMdd</p></td>
-<td><p>데이터 기준 당일</p></td>
-<td><p>-</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="basic-visualization">
-<h3>2.1.3 Basic visualization<a class="headerlink" href="#basic-visualization" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p>통행량 데이터의 경우 출발지/도착지에 대한 공간정보 및 통행시간 정보가 포함된 데이터이다.</p></li>
-<li><p>도시/교통 분야의 데이터는 이처럼 시간과 공간의 정보를 동시에 가지고 있는 ‘시공간 데이터’인 경우가 많으며 이를 분석하기 위한 기초적인 분석기술 및 핵심 패키지를 이해하는 것이 중요하다.</p></li>
-<li><p>공간데이터를 분석하기 위한 Python 패키지로는 대표적으로 <code class="docutils literal notranslate"><span class="pre">geopandas</span></code>가 있으며, 시각화를 위한 패키지로는 <code class="docutils literal notranslate"><span class="pre">folium</span></code>, <code class="docutils literal notranslate"><span class="pre">plotly</span></code>, <code class="docutils literal notranslate"><span class="pre">pydeck</span></code>이 있다.</p></li>
-<li><p>위의 키워드로하여 인터넷 검색을 해보면 다양한 튜토리얼 및 예제 코드가 있으므로 시간을 할애해서 공부하는 것을 추천하며, 본 책에서는 상세히 다루지 않는다.</p></li>
-<li><p>아래는 내가 추천하는 시간을 할애해서 공부하면 좋은 자료들이다.</p>
-<ul>
-<li><p><a class="reference external" href="https://www.kaggle.com/learn/geospatial-analysis">Kaggle 에서 제공해주는 Geospatial Analysis</a></p></li>
-<li><p><a class="reference external" href="https://deckgl.readthedocs.io/en/latest/">Pydeck을 활용한 공간데이터 시각화</a></p></li>
-<li><p><a class="reference external" href="https://py.geocompx.org/08-mapping">Geocomputation with Python</a></p></li>
-</ul>
-</li>
-</ul>
-<ul class="simple">
-<li><p>수도권 생활이동 데이터의 경우 행정동 단위로 데이터가 존재하기 때문에 공간상에 시각화를 하기 위해서는 행정동의 geometry 정보를 담고 있는 데이터가 추가로 필요하다.</p></li>
-<li><p>본 실습에서는 <a class="github reference external" href="https://github.com/vuski/admdongkor">vuski/admdongkor</a> 에서제공하는 행정동 경계 데이터를 활용하여 간단한 시각화를 수행한다</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">download_and_read_geojson</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;../data/chp2_HangJeongDong_ver20230101.geojson&quot;</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Google Drive에서 파일 다운로드</span>
-        <span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        
-        <span class="c1"># Parquet 파일을 DataFrame으로 읽기</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="s1">&#39;GeoJSON&#39;</span><span class="p">)</span>
-        
-        <span class="c1"># 임시 파일 삭제 (데이터 용량이 매우 큰 경우 사용)</span>
-        <span class="c1"># os.remove(output_path) # 다운로드 받은 데이터를 삭제하고 싶지 않을 때는 해당 라인을 주석처리</span>
-        
-        <span class="k">return</span> <span class="n">df</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;오류 발생: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### 행정경계 데이터 불러오기</span>
-<span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;1u8V4h-yUef0g-RJ445wsBgHXpMyUj7ih&quot;</span> <span class="c1"># 구글 드라이브에 업로드 된 파일의 ID</span>
-<span class="n">gdf_adm</span> <span class="o">=</span> <span class="n">download_and_read_geojson</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
-<span class="c1"># gdf_adm = gpd.read_file(&#39;../data/chp2_HangJeongDong_ver20230101.geojson&#39;, driver=&#39;GeoJSON&#39;)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### 서울, 경기, 인천 지역만 추출</span>
-<span class="n">gdf_adm</span> <span class="o">=</span> <span class="n">gdf_adm</span><span class="p">[</span><span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;sidonm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;서울특별시&#39;</span><span class="p">,</span> <span class="s1">&#39;경기도&#39;</span><span class="p">,</span> <span class="s1">&#39;인천광역시&#39;</span><span class="p">])]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1">#### 유동인구와 일치하는 행정동코드 컬럼(`adm_cd2`)을 숫자형태로 변환</span>
-<span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;adm_cd2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;adm_cd2&#39;</span><span class="p">])</span>
-
-<span class="c1">#### Divide by 100 and create the new column &#39;ADMDONG_CD&#39;</span>
-<span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;ADMDONG_CD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;adm_cd2&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
-
-<span class="c1">#### Convert the &#39;ADMDONG_CD&#39; column to integer</span>
-<span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;ADMDONG_CD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gdf_adm</span><span class="p">[</span><span class="s1">&#39;ADMDONG_CD&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-
-<span class="c1">#### name, sgg 컬럼만 남기기</span>
-<span class="n">gdf_adm</span> <span class="o">=</span> <span class="n">gdf_adm</span><span class="p">[[</span><span class="s1">&#39;adm_nm&#39;</span><span class="p">,</span><span class="s1">&#39;ADMDONG_CD&#39;</span><span class="p">,</span><span class="s1">&#39;geometry&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_adm</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_adm</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### 행정동 데이터 기하구조 간소화</span>
-<span class="n">simplified_geometry</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">Topology</span><span class="p">(</span><span class="n">gdf_adm</span><span class="p">,</span> <span class="n">toposimplify</span><span class="o">=</span><span class="mf">.005</span><span class="p">)</span><span class="o">.</span><span class="n">to_gdf</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">simplified_geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Interactive Map</span>
-<span class="n">simplified_geometry</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">tiles</span> <span class="o">=</span> <span class="s1">&#39;CartoDB positron&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#### 출발 행정동 및 시간단위로 통행량 aggregation</span>
-<span class="n">df_agg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;O_ADMDONG_CD&#39;</span><span class="p">,</span> <span class="s1">&#39;ST_TIME_CD&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;CNT&#39;</span><span class="p">:</span> <span class="s1">&#39;sum&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">df_agg</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. 먼저 pandas의 merge 함수를 사용하여 df_agg를 기준으로 병합</span>
-<span class="n">merged_df</span> <span class="o">=</span> <span class="n">df_agg</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">simplified_geometry</span><span class="p">,</span> 
-                         <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;O_ADMDONG_CD&#39;</span><span class="p">,</span> 
-                         <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;ADMDONG_CD&#39;</span><span class="p">,</span> 
-                         <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
-
-<span class="c1"># 2. 병합 결과를 GeoDataFrame으로 변환</span>
-<span class="n">vis_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">merged_df</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="s1">&#39;geometry&#39;</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">simplified_geometry</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vis_gdf</span><span class="p">[</span><span class="n">vis_gdf</span><span class="p">[</span><span class="s1">&#39;ST_TIME_CD&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;CNT&#39;</span><span class="p">,</span> 
-                                            <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                                            <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">,</span> 
-                                            <span class="n">tiles</span><span class="o">=</span><span class="s1">&#39;CartoDB positron&#39;</span><span class="p">,</span>
-                                            <span class="n">style_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fillOpacity&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="travel-time-data-taxi-trip-record">
-<h2>2.3 Travel Time Data (Taxi Trip Record)<a class="headerlink" href="#travel-time-data-taxi-trip-record" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p>지금까지는 통행량 데이터를 살펴보았습니다. 이 장에서는 통행시간 데이터를 살펴봅니다.</p></li>
-<li><p>스마트카드(지하철,버스), 택시 탑승 및 호출 이력, 스마트폰 GPS 데이터 등 다양한 경로를 통해 여러분들의 이동 데이터가 수집되고 있습니다.</p></li>
-<li><p>그 중 택시 데이터는 승차와 하차의 정확한 위치와 시간을 알 수 있다는 점에서 데이터의 신뢰성이 높습니다.</p></li>
-<li><p>다양한 국가에서 이미 표준화된 형태의 택시 승하차 데이터를 공개하고 있습니다.</p>
-<ul>
-<li><p><a class="reference external" href="https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data">Ney York City Taxi Trip Duration Data</a></p></li>
-<li><p><a class="reference external" href="https://data.cityofchicago.org/Transportation/Taxi-Trips-2013-2023-/wrvz-psew/about_data">Chicago Taxi Trips data</a></p></li>
-</ul>
-</li>
-<li><p>본 장에서는 서울의 택시 승하차 이력 데이터를 살펴보겠습니다. 다만, 국내의 경우 택시승하차 데이터가 오픈되어있지 않으므로, 여기선 가상의 데이터를 활용합니다.</p>
-<ul>
-<li><p>본 실습 데이터는 실제 데이터가 아니며, 분석을 위해 랜덤하게 생생된 1일치의 데이터입니다.</p></li>
-<li><p>국내도 데이터 개방이 더 활성화 되어, 미국의 주요도시처럼 택시 및 스마트카드 데이터가 공개되는 날이 오기를 희망합니다.</p></li>
-</ul>
-</li>
-</ul>
-<section id="id4">
-<h3>2.3.1 데이터 읽기<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">download_and_read_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;../data/chp2_tx_data_generated.parquet&quot;</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Google Drive에서 파일 다운로드</span>
-        <span class="n">gdown</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">file_id</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        
-        <span class="c1"># Parquet 파일을 DataFrame으로 읽기</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-        
-        <span class="c1"># 임시 파일 삭제 (데이터 용량이 매우 큰 경우 사용)</span>
-        <span class="c1"># os.remove(output_path) # 다운로드 받은 데이터를 삭제하고 싶지 않을 때는 해당 라인을 주석처리</span>
-        
-        <span class="k">return</span> <span class="n">df</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;오류 발생: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 파일 불러오기</span>
-<span class="n">file_id</span> <span class="o">=</span> <span class="s2">&quot;1uJj-C_7pTkcRk8p5lYah-9Fp660OvS4b&quot;</span> <span class="c1"># 구글 드라이브에 업로드 된 파일의 ID</span>
-<span class="n">tx_data</span> <span class="o">=</span> <span class="n">download_and_read_parquet</span><span class="p">(</span><span class="n">file_id</span><span class="p">)</span>
-<span class="c1"># tx_data = pd.read_parquet(&#39;../data/chp2_tx_data_generated.parquet&#39;)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<ul class="simple">
-<li><p>데이터의 시간 형식이 숫자형태로 되어있다. 이렇게 되어있을 경우 보기가 불편하고, 시간단위 연산이 어렵기 때문에 시간 타입의 데이터로 변환해주는 것이 좋다</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시간 데이터 형식 변횐</span>
-<span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;RIDE_DTIME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;RIDE_DTIME&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span><span class="p">)</span>
-<span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;ALIGHT_DTIME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;ALIGHT_DTIME&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span><span class="p">)</span>
-
-<span class="c1"># 통행시간 계산</span>
-<span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;TRAVEL_TIME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;ALIGHT_DTIME&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tx_data</span><span class="p">[</span><span class="s1">&#39;RIDE_DTIME&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tx_data</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id5">
-<h3>2.3.2 Basic Visualization<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p>통행량 데이터와 마찬가지로 간단한 시각화를 해보자.</p></li>
-<li><p>다음과 같은 오픈소스를 활용한다면 매끄럽게 시각화가 가능하다.</p>
-<ul>
-<li><p><a class="reference external" href="https://kepler.gl/">https://kepler.gl/</a></p></li>
-<li><p>데이터를 csv로 저장한 후, Kepler를 통해 시각화를 해보자.</p></li>
-<li><p><a class="reference external" href="https://kepler.gl/demo/map?mapUrl=https://dl.dropboxusercontent.com/scl/fi/8k0y58t4rceqvslmvhwyl/keplergl_7sjanmo.json?rlkey=8d6d24vw7l63t2bsch5cd53m9&amp;dl=0">예시</a></p></li>
-</ul>
-</li>
-<li><p>통행시간의 경우 출발지-목적지(O-D) 단위로 통행시간을 시각화 하는 연습도 해보자.</p>
-<ul>
-<li><p>O-D 단위의 시각화의 경우 무수히 많은 O-D pairs가 존재하기 때문에 시각적으로 표현하기가 매우 어렵다.</p></li>
-<li><p>또한, 지금 데이터의 공간단위가 이전에 다뤘던 행정구역과 같이 합산된 공간단위가 아니라, 세밀한 위경도 좌표로 표현되어 있기 때문에 더 어렵다.</p></li>
-<li><p>위와 같은 문제들을 어떻게 해결할 수 있을까?</p></li>
-</ul>
-</li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tx_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;../data/tx_data_generated.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="road-network-and-geometry">
-<h2>2.4 Road Network and Geometry<a class="headerlink" href="#road-network-and-geometry" title="Permalink to this heading">#</a></h2>
+<br><section id="road-network-and-geometry">
+<h1>2.4 Road Network and Geometry<a class="headerlink" href="#road-network-and-geometry" title="Permalink to this heading">#</a></h1>
 <section id="open-street-map">
-<h3>2.4.1 Open Street Map 데이터 살펴보기<a class="headerlink" href="#open-street-map" title="Permalink to this heading">#</a></h3>
+<h2>2.4.1 Open Street Map 데이터 살펴보기<a class="headerlink" href="#open-street-map" title="Permalink to this heading">#</a></h2>
 <p><a class="reference external" href="https://osm.kr/usage/">오픈스트리트맵 한국</a>에서는 대한민국의 OSM을 이용하는 상세한 방법에 대한 메뉴얼을 제공해주고 있다. 상세한 내용은 이곳을 참고하면 되며, 본 장에서는 한국의 OSM 데이터를 불러와서 <code class="docutils literal notranslate"><span class="pre">OSMnx</span></code> 패키지로 간략히 분석하고 시각화 하는 작업을 진행한다.</p>
 <ul class="simple">
 <li><p>OSM을 이용해서 수도권 지역의 도로 데이터를 가져오고, 시각화 하는 작업을 수행한다</p></li>
 <li><p>OSMnx 이용해서 그래프 분석하고, 복잡한 그래프를 간소화 하는 작업을 실습한다</p></li>
 </ul>
 <section id="open-street-map-osm-pbf">
-<h4>[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)<a class="headerlink" href="#open-street-map-osm-pbf" title="Permalink to this heading">#</a></h4>
+<h3>[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)<a class="headerlink" href="#open-street-map-osm-pbf" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>사이트 : <a class="reference external" href="https://download.geofabrik.de/asia.html">https://download.geofabrik.de/asia.html</a></p></li>
 <li><p>South Korea 부분의 .osm.pbf 버튼 클릭</p></li>
@@ -1003,10 +447,22 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">osmnx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ox</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span><span class="w"> </span><span class="nn">folium</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;networkx&#39;
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="osm">
-<h4>[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현<a class="headerlink" href="#osm" title="Permalink to this heading">#</a></h4>
+<h3>[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현<a class="headerlink" href="#osm" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>본 실습에서는 <code class="docutils literal notranslate"><span class="pre">OSMnx</span></code> 패키지를 사용하여 원하는 도시의 Graph를 Python으로 가져와서 분석하는 실습을 진행한다.</p></li>
 </ul>
@@ -1265,8 +721,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id6">
-<h4>[3] 여러 네트워크를 한번에 표시<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h4>
+<section id="id1">
+<h3>[3] 여러 네트워크를 한번에 표시<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 여러 위치에서 네트워크를 생성하기 위한 서울 지역 리스트 설정</span>
@@ -1292,8 +748,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id7">
-<h4>[4]  기초적인 도로네트워크 속성 파악 및 시각화<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h4>
+<section id="id2">
+<h3>[4]  기초적인 도로네트워크 속성 파악 및 시각화<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># osmnx 그래프 생성( osm 지도 다운로드 )</span>
@@ -1437,14 +893,14 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </section>
 </section>
-<section id="id8">
-<h3>2.4.2 최단거리 분석<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h3>
+<section id="id3">
+<h2>2.4.2 최단거리 분석<a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>두 지점까지의 거리를 추출하는 것은 교통 데이터를 분석할 때 매우 빈번히 쓰인다</p></li>
 <li><p>가장 간단한 것은 직선거리를 추출하는 것이지만, 실제 도로위를 움직이는 차량이나 사람의 움직임과는 큰 차이를 보인다.</p></li>
 </ul>
 <section id="network-distance">
-<h4>[1] 두 지점간 Network Distance 구하기 실습<a class="headerlink" href="#network-distance" title="Permalink to this heading">#</a></h4>
+<h3>[1] 두 지점간 Network Distance 구하기 실습<a class="headerlink" href="#network-distance" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
@@ -1543,8 +999,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id9">
-<h4>[2] 이동 속도 및 시간 영향을 고려한 경로 산출<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h4>
+<section id="id4">
+<h3>[2] 이동 속도 및 시간 영향을 고려한 경로 산출<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">=</span> <span class="pre">ox.add_edge_speeds(G)</span></code></p>
 <p>이 함수는 그래프의 모든 엣지(도로 구간)에 예상 속도를 부여한다. OSMnx는 도로 유형, 속도 제한 등의 OpenStreetMap 데이터를 기반으로 각 도로 구간의 예상 속도를 추정한다. 만약 특정 도로에 대한 속도 정보가 없다면, 도로 유형에 따른 기본값을 사용한다. 이 함수 실행 후, 각 엣지에는 ‘speed’ 속성이 추가된다 (단위: km/h).</p>
 <p><code class="docutils literal notranslate"><span class="pre">G</span> <span class="pre">=</span> <span class="pre">ox.add_edge_travel_times(G)</span></code></p>
@@ -1648,8 +1104,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id10">
-<h4>[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h4>
+<section id="id5">
+<h3>[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
 <p>OSMnx 패키지를 사용하면 도로 네트워크에서 특정 시작점으로부터 일정 거리 또는 시간 내에 도달할 수 있는 영역을 식별하는 데도 활용할 수 있다. 이러한 방법은 주로, 어떤 시설이 주변에 얼마나 영향을 미치는지 분석하거나 접근성을 분석하는데 주로 쓰인다. 아래 코드는 강남구의 도로 네트워크에서 특정 노드를 중심으로 1000m 반경 내의 서브그래프를 추출하고 시각화하는 예제이다.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1686,13 +1142,13 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </section>
 </section>
 <section id="graph">
-<h3>2.4.3 Graph 간소화<a class="headerlink" href="#graph" title="Permalink to this heading">#</a></h3>
+<h2>2.4.3 Graph 간소화<a class="headerlink" href="#graph" title="Permalink to this heading">#</a></h2>
 <p>그래프 간소화는 복잡한 네트워크 데이터를 보다 효율적으로 처리하고 분석하기 위해 필요하다. 복잡한 도로망이나 경로 데이터를 단순화함으로써 계산 시간을 줄이고, 시각화나 경로 탐색 등의 작업을 용이하게 할 수 있다. 우리가 계속 사용해왔던 <code class="docutils literal notranslate"><span class="pre">graph_from_place</span></code> 함수는 기본적으로 <code class="docutils literal notranslate"><span class="pre">simplify=True</span></code> 인자를 사용하고 있다. 이는 OpenStreetMap에서 가져온 원시 그래프 데이터를 자동으로 간소화하여 반환한다는 의미이다.</p>
 <p><code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 함수는 불필요한 노드와 엣지를 제거하여 그래프를 단순화한다. 교차로나 말단 노드가 아닌 중간 노드들을 합침으로써 도로를 직선화하고, 그래프의 복잡성을 줄인다. 이를 통해 네트워크 분석의 효율성을 높일 수 있다.</p>
 <p><code class="docutils literal notranslate"><span class="pre">consolidate_intersections</span></code> 함수는 일정 거리 이내에 있는 교차로 노드들을 하나로 통합한다. 이는 현실 세계에서 매우 근접해 있는 교차로를 단일 지점으로 처리하여 분석의 정확성을 높이고, 그래프의 구조를 더욱 간소화한다. 하지만 해당 방법은 굉장히 극단적인 방법일 수 있다. 교차로를 합친다는 것은 도로 구조의 큰 변화를 야기하므로 사용에 주의할 필요가 있다. 분석하는 공간범위가 매우 커, <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code>만으로는 분석이 어려운 경우 사용을 검토해볼 수 있겠다.</p>
 <p>상세한 설명은 <a class="reference external" href="https://osmnx.readthedocs.io/en/stable/user-reference.html#osmnx.simplification.simplify_graph">https://osmnx.readthedocs.io/en/stable/user-reference.html#osmnx.simplification.simplify_graph</a> 을 참고</p>
 <section id="osmnx">
-<h4>[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수<a class="headerlink" href="#osmnx" title="Permalink to this heading">#</a></h4>
+<h3>[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수<a class="headerlink" href="#osmnx" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the raw graph</span>
@@ -1749,7 +1205,7 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </section>
 <section id="simplify-graph">
-<h4>[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기<a class="headerlink" href="#simplify-graph" title="Permalink to this heading">#</a></h4>
+<h3>[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기<a class="headerlink" href="#simplify-graph" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 중심 위치 지점(위도, 경도) 정의 ( 서울 시청 )</span>
@@ -1794,15 +1250,15 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </section>
 </section>
 </section>
-<section id="id11">
-<h2>2.2 스마트카드 데이터 분석<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h2>
+<section id="id6">
+<h1>2.2 스마트카드 데이터 분석<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h1>
 <ul class="simple">
 <li><p>대중교통 이용자들의 승하차 정보를 담고 있는 스마트카드 데이터는 도시 교통 패턴을 이해하는 데 핵심적인 자료입니다.</p></li>
 <li><p>본 섹션에서는 서울시 지하철 승하차 데이터를 활용하여 기본적인 분석 및 시각화를 수행합니다.</p></li>
 <li><p>스마트카드 데이터는 정확한 시간과 위치 정보를 제공하므로 교통 패턴 분석에 매우 유용합니다.</p></li>
 </ul>
-<section id="id12">
-<h3>2.2.1 활용 데이터<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
+<section id="id7">
+<h2>2.2.1 활용 데이터<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>서울시에서 공개하는 지하철 역별 승하차 인원수 데이터를 활용합니다.</p></li>
 <li><p>데이터는 역별, 시간대별 승차 및 하차 인원수를 포함합니다.</p></li>
@@ -1860,8 +1316,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id13">
-<h3>2.2.2 시간대별 승하차 패턴 분석<a class="headerlink" href="#id13" title="Permalink to this heading">#</a></h3>
+<section id="id8">
+<h2>2.2.2 시간대별 승하차 패턴 분석<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시간대별 전체 승하차 인원 집계</span>
@@ -1902,8 +1358,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id14">
-<h3>2.2.3 역별 승하차 패턴 히트맵 시각화<a class="headerlink" href="#id14" title="Permalink to this heading">#</a></h3>
+<section id="id9">
+<h2>2.2.3 역별 승하차 패턴 히트맵 시각화<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 역별-시간대별 승차 인원 피벗 테이블 생성</span>
@@ -1930,8 +1386,8 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </div>
 </div>
 </section>
-<section id="id15">
-<h3>2.2.4 출퇴근 시간대 집중도 분석<a class="headerlink" href="#id15" title="Permalink to this heading">#</a></h3>
+<section id="id10">
+<h2>2.2.4 출퇴근 시간대 집중도 분석<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 출퇴근 시간대 정의</span>
@@ -1976,17 +1432,17 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 </section>
 </section>
 <section id="gtfs-general-transit-feed-specification">
-<h2>2.5 GTFS (General Transit Feed Specification)<a class="headerlink" href="#gtfs-general-transit-feed-specification" title="Permalink to this heading">#</a></h2>
+<h1>2.5 GTFS (General Transit Feed Specification)<a class="headerlink" href="#gtfs-general-transit-feed-specification" title="Permalink to this heading">#</a></h1>
 <ul class="simple">
 <li><p>대중교통 네트워크 분석을 위한 데이터</p></li>
 <li><p>향후 업데이트 예정</p></li>
 </ul>
 </section>
 <section id="exercise">
-<h2>2.6 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h2>
+<h1>2.6 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h1>
 <p>GPT와 같은 AI 툴을 적극 활용해 문제를 풀어봅시다. 다만, 출력된 코드를 보고 이해하고, 코드가 실행되지 않는다면 어디서 실행되지 않는지 파악하고 올바르게 수정할 수 있어야 합니다.</p>
-<section id="id16">
-<h3>[1] 도로네트워크 분석<a class="headerlink" href="#id16" title="Permalink to this heading">#</a></h3>
+<section id="id11">
+<h2>[1] 도로네트워크 분석<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h2>
 <blockquote>
 <div><p>2.4 Section에서 실습한 OSM 데이터를 분석하는 코드를 참고하면서 아래 문제를 풀어보자.</p>
 </div></blockquote>
@@ -1994,7 +1450,6 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
 <li><p>가천대학교 AI공학관에서 가천대역까지 가는 최단경로를 뽑아보고 지도상에 시각화 해봅시다. 해당 위치의 좌표는 어떻게 알 수 있을까요? (<a class="reference external" href="https://www.google.com/maps">구글지도</a>를 사용해봅시다)</p></li>
 <li><p>가천대역을 중심으로 하여 도보로 15분 내에 도달 가능한 지역을 지도상에 나타내봅시다. 사람의 통행속도는 5km/h로 가정합니다.</p></li>
 </ol>
-</section>
 </section>
 </section>
 
@@ -2043,51 +1498,41 @@ To: e:\book\urban-mobility-simulation\data\chp2_od_data_2.parquet
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.1 수도권 생활이동 데이터 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1.1 활용 데이터</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1.2 데이터 읽기 및 간단한 전처리</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-visualization">2.1.3 Basic visualization</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">2.4 Road Network and Geometry</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.4.1 Open Street Map 데이터 살펴보기</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map-osm-pbf">[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">[3] 여러 네트워크를 한번에 표시</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">[4]  기초적인 도로네트워크 속성 파악 및 시각화</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#travel-time-data-taxi-trip-record">2.3 Travel Time Data (Taxi Trip Record)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3.1 데이터 읽기</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.3.2 Basic Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.4.2 최단거리 분석</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-distance">[1] 두 지점간 Network Distance 구하기 실습</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[2] 이동 속도 및 시간 영향을 고려한 경로 산출</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#road-network-and-geometry">2.4 Road Network and Geometry</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map">2.4.1 Open Street Map 데이터 살펴보기</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#open-street-map-osm-pbf">[1] Open Street Map 데이터 취득하기 (.osm.pbf 파일)</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osm">[2] 내가 원하는 지역 osm 지도를 그래프 형태로 표현</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[3] 여러 네트워크를 한번에 표시</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">[4]  기초적인 도로네트워크 속성 파악 및 시각화</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.4.2 최단거리 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#network-distance">[1] 두 지점간 Network Distance 구하기 실습</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">[2] 이동 속도 및 시간 영향을 고려한 경로 산출</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph">2.4.3 Graph 간소화</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#osmnx">[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-graph">[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#graph">2.4.3 Graph 간소화</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#osmnx">[1] OSMnx에서 제공하는 그래프를 간소화 하는 두가지 함수</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simplify-graph">[2] <code class="docutils literal notranslate"><span class="pre">simplify_graph</span></code> 자세히 살펴보기</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.2 스마트카드 데이터 분석</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">2.2.1 활용 데이터</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">2.2.2 시간대별 승하차 패턴 분석</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">2.2.4 출퇴근 시간대 집중도 분석</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 스마트카드 데이터 분석</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.2.1 활용 데이터</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.2.2 시간대별 승하차 패턴 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.2.4 출퇴근 시간대 집중도 분석</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">[1] 도로네트워크 분석</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">[1] 도로네트워크 분석</a></li>
 </ul>
 </li>
 </ul>
+
   </nav></div>
 
 </div></div>
