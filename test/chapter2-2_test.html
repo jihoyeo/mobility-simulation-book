@@ -948,6 +948,145 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3) 교통약자 유형별 시간대별 이동건수 시각화</span>
+
+<span class="c1"># 교통카드 사용자 구분 코드 매핑 정의</span>
+<span class="n">user_group_map</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;비교통약자&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;어린이&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;청소년&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;경로&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;장애인&quot;</span><span class="p">}</span>
+
+<span class="c1"># 분석을 위한 데이터프레임 복사본 생성</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_refined</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># 교통카드 사용자 구분 코드를 숫자형으로 변환</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
+<span class="c1"># 사용자 구분 코드를 이용자유형 텍스트로 매핑</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">user_group_map</span><span class="p">)</span>
+
+<span class="c1"># 분석 대상 그룹 정의</span>
+<span class="n">target_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;비교통약자&quot;</span><span class="p">,</span> <span class="s2">&quot;어린이&quot;</span><span class="p">,</span> <span class="s2">&quot;경로&quot;</span><span class="p">,</span> <span class="s2">&quot;장애인&quot;</span><span class="p">]</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_groups</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># 출발시간에서 시간 추출</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[[</span><span class="s2">&quot;출발시간&quot;</span><span class="p">,</span> <span class="s2">&quot;이용자유형&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;출발시간&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span>
+
+<span class="c1"># 유형별, 시간대별 이동건수 계산</span>
+<span class="n">hourly_counts</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 모든 시간대(0~23시) 포함하도록 재색인</span>
+<span class="n">hours</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">RangeIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">hourly_counts</span> <span class="o">=</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">hours</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hourly_counts</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">],</span> 
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">user_type</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;시간 (시)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;이동 건수&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;교통약자 유형별 시간대별 이동건수&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># 유형별 피크 시간 분석</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[교통약자 유형별 피크 시간 요약]&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">peak_hour</span> <span class="o">=</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+        <span class="n">peak_count</span> <span class="o">=</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">user_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">peak_hour</span><span class="si">}</span><span class="s2">시 (</span><span class="si">{</span><span class="n">peak_count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">건)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c35f690c321865f257db55f14ab4a17ef24a5a1e956392239e979e36c807752c.png" src="../_images/c35f690c321865f257db55f14ab4a17ef24a5a1e956392239e979e36c807752c.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[교통약자 유형별 피크 시간 요약]
+- 비교통약자: 18시 (68,835건)
+- 어린이: 15시 (644건)
+- 경로: 15시 (10,984건)
+- 장애인: 16시 (1,184건)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3) 교통약자 유형별 시간대별 이동건수 비율 시각화</span>
+
+<span class="c1"># 교통카드 사용자 구분 코드 매핑 정의</span>
+<span class="n">user_group_map</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;비교통약자&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;어린이&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;청소년&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;경로&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;장애인&quot;</span><span class="p">}</span>
+
+<span class="c1"># 분석을 위한 데이터프레임 복사본 생성</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_refined</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># 교통카드 사용자 구분 코드를 숫자형으로 변환</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
+<span class="c1"># 사용자 구분 코드를 이용자유형 텍스트로 매핑</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;교통카드 사용자 구분 코드&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">user_group_map</span><span class="p">)</span>
+
+<span class="c1"># 분석 대상 그룹 정의</span>
+<span class="n">target_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;비교통약자&quot;</span><span class="p">,</span> <span class="s2">&quot;어린이&quot;</span><span class="p">,</span> <span class="s2">&quot;경로&quot;</span><span class="p">,</span> <span class="s2">&quot;장애인&quot;</span><span class="p">]</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">target_groups</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># 출발시간에서 시간 추출</span>
+<span class="n">df_hourly</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[[</span><span class="s2">&quot;출발시간&quot;</span><span class="p">,</span> <span class="s2">&quot;이용자유형&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;hour&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="p">[</span><span class="s2">&quot;출발시간&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span>
+
+<span class="c1"># 유형별, 시간대별 이동건수 계산</span>
+<span class="n">hourly_counts</span> <span class="o">=</span> <span class="n">df_hourly</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;이용자유형&quot;</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 모든 시간대(0~23시) 포함하도록 재색인</span>
+<span class="n">hours</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">RangeIndex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">hourly_counts</span> <span class="o">=</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">hours</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 각 유형별 전체 이동건수로 나누어 비율로 변환 (행별로 정규화)</span>
+<span class="n">hourly_ratios</span> <span class="o">=</span> <span class="n">hourly_counts</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">hourly_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="c1"># 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">hourly_ratios</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hourly_ratios</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">hourly_ratios</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">],</span> 
+                <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">user_type</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;시간 (시)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;이동 비율 (%)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;교통약자 유형별 시간대별 이동비율&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># 유형별 피크 시간 분석</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[교통약자 유형별 피크 시간 요약]&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">user_type</span> <span class="ow">in</span> <span class="n">hourly_ratios</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">peak_hour</span> <span class="o">=</span> <span class="n">hourly_ratios</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+        <span class="n">peak_ratio</span> <span class="o">=</span> <span class="n">hourly_ratios</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_type</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">user_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">peak_hour</span><span class="si">}</span><span class="s2">시 (</span><span class="si">{</span><span class="n">peak_ratio</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5752dbe84a51674defe0cc721c8f6fbbe1ce9a7b0e089a6c7ee4d0d7ecf9c0d4.png" src="../_images/5752dbe84a51674defe0cc721c8f6fbbe1ce9a7b0e089a6c7ee4d0d7ecf9c0d4.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[교통약자 유형별 피크 시간 요약]
+- 비교통약자: 18시 (11.4%)
+- 어린이: 15시 (17.3%)
+- 경로: 15시 (9.7%)
+- 장애인: 16시 (7.9%)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 2) 이용자 유형별 평균탑승시간/이동거리/환승횟수 시각화</span>
 
 <span class="c1"># 교통카드 사용자 구분 코드 매핑 정의</span>
@@ -1127,7 +1266,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6807619c916e4a6d4394e72f3ca025a5404da25bd9f943521d9222b88fe6f98a.png" src="../_images/6807619c916e4a6d4394e72f3ca025a5404da25bd9f943521d9222b88fe6f98a.png" />
+<img alt="../_images/b3904e2bc42963c88ad935af452adb9d68df8c46080bb27e88b6455dfaf4073e.png" src="../_images/b3904e2bc42963c88ad935af452adb9d68df8c46080bb27e88b6455dfaf4073e.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[이용자 유형별 평균 지표 요약]
 - 평균 탑승시간(분):
 이용자유형
