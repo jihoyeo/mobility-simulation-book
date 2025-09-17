@@ -428,13 +428,24 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 
-<span class="c1"># 한글 폰트 설정 (Windows 환경)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Malgun Gothic&#39;</span>
+<span class="c1"># 운영체제별 한글 폰트 설정</span>
+<span class="n">system</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">system</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Malgun Gothic&#39;</span>
+    <span class="n">font_name</span> <span class="o">=</span> <span class="s1">&#39;Malgun Gothic&#39;</span>
+<span class="k">elif</span> <span class="n">system</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span><span class="p">:</span>  <span class="c1"># macOS</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AppleGothic&#39;</span>
+    <span class="n">font_name</span> <span class="o">=</span> <span class="s1">&#39;AppleGothic&#39;</span>
+<span class="k">else</span><span class="p">:</span>  <span class="c1"># Linux</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DejaVu Sans&#39;</span>
+    <span class="n">font_name</span> <span class="o">=</span> <span class="s1">&#39;DejaVu Sans&#39;</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.unicode_minus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># 마이너스 기호 깨짐 방지</span>
 
 <span class="c1"># seaborn 스타일 적용</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font</span><span class="o">=</span><span class="s1">&#39;Malgun Gothic&#39;</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font</span><span class="o">=</span><span class="n">font_name</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;axes.unicode_minus&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
 
 <span class="c1"># 그래프 크기 기본 설정</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
@@ -526,7 +537,7 @@ document.write(`
 <span class="n">sttn_df</span> <span class="o">=</span> <span class="n">load_sttn_data</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
 
 <span class="c1"># 필요한 컬럼들의 고유값만 남기기</span>
-<span class="n">sttn_unique</span> <span class="o">=</span> <span class="n">sttn_df</span><span class="p">[[</span><span class="s1">&#39;정류장 ID&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 명칭&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 ARS번호&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 X 좌표&#39;</span><span class="p">,</span> 
+<span class="n">sttn_unique</span> <span class="o">=</span> <span class="n">sttn_df</span><span class="p">[[</span><span class="s1">&#39;정류장 ID&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 명칭&#39;</span><span class="p">,</span> <span class="s1">&#39;정류장 X 좌표&#39;</span><span class="p">,</span> 
                        <span class="s1">&#39;정류장 Y 좌표&#39;</span><span class="p">,</span> <span class="s1">&#39;시도코드&#39;</span><span class="p">,</span> <span class="s1">&#39;시도명&#39;</span><span class="p">,</span> <span class="s1">&#39;시군구코드&#39;</span><span class="p">,</span> <span class="s1">&#39;시군구명&#39;</span><span class="p">,</span> 
                        <span class="s1">&#39;읍면동코드&#39;</span><span class="p">,</span> <span class="s1">&#39;읍면동명&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
 
@@ -555,7 +566,6 @@ document.write(`
       <th></th>
       <th>정류장 ID</th>
       <th>정류장 명칭</th>
-      <th>정류장 ARS번호</th>
       <th>정류장 X 좌표</th>
       <th>정류장 Y 좌표</th>
       <th>시도코드</th>
@@ -571,7 +581,6 @@ document.write(`
       <th>0</th>
       <td>3100001</td>
       <td>동울산우체국</td>
-      <td>~</td>
       <td>35.51093</td>
       <td>129.4297</td>
       <td>31</td>
@@ -585,7 +594,6 @@ document.write(`
       <th>1</th>
       <td>3100002</td>
       <td>청량초등학교</td>
-      <td>~</td>
       <td>35.48747</td>
       <td>129.2983</td>
       <td>31</td>
@@ -599,7 +607,6 @@ document.write(`
       <th>2</th>
       <td>3100003</td>
       <td>청량초등학교</td>
-      <td>~</td>
       <td>35.48757</td>
       <td>129.29838</td>
       <td>31</td>
@@ -613,7 +620,6 @@ document.write(`
       <th>3</th>
       <td>3100004</td>
       <td>화봉쌍용예가</td>
-      <td>~</td>
       <td>35.5938</td>
       <td>129.3676</td>
       <td>31</td>
@@ -627,7 +633,6 @@ document.write(`
       <th>4</th>
       <td>3100005</td>
       <td>화봉휴먼시아2단지</td>
-      <td>~</td>
       <td>35.59398</td>
       <td>129.3677</td>
       <td>31</td>
@@ -649,13 +654,11 @@ document.write(`
       <td>...</td>
       <td>...</td>
       <td>...</td>
-      <td>...</td>
     </tr>
     <tr>
       <th>129824</th>
       <td>8019</td>
       <td>남창</td>
-      <td>~</td>
       <td>35.418539</td>
       <td>129.28289</td>
       <td>31</td>
@@ -669,7 +672,6 @@ document.write(`
       <th>129825</th>
       <td>8020</td>
       <td>망양</td>
-      <td>~</td>
       <td>35.456522</td>
       <td>129.287872</td>
       <td>31</td>
@@ -683,7 +685,6 @@ document.write(`
       <th>129826</th>
       <td>8021</td>
       <td>덕하</td>
-      <td>~</td>
       <td>35.493964</td>
       <td>129.303064</td>
       <td>31</td>
@@ -697,7 +698,6 @@ document.write(`
       <th>129827</th>
       <td>8022</td>
       <td>개운포</td>
-      <td>~</td>
       <td>35.507907</td>
       <td>129.321188</td>
       <td>31</td>
@@ -711,7 +711,6 @@ document.write(`
       <th>129828</th>
       <td>8023</td>
       <td>태화강</td>
-      <td>~</td>
       <td>35.53844</td>
       <td>129.353792</td>
       <td>31</td>
@@ -723,7 +722,7 @@ document.write(`
     </tr>
   </tbody>
 </table>
-<p>128554 rows × 11 columns</p>
+<p>128545 rows × 10 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -748,8 +747,8 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>==================================================
 🚏 정류장 정보 데이터 (STTN) 정보
 ==================================================
-- 데이터 크기: 128,554개의 고유 정류장
-- 컬럼 수: 11개
+- 데이터 크기: 128,545개의 고유 정류장
+- 컬럼 수: 10개
 - 설명: 대중교통 정류장 및 지하철역의 위치 정보와 행정구역 정보를 담고 있는 데이터
 - 포함 정보: 정류장 ID, 명칭, 좌표, 행정구역코드, 행정구역명 등
 - 주요 컬럼:
@@ -939,7 +938,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c862cdd5f656b7aab905483a91139dead7be091e518dc6864b69754ee3040210.png" src="../_images/c862cdd5f656b7aab905483a91139dead7be091e518dc6864b69754ee3040210.png" />
+<img alt="../_images/74676f4e054095ea3c946dbfb4947887d3d7c63cc44f4023100bafcd7083a99b.png" src="../_images/74676f4e054095ea3c946dbfb4947887d3d7c63cc44f4023100bafcd7083a99b.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[시간대별 패턴 요약]
 - 승차 피크: 18시 (77,480건)
 - 하차 피크: 8시 (91,022건)
