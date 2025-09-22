@@ -3,14 +3,31 @@
 
 format: jb-book
 root: intro
+# parts:
+#   - caption: Chapters
+#     numbered: false
+#     chapters:
+#       - file: ko/chapter1
+#       - file: ko/chapter2-1
+#       - file: ko/chapter2-2
+#       - file: ko/chapter2-3
+#       - file: ko/chapter3
+#       - file: ko/chapter4
+
 parts:
   - caption: Chapters
-    numbered: false
+    # 전반에 번호 매기기. 깊이를 2까지(장/절)로 제한하려면 2로 설정
+    numbered: 2
     chapters:
       - file: ko/chapter1
-      - file: ko/chapter2-1
-      - file: ko/chapter2-2
-      - file: ko/chapter2-3
+
+      # 2장(개요 페이지) + 섹션 목록
+      - file: ko/chapter2      # 또는 ko/chapter2 (확장자/경로는 실제 파일에 맞추세요)
+        sections:
+          - file: ko/chapter2-1
+          - file: ko/chapter2-2
+          - file: ko/chapter2-3
+
       - file: ko/chapter3
       - file: ko/chapter4
 
