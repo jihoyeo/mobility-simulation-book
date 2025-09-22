@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축 &#8212; Digital Twin for Urban Mobility Systems</title>
+    <title>4. 4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축 &#8212; Digital Twin for Urban Mobility Systems</title>
   
   
   
@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'ko/chapter4';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="3. Models for Predicting Estimated Time of Arrival" href="chapter3.html" />
+    <link rel="prev" title="3. 3. Models for Predicting Estimated Time of Arrival" href="chapter3.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -170,12 +170,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Chapters</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="chapter1.html">1. Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter2-1.html">2. Data Preparation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter2-2.html">2.2 스마트카드 데이터 분석</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter2-3.html">2.3 Travel Time Data (Taxi Trip Record)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="chapter3.html">3. Models for Predicting Estimated Time of Arrival</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chapter1.html">1. 1. Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="chapter2.html">2. 2. Data Preparation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="chapter2-1.html">2.1. 2. Data Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter2-2.html">2.2. 2.2 스마트카드 데이터 분석</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chapter2-3.html">2.3. 2.3 Travel Time Data (Taxi Trip Record)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="chapter3.html">3. 3. Models for Predicting Estimated Time of Arrival</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">4. 4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축</a></li>
 </ul>
 
     </div>
@@ -371,7 +374,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.1. 4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4.1.1 가상의 통행데이터 생성</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[1] 필수 함수 정의</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#od">[2] OD 데이터 생성</a></li>
@@ -382,7 +385,7 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2 시스템 아키텍처와 설정</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2. 4.2 시스템 아키텍처와 설정</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#react-axios-mapbox-gl">목표: React 애플리케이션 설정 및 axios, mapbox-gl 같은 필수 라이브러리 설명</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">주요 파일</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">라이브러리</a></li>
@@ -390,24 +393,24 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#react">4.2.2 React 애플리케이션 설정</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 데이터 처리 및 컴포넌트 설계</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3. 4.3 데이터 처리 및 컴포넌트 설계</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">목표: 디지털 트윈 시뮬레이션에서 데이터 획득 및 관리 방식을 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.4 시뮬레이션 데이터 시각화</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.4. 4.4 시뮬레이션 데이터 시각화</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapbox-gl">목표: mapbox-gl을 사용해 지도 기반 데이터를 렌더링하는 방법 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.5 인터랙티브 기능과 사용자 인터페이스</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.5. 4.5 인터랙티브 기능과 사용자 인터페이스</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">목표: 디지털 트윈 시뮬레이션의 인터랙티브 요소 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.6 테스트 및 배포</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.6. 4.6 테스트 및 배포</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">목표: 테스트 방법과 애플리케이션 배포 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">4.7 사례 연구: 샘플 여행 시뮬레이션</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.8 Exercise</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">4.7. 4.7 사례 연구: 샘플 여행 시뮬레이션</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.8. 4.8 Exercise</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">4.8.1 100개의 od를 뽑아서 시뮬레이션을 만들고 깃허브에 올려서 시뮬레이션 링크를 사이버캠퍼스에 제출</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">과제 지침</a></li>
 </ul>
@@ -424,9 +427,9 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
+<h1><span class="section-number">4. </span>4. 모빌리티 운영을 위한 디지털 트윈 시뮬레이션 구축<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h1>
 <section id="id2">
-<h2>4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.1. </span>4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>이 절의 목표: 간단한 예제를 통해 데이터 생성→경로 계산→시간 스탬프 생성→저장→시각화까지 흐름을 빠르게 체험합니다.</p></li>
 <li><p>자세한 구성요소는 이후 절에서 단계별로 설명하며, 여기서는 전체 파이프라인을 한 번 훑습니다.</p></li>
@@ -913,7 +916,7 @@ document.write(`
 </section>
 </section>
 <section id="id7">
-<h2>4.2 시스템 아키텍처와 설정<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.2. </span>4.2 시스템 아키텍처와 설정<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h2>
 <section id="react-axios-mapbox-gl">
 <h3>목표: React 애플리케이션 설정 및 axios, mapbox-gl 같은 필수 라이브러리 설명<a class="headerlink" href="#react-axios-mapbox-gl" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
@@ -1017,7 +1020,7 @@ npm<span class="w"> </span>-v
 </section>
 </section>
 <section id="id10">
-<h2>4.3 데이터 처리 및 컴포넌트 설계<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.3. </span>4.3 데이터 처리 및 컴포넌트 설계<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h2>
 <section id="id11">
 <h3>목표: 디지털 트윈 시뮬레이션에서 데이터 획득 및 관리 방식을 설명<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
@@ -1071,7 +1074,7 @@ npm<span class="w"> </span>-v
 </section>
 </section>
 <section id="id12">
-<h2>4.4 시뮬레이션 데이터 시각화<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.4. </span>4.4 시뮬레이션 데이터 시각화<a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h2>
 <section id="mapbox-gl">
 <h3>목표: mapbox-gl을 사용해 지도 기반 데이터를 렌더링하는 방법 설명<a class="headerlink" href="#mapbox-gl" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
@@ -1147,7 +1150,7 @@ npm<span class="w"> </span>-v
 </section>
 </section>
 <section id="id13">
-<h2>4.5 인터랙티브 기능과 사용자 인터페이스<a class="headerlink" href="#id13" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.5. </span>4.5 인터랙티브 기능과 사용자 인터페이스<a class="headerlink" href="#id13" title="Permalink to this heading">#</a></h2>
 <section id="id14">
 <h3>목표: 디지털 트윈 시뮬레이션의 인터랙티브 요소 설명<a class="headerlink" href="#id14" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
@@ -1214,7 +1217,7 @@ npm<span class="w"> </span>-v
 </section>
 </section>
 <section id="id15">
-<h2>4.6 테스트 및 배포<a class="headerlink" href="#id15" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.6. </span>4.6 테스트 및 배포<a class="headerlink" href="#id15" title="Permalink to this heading">#</a></h2>
 <section id="id16">
 <h3>목표: 테스트 방법과 애플리케이션 배포 설명<a class="headerlink" href="#id16" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
@@ -1256,7 +1259,7 @@ npm<span class="w"> </span>-v
 </section>
 </section>
 <section id="id17">
-<h2>4.7 사례 연구: 샘플 여행 시뮬레이션<a class="headerlink" href="#id17" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.7. </span>4.7 사례 연구: 샘플 여행 시뮬레이션<a class="headerlink" href="#id17" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>목표: 특정 여행 시나리오를 시뮬레이션하며 전체 워크플로우를 데모</p></li>
 <li><p>구성:</p>
@@ -1286,7 +1289,7 @@ npm<span class="w"> </span>-v
 </ul>
 </section>
 <section id="exercise">
-<h2>4.8 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h2>
+<h2><span class="section-number">4.8. </span>4.8 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h2>
 <section id="id18">
 <h3>4.8.1 100개의 od를 뽑아서 시뮬레이션을 만들고 깃허브에 올려서 시뮬레이션 링크를 사이버캠퍼스에 제출<a class="headerlink" href="#id18" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
@@ -1375,7 +1378,7 @@ npm<span class="w"> </span>-v
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">3. Models for Predicting Estimated Time of Arrival</p>
+        <p class="prev-next-title"><span class="section-number">3. </span>3. Models for Predicting Estimated Time of Arrival</p>
       </div>
     </a>
 </div>
@@ -1393,7 +1396,7 @@ npm<span class="w"> </span>-v
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.1. 4.1 간단한 예제로 알아보는 모빌리티 디지털 트윈 시뮬레이션 구현</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4.1.1 가상의 통행데이터 생성</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">[1] 필수 함수 정의</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#od">[2] OD 데이터 생성</a></li>
@@ -1404,7 +1407,7 @@ npm<span class="w"> </span>-v
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2 시스템 아키텍처와 설정</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2. 4.2 시스템 아키텍처와 설정</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#react-axios-mapbox-gl">목표: React 애플리케이션 설정 및 axios, mapbox-gl 같은 필수 라이브러리 설명</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">주요 파일</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">라이브러리</a></li>
@@ -1412,24 +1415,24 @@ npm<span class="w"> </span>-v
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#react">4.2.2 React 애플리케이션 설정</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 데이터 처리 및 컴포넌트 설계</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3. 4.3 데이터 처리 및 컴포넌트 설계</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">목표: 디지털 트윈 시뮬레이션에서 데이터 획득 및 관리 방식을 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.4 시뮬레이션 데이터 시각화</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.4. 4.4 시뮬레이션 데이터 시각화</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapbox-gl">목표: mapbox-gl을 사용해 지도 기반 데이터를 렌더링하는 방법 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.5 인터랙티브 기능과 사용자 인터페이스</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.5. 4.5 인터랙티브 기능과 사용자 인터페이스</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">목표: 디지털 트윈 시뮬레이션의 인터랙티브 요소 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.6 테스트 및 배포</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.6. 4.6 테스트 및 배포</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">목표: 테스트 방법과 애플리케이션 배포 설명</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">4.7 사례 연구: 샘플 여행 시뮬레이션</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.8 Exercise</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">4.7. 4.7 사례 연구: 샘플 여행 시뮬레이션</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">4.8. 4.8 Exercise</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">4.8.1 100개의 od를 뽑아서 시뮬레이션을 만들고 깃허브에 올려서 시뮬레이션 링크를 사이버캠퍼스에 제출</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">과제 지침</a></li>
 </ul>
