@@ -394,16 +394,9 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 스마트카드 데이터 분석</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.2.1 활용 데이터</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.2.2 시간대별 승하차 패턴 분석</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.2.4 출퇴근 시간대 집중도 분석</a></li>
-</ul>
-</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">[1] 도로네트워크 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[1] 도로네트워크 분석</a></li>
 </ul>
 </li>
 </ul>
@@ -478,7 +471,7 @@ document.write(`
 <span class="c1"># G = ox.graph_from_place(&#39;서울특별시, 대한민국&#39;, network_type=&#39;drive&#39;)</span>
 
 <span class="c1"># osmnx 그래프 생성( osm 지도 다운로드 )</span>
-<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -510,6 +503,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/4adcc683d06b0d1229d9122ea08b2ede5e4336ea565a09b9f43404377f1dc3f8.png" src="../_images/4adcc683d06b0d1229d9122ea08b2ede5e4336ea565a09b9f43404377f1dc3f8.png" />
+</div>
 </div>
 <ul class="simple">
 <li><p>하지만 위와 같이 시각화를 한다면, static map이기 때문에 원하는 특정 지역을 세밀하게 관찰하기가 어렵다.</p></li>
@@ -518,7 +514,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 그래프의 중심점 계산</span>
-<span class="n">center_lat</span><span class="p">,</span> <span class="n">center_lon</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">)</span>
+<span class="n">center_lat</span><span class="p">,</span> <span class="n">center_lon</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="s1">&#39;성남시, 대한민국&#39;</span><span class="p">)</span>
 
 <span class="c1"># folium 맵 생성</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">center_lat</span><span class="p">,</span> <span class="n">center_lon</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="s1">&#39;cartodbpositron&#39;</span><span class="p">)</span>
@@ -629,7 +625,7 @@ document.write(`
 </div>
 </div>
 <p>위 HTML 파일을 열어서 한번 살펴보자. <code class="docutils literal notranslate"><span class="pre">Folium</span></code>은 Leaflet.js 기반으로 HTML을 생성하고 이를 웹페이지로 렌더링한다.<br />
-지도를 그리거나 데이터를 시각화할 때 매번 HTML 파일을 업데이트하거나 렌더링해야 하기 때문에 시간이 더 소요될 수 있습니다.</p>
+지도를 그리거나 데이터를 시각화할 때 매번 HTML 파일을 업데이트하거나 렌더링해야 하기 때문에 시간이 더 소요될 수 있다.</p>
 <p>데이터가 매우 크고, 수가 많을 경우 GPU 가속을 활용하는 시각화 패키지나 툴을 이용하는 것이 도움이 된다.<br />
 베이스 맵의 경우 <a class="reference external" href="https://www.mapbox.com/%EC%97%90%EC%84%9C">https://www.mapbox.com/에서</a> 직접 커스터마이즈 하면 된다.</p>
 <div class="cell docutils container">
@@ -717,8 +713,14 @@ document.write(`
     <span class="n">initial_view_state</span><span class="o">=</span><span class="n">view_state</span>
 <span class="p">)</span>
 
-<span class="c1"># 맵 저장</span>
+<span class="c1"># 맵 저장 (출력 없이)</span>
 <span class="n">r</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="s2">&quot;../data/Sungnam_road_network_vis_with_pydeck.html&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pydeck 맵이 저장되었습니다.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Pydeck 맵이 저장되었습니다.
 </pre></div>
 </div>
 </div>
@@ -730,9 +732,9 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 여러 위치에서 네트워크를 생성하기 위한 서울 지역 리스트 설정</span>
 <span class="n">places</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">,</span>  
+    <span class="s1">&#39;성남시, 대한민국&#39;</span><span class="p">,</span>  
     <span class="s1">&#39;송파구, 서울특별시, 대한민국&#39;</span><span class="p">,</span>  
-    <span class="s1">&#39;하남시, 경기도, 대한민국&#39;</span><span class="p">,</span>  
+    <span class="s1">&#39;하남시, 대한민국&#39;</span><span class="p">,</span>  
 <span class="p">]</span>
 
 <span class="c1"># retain_all=True를 사용하여 모든 연결되지 않은 서브그래프도 유지 (연속된 네트워크가 아닌 경우에도 유지)</span>
@@ -749,6 +751,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/63de1446b302476ce19b6ba25a3b21d4b3bfd4c0db5dd6c2a70815bd3bd64715.png" src="../_images/63de1446b302476ce19b6ba25a3b21d4b3bfd4c0db5dd6c2a70815bd3bd64715.png" />
+</div>
 </div>
 </section>
 <section id="id2">
@@ -756,7 +761,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># osmnx 그래프 생성( osm 지도 다운로드 )</span>
-<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -766,6 +771,12 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 기본 그래프 정보 출력</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;노드 수:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;엣지 수:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>노드 수: 4908
+엣지 수: 13233
 </pre></div>
 </div>
 </div>
@@ -797,6 +808,25 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>기본 네트워크 통계:
+n: 4908
+m: 13233
+k_avg: 5.39242053789731
+edge_length_total: 1622659.8079999986
+edge_length_avg: 122.62221778886108
+streets_per_node_avg: 3.0554197229013855
+streets_per_node_counts: {0: 0, 1: 441, 2: 24, 3: 3294, 4: 1121, 5: 27, 6: 1}
+streets_per_node_proportions: {0: 0.0, 1: 0.08985330073349633, 2: 0.004889975550122249, 3: 0.6711491442542787, 4: 0.22840260798696008, 5: 0.005501222493887531, 6: 0.00020374898125509371}
+intersection_count: 4467
+street_length_total: 997178.0209999979
+street_segment_count: 7465
+street_length_avg: 133.58044487608814
+circuity_avg: 1.0659417177433692
+self_loop_proportion: 0.0021433355659745477
+</pre></div>
+</div>
+</div>
 </div>
 <p>보다 세부적으로 Node와 Edge들이 어떤 속성을 가지고 있는지 알아보자.<br />
 기본적으로 Graph의 Node와 Edge는 ~~~ 형태의 데이터 포맷을 가지고 있다. Python에서 보다 쉽게 이를 보기 위해서 Dataframe으로 변환하면 좋다.</p>
@@ -824,6 +854,196 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>node_id</th>
+      <th>y</th>
+      <th>x</th>
+      <th>street_count</th>
+      <th>highway</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>414689872</td>
+      <td>37.462244</td>
+      <td>127.155179</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>414689878</td>
+      <td>37.422383</td>
+      <td>127.102033</td>
+      <td>4</td>
+      <td>traffic_signals</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>414689917</td>
+      <td>37.440888</td>
+      <td>127.131794</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>414689923</td>
+      <td>37.409577</td>
+      <td>127.124802</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>414689924</td>
+      <td>37.405432</td>
+      <td>127.123595</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>414689925</td>
+      <td>37.405433</td>
+      <td>127.125451</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>414689927</td>
+      <td>37.399175</td>
+      <td>127.125408</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>414689930</td>
+      <td>37.409160</td>
+      <td>127.123032</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>414689935</td>
+      <td>37.413087</td>
+      <td>127.120808</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>414689936</td>
+      <td>37.413800</td>
+      <td>127.122542</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>414689939</td>
+      <td>37.407387</td>
+      <td>127.133911</td>
+      <td>3</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>414689940</td>
+      <td>37.408093</td>
+      <td>127.142963</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>414689943</td>
+      <td>37.428234</td>
+      <td>127.137920</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>414689944</td>
+      <td>37.429750</td>
+      <td>127.137140</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>414689946</td>
+      <td>37.432220</td>
+      <td>127.167570</td>
+      <td>3</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>414689949</td>
+      <td>37.436372</td>
+      <td>127.158149</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>414689950</td>
+      <td>37.433378</td>
+      <td>127.159984</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>414689951</td>
+      <td>37.443884</td>
+      <td>127.157849</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>414689953</td>
+      <td>37.445126</td>
+      <td>127.156678</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>414689954</td>
+      <td>37.452315</td>
+      <td>127.149288</td>
+      <td>3</td>
+      <td>traffic_signals</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -839,6 +1059,17 @@ document.write(`
 <span class="c1"># highway 타입별 개수 세기</span>
 <span class="n">highway_counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">highway_types</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 <span class="n">highway_counts</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>traffic_signals      146
+motorway_junction     20
+crossing               8
+turning_circle         7
+mini_roundabout        2
+proposed               1
+Name: count, dtype: int64
 </pre></div>
 </div>
 </div>
@@ -869,6 +1100,343 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start_node</th>
+      <th>end_node</th>
+      <th>osmid</th>
+      <th>oneway</th>
+      <th>highway</th>
+      <th>reversed</th>
+      <th>length</th>
+      <th>ref</th>
+      <th>name</th>
+      <th>geometry</th>
+      <th>lanes</th>
+      <th>bridge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>414689872</td>
+      <td>10712317417</td>
+      <td>1151530545</td>
+      <td>True</td>
+      <td>secondary_link</td>
+      <td>False</td>
+      <td>10.895</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>414689872</td>
+      <td>4809139436</td>
+      <td>54607084</td>
+      <td>False</td>
+      <td>secondary</td>
+      <td>False</td>
+      <td>36.738</td>
+      <td>342</td>
+      <td>남한산성로</td>
+      <td>LINESTRING (127.1551794 37.4622445, 127.155167...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>414689872</td>
+      <td>2684209530</td>
+      <td>220199776</td>
+      <td>True</td>
+      <td>secondary</td>
+      <td>False</td>
+      <td>53.796</td>
+      <td>342</td>
+      <td>수정로</td>
+      <td>LINESTRING (127.1551794 37.4622445, 127.155156...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>414689878</td>
+      <td>4299327239</td>
+      <td>829530778</td>
+      <td>False</td>
+      <td>secondary</td>
+      <td>False</td>
+      <td>58.502</td>
+      <td>23</td>
+      <td>대왕판교로</td>
+      <td>NaN</td>
+      <td>8</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>414689878</td>
+      <td>1668416833</td>
+      <td>829530778</td>
+      <td>False</td>
+      <td>secondary</td>
+      <td>True</td>
+      <td>15.431</td>
+      <td>23</td>
+      <td>대왕판교로</td>
+      <td>NaN</td>
+      <td>8</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>414689878</td>
+      <td>4299327232</td>
+      <td>70986684</td>
+      <td>True</td>
+      <td>trunk_link</td>
+      <td>False</td>
+      <td>67.538</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>LINESTRING (127.102033 37.4223826, 127.1019343...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>414689917</td>
+      <td>6293360179</td>
+      <td>60609785</td>
+      <td>True</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>49.945</td>
+      <td>NaN</td>
+      <td>제일로</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>414689917</td>
+      <td>759684094</td>
+      <td>218842461</td>
+      <td>True</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>2.893</td>
+      <td>NaN</td>
+      <td>수정로</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>414689923</td>
+      <td>2939333063</td>
+      <td>186410776</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>True</td>
+      <td>204.641</td>
+      <td>NaN</td>
+      <td>양현로</td>
+      <td>LINESTRING (127.1248017 37.4095773, 127.124729...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>414689923</td>
+      <td>1970949890</td>
+      <td>522869003</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>58.064</td>
+      <td>NaN</td>
+      <td>양현로</td>
+      <td>LINESTRING (127.1248017 37.4095773, 127.124879...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>414689923</td>
+      <td>414689930</td>
+      <td>[86191984, 522869004, 86191992]</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>163.040</td>
+      <td>NaN</td>
+      <td>야탑로</td>
+      <td>LINESTRING (127.1248017 37.4095773, 127.124601...</td>
+      <td>4</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>414689923</td>
+      <td>1970949905</td>
+      <td>522869005</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>True</td>
+      <td>111.403</td>
+      <td>NaN</td>
+      <td>야탑로</td>
+      <td>LINESTRING (127.1248017 37.4095773, 127.125026...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>414689924</td>
+      <td>414689925</td>
+      <td>[86192896, 277593627, 86192892]</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>[False, True]</td>
+      <td>163.927</td>
+      <td>NaN</td>
+      <td>판교로</td>
+      <td>LINESTRING (127.1235955 37.4054319, 127.123820...</td>
+      <td>6</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>414689924</td>
+      <td>4299773324</td>
+      <td>435950146</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>True</td>
+      <td>61.039</td>
+      <td>NaN</td>
+      <td>탄천로</td>
+      <td>LINESTRING (127.1235955 37.4054319, 127.123586...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>414689924</td>
+      <td>4299773322</td>
+      <td>523170415</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>60.780</td>
+      <td>NaN</td>
+      <td>탄천로</td>
+      <td>LINESTRING (127.1235955 37.4054319, 127.123596...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>414689924</td>
+      <td>4299773320</td>
+      <td>523170416</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>181.874</td>
+      <td>NaN</td>
+      <td>판교로</td>
+      <td>LINESTRING (127.1235955 37.4054319, 127.123418...</td>
+      <td>6</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>414689925</td>
+      <td>4264953671</td>
+      <td>86192896</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>143.716</td>
+      <td>NaN</td>
+      <td>판교로</td>
+      <td>LINESTRING (127.1254512 37.4054332, 127.125653...</td>
+      <td>6</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>414689925</td>
+      <td>414689924</td>
+      <td>[86192896, 277593627, 86192892]</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>[False, True]</td>
+      <td>163.927</td>
+      <td>NaN</td>
+      <td>판교로</td>
+      <td>LINESTRING (127.1254512 37.4054332, 127.125297...</td>
+      <td>6</td>
+      <td>yes</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>414689925</td>
+      <td>1970949852</td>
+      <td>186410765</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>False</td>
+      <td>62.327</td>
+      <td>NaN</td>
+      <td>양현로</td>
+      <td>LINESTRING (127.1254512 37.4054332, 127.125448...</td>
+      <td>4</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>414689925</td>
+      <td>4272268329</td>
+      <td>[186410730, 522869003, 186410765]</td>
+      <td>False</td>
+      <td>tertiary</td>
+      <td>True</td>
+      <td>305.256</td>
+      <td>NaN</td>
+      <td>양현로</td>
+      <td>LINESTRING (127.1254512 37.4054332, 127.125457...</td>
+      <td>4</td>
+      <td>yes</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <p>OSM에서 도로 타입이 총 몇가지로 구분이 되는지 알아보려면 아래와 같이 할 수 있다.<br />
 매우 많은 도로유형이 있는 것을 알 수 있다. 각각의 상세한 설명 및 기준이 궁금하면 다음을 참고하자. <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Key:highway">https://wiki.openstreetmap.org/wiki/Key:highway</a></p>
@@ -890,6 +1458,26 @@ document.write(`
 <span class="c1"># highway 타입별 개수 세기</span>
 <span class="n">highway_counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">highway_types</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 <span class="n">highway_counts</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>residential       8357
+tertiary          2605
+unclassified       747
+primary            356
+secondary          300
+living_street      236
+tertiary_link      196
+primary_link       120
+trunk_link         113
+motorway_link       88
+secondary_link      63
+trunk               56
+motorway            38
+road                12
+busway               1
+Name: count, dtype: int64
 </pre></div>
 </div>
 </div>
@@ -940,6 +1528,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/f508427d85d437ef1976c7d3584a901bf81c87b0cdd21f6ee99789c92cbd9cae.png" src="../_images/f508427d85d437ef1976c7d3584a901bf81c87b0cdd21f6ee99789c92cbd9cae.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -977,6 +1568,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.1 킬로미터
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1000,6 +1596,230 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\jiho\AppData\Local\Temp\ipykernel_55604\1969001100.py:2: UserWarning: Geometry is in a geographic CRS. Results from &#39;centroid&#39; are likely incorrect. Use &#39;GeoSeries.to_crs()&#39; to re-project geometries to a projected CRS before this operation.
+
+  center_lat = route_gdf.geometry.centroid.y.median()
+C:\Users\jiho\AppData\Local\Temp\ipykernel_55604\1969001100.py:3: UserWarning: Geometry is in a geographic CRS. Results from &#39;centroid&#39; are likely incorrect. Use &#39;GeoSeries.to_crs()&#39; to re-project geometries to a projected CRS before this operation.
+
+  center_lon = route_gdf.geometry.centroid.x.median()
+</pre></div>
+</div>
+<div class="output text_html"><div style="width:100%;"><div style="position:relative;width:100%;height:0;padding-bottom:60%;"><span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span><iframe srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=UTF-8&quot; /&gt;
+    
+        &lt;script&gt;
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        &lt;/script&gt;
+    
+    &lt;style&gt;html, body {width: 100%;height: 100%;margin: 0;padding: 0;}&lt;/style&gt;
+    &lt;style&gt;#map {position:absolute;top:0;bottom:0;right:0;left:0;}&lt;/style&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css&quot;/&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css&quot;/&gt;
+    
+            &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no&quot; /&gt;
+            &lt;style&gt;
+                #map_2f02c25bc07c8d969ae0f9aee394c9f3 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            &lt;/style&gt;
+        
+    
+                    &lt;style&gt;
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    &lt;/style&gt;
+            
+&lt;/head&gt;
+&lt;body&gt;
+    
+    
+            &lt;div class=&quot;folium-map&quot; id=&quot;map_2f02c25bc07c8d969ae0f9aee394c9f3&quot; &gt;&lt;/div&gt;
+        
+&lt;/body&gt;
+&lt;script&gt;
+    
+    
+            var map_2f02c25bc07c8d969ae0f9aee394c9f3 = L.map(
+                &quot;map_2f02c25bc07c8d969ae0f9aee394c9f3&quot;,
+                {
+                    center: [37.579153025000004, 127.0419013],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 16,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_9ca2721361e36934f0fbd18fe29a24bf = L.tileLayer(
+                &quot;https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png&quot;,
+                {&quot;attribution&quot;: &quot;\u0026copy; \u003ca target=\&quot;_blank\&quot; href=\&quot;http://www.openstreetmap.org/copyright\&quot;\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca target=\&quot;_blank\&quot; href=\&quot;http://cartodb.com/attributions\&quot;\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca target=\&quot;_blank\&quot; href =\&quot;http://cartodb.com/attributions\&quot;\u003eattributions\u003c/a\u003e&quot;, &quot;detectRetina&quot;: false, &quot;maxNativeZoom&quot;: 18, &quot;maxZoom&quot;: 18, &quot;minZoom&quot;: 0, &quot;noWrap&quot;: false, &quot;opacity&quot;: 1, &quot;subdomains&quot;: &quot;abc&quot;, &quot;tms&quot;: false}
+            ).addTo(map_2f02c25bc07c8d969ae0f9aee394c9f3);
+        
+    
+        function geo_json_af16a6b0b9026f638fc46267dc3e6baf_styler(feature) {
+            switch(feature.id) {
+                default:
+                    return {&quot;color&quot;: &quot;red&quot;, &quot;fillColor&quot;: &quot;red&quot;, &quot;fillOpacity&quot;: 0.5, &quot;weight&quot;: 2};
+            }
+        }
+        function geo_json_af16a6b0b9026f638fc46267dc3e6baf_highlighter(feature) {
+            switch(feature.id) {
+                default:
+                    return {&quot;fillOpacity&quot;: 0.75};
+            }
+        }
+        function geo_json_af16a6b0b9026f638fc46267dc3e6baf_pointToLayer(feature, latlng) {
+            var opts = {&quot;bubblingMouseEvents&quot;: true, &quot;color&quot;: &quot;#3388ff&quot;, &quot;dashArray&quot;: null, &quot;dashOffset&quot;: null, &quot;fill&quot;: true, &quot;fillColor&quot;: &quot;#3388ff&quot;, &quot;fillOpacity&quot;: 0.2, &quot;fillRule&quot;: &quot;evenodd&quot;, &quot;lineCap&quot;: &quot;round&quot;, &quot;lineJoin&quot;: &quot;round&quot;, &quot;opacity&quot;: 1.0, &quot;radius&quot;: 2, &quot;stroke&quot;: true, &quot;weight&quot;: 3};
+            
+            let style = geo_json_af16a6b0b9026f638fc46267dc3e6baf_styler(feature)
+            Object.assign(opts, style)
+            
+            return new L.CircleMarker(latlng, opts)
+        }
+
+        function geo_json_af16a6b0b9026f638fc46267dc3e6baf_onEachFeature(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if(typeof e.target.setStyle === &quot;function&quot;){
+                        geo_json_af16a6b0b9026f638fc46267dc3e6baf.resetStyle(e.target);
+                    }
+                },
+                mouseover: function(e) {
+                    if(typeof e.target.setStyle === &quot;function&quot;){
+                        const highlightStyle = geo_json_af16a6b0b9026f638fc46267dc3e6baf_highlighter(e.target.feature)
+                        e.target.setStyle(highlightStyle);
+                    }
+                },
+            });
+        };
+        var geo_json_af16a6b0b9026f638fc46267dc3e6baf = L.geoJson(null, {
+                onEachFeature: geo_json_af16a6b0b9026f638fc46267dc3e6baf_onEachFeature,
+            
+                style: geo_json_af16a6b0b9026f638fc46267dc3e6baf_styler,
+                pointToLayer: geo_json_af16a6b0b9026f638fc46267dc3e6baf_pointToLayer
+        });
+
+        function geo_json_af16a6b0b9026f638fc46267dc3e6baf_add (data) {
+            geo_json_af16a6b0b9026f638fc46267dc3e6baf
+                .addData(data)
+                .addTo(map_2f02c25bc07c8d969ae0f9aee394c9f3);
+        }
+            geo_json_af16a6b0b9026f638fc46267dc3e6baf_add({&quot;bbox&quot;: [127.0234527, 37.5715434, 127.0476547, 37.5815735], &quot;features&quot;: [{&quot;bbox&quot;: [127.0462162, 37.5806483, 127.0463613, 37.580801], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0462162, 37.5806483], [127.0463613, 37.580801]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3830520095, 11170069504, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 21.255, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878033, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0463613, 37.580801, 127.046455, 37.5808913], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0463613, 37.580801], [127.046455, 37.5808913]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(11170069504, 11170069505, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.0, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878033, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.046455, 37.5808913, 127.0465621, 37.5809847], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.046455, 37.5808913], [127.0465621, 37.5809847]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(11170069505, 10017702537, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 14.033, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878033, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0465621, 37.5809847, 127.046786, 37.5810892], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0465621, 37.5809847], [127.046786, 37.5810892]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702537, 10017702538, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 22.898, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.046786, 37.5810848, 127.0468233, 37.5810892], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.046786, 37.5810892], [127.0468233, 37.5810848]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702538, 10017702539, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.323, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0468233, 37.5810803, 127.0468532, 37.5810848], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0468233, 37.5810848], [127.0468532, 37.5810803]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702539, 11170069506, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.682, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0468532, 37.5810768, 127.0468708, 37.5810803], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0468532, 37.5810803], [127.0468708, 37.5810768]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(11170069506, 10017702551, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.599, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0468708, 37.5810708, 127.0469053, 37.5810768], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0468708, 37.5810768], [127.0469053, 37.5810708]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702551, 12392878429, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.113, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0469053, 37.5810583, 127.0469482, 37.5810708], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0469053, 37.5810708], [127.0469482, 37.5810583]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878429, 12392878428, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 4.028, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0469482, 37.581011, 127.047077, 37.5810583], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0469482, 37.5810583], [127.047077, 37.581011]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878428, 10017702542, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 12.509, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.047077, 37.5809996, 127.047111, 37.581011], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.047077, 37.581011], [127.047111, 37.5809996]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702542, 10017702543, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.253, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.047111, 37.5809968, 127.0471259, 37.5809996], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.047111, 37.5809996], [127.0471259, 37.5809968]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702543, 10017702544, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.349, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0471259, 37.5809953, 127.047145, 37.5809968], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0471259, 37.5809968], [127.047145, 37.5809953]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702544, 12392878423, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.691, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.047145, 37.5809953, 127.0472007, 37.580996], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.047145, 37.5809953], [127.0472007, 37.580996]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878423, 10017702546, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 4.909, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472007, 37.580996, 127.0472445, 37.5809976], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472007, 37.580996], [127.0472445, 37.5809976]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702546, 10017702547, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.864, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472445, 37.5809976, 127.0472855, 37.5810014], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472445, 37.5809976], [127.0472855, 37.5810014]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702547, 10017702548, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.638, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472855, 37.5810014, 127.0473207, 37.5810046], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472855, 37.5810014], [127.0473207, 37.5810046]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702548, 10017702549, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.122, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0473207, 37.5810046, 127.0474482, 37.5810694], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0473207, 37.5810046], [127.0474482, 37.5810694]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702549, 10017702550, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.347, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755308, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0474482, 37.5810694, 127.0476372, 37.581128], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0474482, 37.5810694], [127.0476372, 37.581128]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702550, 10017702510, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 17.884, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0476372, 37.581128, 127.0476512, 37.5811335], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0476372, 37.581128], [127.0476512, 37.5811335]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702510, 10017702511, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.377, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: &quot;yes&quot;}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0476512, 37.5811335, 127.0476547, 37.5811437], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0476512, 37.5811335], [127.0476547, 37.5811437]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702511, 10017702512, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.175, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: &quot;yes&quot;}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0476501, 37.5811437, 127.0476547, 37.5811548], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0476547, 37.5811437], [127.0476501, 37.5811548]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702512, 10017702513, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.299, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: &quot;yes&quot;}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0475555, 37.5811548, 127.0476501, 37.5813297], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0476501, 37.5811548], [127.0475555, 37.5813297]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702513, 10017702514, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 21.159, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: &quot;yes&quot;}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0475485, 37.5813297, 127.0475555, 37.5813371], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0475555, 37.5813297], [127.0475485, 37.5813371]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702514, 10017702515, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.028, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: &quot;yes&quot;}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0475275, 37.5813343, 127.0475485, 37.5813371], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0475485, 37.5813371], [127.0475275, 37.5813343]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702515, 10017702516, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 1.877, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0474493, 37.581288, 127.0475275, 37.5813343], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0475275, 37.5813343], [127.0474493, 37.581288]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702516, 10017702517, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 8.602, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0474294, 37.5812779, 127.0474493, 37.581288], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0474493, 37.581288], [127.0474294, 37.5812779]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702517, 10017702518, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.082, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0474008, 37.5812642, 127.0474294, 37.5812779], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0474294, 37.5812779], [127.0474008, 37.5812642]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702518, 10017702519, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.945, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0473748, 37.5812535, 127.0474008, 37.5812642], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0474008, 37.5812642], [127.0473748, 37.5812535]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702519, 10017702520, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.582, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0473483, 37.5812463, 127.0473748, 37.5812535], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0473748, 37.5812535], [127.0473483, 37.5812463]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702520, 10017702521, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.469, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0473248, 37.5812426, 127.0473483, 37.5812463], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0473483, 37.5812463], [127.0473248, 37.5812426]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702521, 10017702522, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.111, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472947, 37.5812416, 127.0473248, 37.5812426], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0473248, 37.5812426], [127.0472947, 37.5812416]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702522, 10017702523, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.655, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472677, 37.5812416, 127.0472947, 37.5812424], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472947, 37.5812416], [127.0472677, 37.5812424]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702523, 10017702524, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.381, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0472371, 37.5812424, 127.0472677, 37.581244], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472677, 37.5812424], [127.0472371, 37.581244]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702524, 10017702525, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.702, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.047202, 37.581244, 127.0472371, 37.5812489], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0472371, 37.581244], [127.047202, 37.5812489]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702525, 10017702526, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.141, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0471621, 37.5812489, 127.047202, 37.5812621], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.047202, 37.5812489], [127.0471621, 37.5812621]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702526, 12392878454, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.81, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0471187, 37.5812621, 127.0471621, 37.5812797], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0471621, 37.5812621], [127.0471187, 37.5812797]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878454, 10017702527, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 4.296, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0470775, 37.5812797, 127.0471187, 37.5813023], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0471187, 37.5812797], [127.0470775, 37.5813023]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702527, 10017702528, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 4.415, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0470524, 37.5813023, 127.0470775, 37.5813179], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0470775, 37.5813023], [127.0470524, 37.5813179]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702528, 10017702529, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.811, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.047033, 37.5813179, 127.0470524, 37.5813338], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0470524, 37.5813179], [127.047033, 37.5813338]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702529, 12392878449, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.459, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0470154, 37.5813338, 127.047033, 37.5813528], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.047033, 37.5813338], [127.0470154, 37.5813528]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878449, 10017702531, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 2.621, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0469931, 37.5813528, 127.0470154, 37.5813822], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0470154, 37.5813528], [127.0469931, 37.5813822]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702531, 12392878452, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.814, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0469595, 37.5813822, 127.0469931, 37.5814383], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0469931, 37.5813822], [127.0469595, 37.5814383]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878452, 10017702530, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 6.905, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1093755307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0469595, 37.5814383, 127.0469918, 37.5815735], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0469595, 37.5814383], [127.0469918, 37.5815735]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702530, 12394189777, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 15.301, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 536188524, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0467274, 37.5813647, 127.0469918, 37.5815735], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0469918, 37.5815735], [127.0467274, 37.5813647]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12394189777, 7068765380, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 32.892, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 183521150, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0466536, 37.5813069, 127.0467274, 37.5813647], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0467274, 37.5813647], [127.0466536, 37.5813069]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(7068765380, 12394189781, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 9.143, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 183521150, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0465243, 37.5812038, 127.0466536, 37.5813069], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0466536, 37.5813069], [127.0465243, 37.5812038]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12394189781, 12394189782, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 16.163, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 183521150, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0463216, 37.5810328, 127.0465243, 37.5812038], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0465243, 37.5812038], [127.0463216, 37.5810328]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12394189782, 7068765379, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 26.088, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 183521150, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0460277, 37.5808563, 127.0463216, 37.5810328], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0463216, 37.5810328], [127.0460277, 37.5808563]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(7068765379, 1939144062, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 32.495, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878038, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0458, 37.580688, 127.0460277, 37.5808563], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0460277, 37.5808563], [127.0458, 37.580688]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939144062, 10017702397, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 27.438, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878038, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0456908, 37.5806111, 127.0458, 37.580688], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0458, 37.580688], [127.0456908, 37.5806111]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(10017702397, 1939144058, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 12.873, &quot;maxspeed&quot;: &quot;50&quot;, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 1339878038, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0453774, 37.5803983, 127.0456908, 37.5806111], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0456908, 37.5806111], [127.0453774, 37.5803983]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939144058, 12392878418, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 36.368, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 516643230, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.045172, 37.5802828, 127.0453774, 37.5803983], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0453774, 37.5803983], [127.045172, 37.5802828]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12392878418, 1939144054, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 22.194, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 516643230, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0450075, 37.5801195, 127.045172, 37.5802828], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.045172, 37.5802828], [127.0450075, 37.5801195]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939144054, 287710035, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 23.235, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uc655\uc0b0\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 516643230, &quot;ref&quot;: &quot;6&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0447002, 37.5800354, 127.0450075, 37.5801195], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0450075, 37.5801195], [127.0447002, 37.5800354]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(287710035, 12234274185, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 28.649, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0442973, 37.5799091, 127.0447002, 37.5800354], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0447002, 37.5800354], [127.0442973, 37.5799091]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274185, 12234274186, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 38.181, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0435877, 37.5796882, 127.0442973, 37.5799091], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0442973, 37.5799091], [127.0435877, 37.5796882]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274186, 12234274187, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 67.183, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0425748, 37.579359, 127.0435877, 37.5796882], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0435877, 37.5796882], [127.0425748, 37.579359]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274187, 12234274205, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 96.474, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0424753, 37.5793266, 127.0425748, 37.579359], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0425748, 37.579359], [127.0424753, 37.5793266]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274205, 12234274204, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 9.48, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0423958, 37.5793008, 127.0424753, 37.5793266], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0424753, 37.5793266], [127.0423958, 37.5793008]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274204, 12234274188, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 7.57, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0423227, 37.5792791, 127.0423958, 37.5793008], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0423958, 37.5793008], [127.0423227, 37.5792791]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274188, 12234274203, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 6.879, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0422305, 37.5792518, 127.0423227, 37.5792791], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0423227, 37.5792791], [127.0422305, 37.5792518]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274203, 12234274202, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 8.674, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0419004, 37.5791539, 127.0422305, 37.5792518], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0422305, 37.5792518], [127.0419004, 37.5791539]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274202, 12234274189, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 31.06, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0415739, 37.5790525, 127.0419004, 37.5791539], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0419004, 37.5791539], [127.0415739, 37.5790525]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274189, 12234274284, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 30.903, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0407166, 37.5787864, 127.0415739, 37.5790525], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0415739, 37.5790525], [127.0407166, 37.5787864]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274284, 12234274190, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 81.136, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0404056, 37.5786934, 127.0407166, 37.5787864], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0407166, 37.5787864], [127.0404056, 37.5786934]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274190, 12234274280, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 29.293, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0403399, 37.5786738, 127.0404056, 37.5786934], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0404056, 37.5786934], [127.0403399, 37.5786738]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274280, 12234274191, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 6.186, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0398714, 37.5785308, 127.0403399, 37.5786738], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0403399, 37.5786738], [127.0398714, 37.5785308]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274191, 12234274282, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 44.242, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0393283, 37.578365, 127.0398714, 37.5785308], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0398714, 37.5785308], [127.0393283, 37.578365]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274282, 12234274192, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 51.288, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0389089, 37.5782507, 127.0393283, 37.578365], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0393283, 37.578365], [127.0389089, 37.5782507]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274192, 12234274193, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 39.084, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.038521, 37.5782192, 127.0389089, 37.5782507], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0389089, 37.5782507], [127.038521, 37.5782192]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274193, 12234274194, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 34.362, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0383579, 37.5782087, 127.038521, 37.5782192], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.038521, 37.5782192], [127.0383579, 37.5782087]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274194, 12234274195, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 14.42, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0381456, 37.5782079, 127.0383579, 37.5782087], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0383579, 37.5782087], [127.0381456, 37.5782079]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274195, 12234274196, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 18.709, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0376914, 37.5782079, 127.0381456, 37.5782114], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0381456, 37.5782079], [127.0376914, 37.5782114]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274196, 12234274197, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 40.028, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0364017, 37.5782058, 127.0376914, 37.5782114], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0376914, 37.5782114], [127.0364017, 37.5782058]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274197, 12234274277, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 113.656, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0362501, 37.5782051, 127.0364017, 37.5782058], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0364017, 37.5782058], [127.0362501, 37.5782051]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274277, 12234274198, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.36, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0360755, 37.5782009, 127.0362501, 37.5782051], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0362501, 37.5782051], [127.0360755, 37.5782009]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274198, 12234274276, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 15.394, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0351582, 37.5781848, 127.0360755, 37.5782009], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0360755, 37.5782009], [127.0351582, 37.5781848]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274276, 12234274199, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 80.856, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0349275, 37.5781835, 127.0351582, 37.5781848], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0351582, 37.5781848], [127.0349275, 37.5781835]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274199, 12234274200, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 20.331, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0348269, 37.5781834, 127.0349275, 37.5781835], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0349275, 37.5781835], [127.0348269, 37.5781834]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274200, 12234274201, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 8.865, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056305, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0342226, 37.5781734, 127.0348269, 37.5781834], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0348269, 37.5781834], [127.0342226, 37.5781734]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274201, 12234274206, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: &quot;yes&quot;, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 53.265, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056306, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0334647, 37.5781701, 127.0342226, 37.5781734], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0342226, 37.5781734], [127.0334647, 37.5781701]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274206, 12234274207, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 66.791, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0325892, 37.5781463, 127.0334647, 37.5781701], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0334647, 37.5781701], [127.0325892, 37.5781463]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274207, 12234274208, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 77.198, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0321915, 37.5781322, 127.0325892, 37.5781463], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0325892, 37.5781463], [127.0321915, 37.5781322]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274208, 12234274209, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 35.082, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0316049, 37.5780354, 127.0321915, 37.5781322], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0321915, 37.5781322], [127.0316049, 37.5780354]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274209, 12234274210, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 52.803, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0306091, 37.5778083, 127.0316049, 37.5780354], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0316049, 37.5780354], [127.0306091, 37.5778083]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274210, 12234274211, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 91.316, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304643, 37.5777752, 127.0306091, 37.5778083], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0306091, 37.5778083], [127.0304643, 37.5777752]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274211, 12234274212, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;busway&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.281, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: true, &quot;osmid&quot;: 1322056307, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304643, 37.5777451, 127.030468, 37.5777752], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0304643, 37.5777752], [127.030468, 37.5777451]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(12234274212, 7068765180, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: &quot;4&quot;, &quot;length&quot;: 3.363, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 218838665, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.030468, 37.5777261, 127.0304703, 37.5777451], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.030468, 37.5777451], [127.0304703, 37.5777261]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(7068765180, 7068765184, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: &quot;4&quot;, &quot;length&quot;: 2.122, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 218838665, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304703, 37.5776761, 127.0304765, 37.5777261], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0304703, 37.5777261], [127.0304765, 37.5776761]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(7068765184, 1939143994, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: &quot;4&quot;, &quot;length&quot;: 5.587, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 218838665, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304765, 37.5775519, 127.0304828, 37.5776761], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0304765, 37.5776761], [127.0304828, 37.5775519]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939143994, 5191899934, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.822, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 218838672, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304828, 37.5774009, 127.0304905, 37.5775519], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0304828, 37.5775519], [127.0304905, 37.5774009]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(5191899934, 3372138530, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 16.804, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 218838672, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0304905, 37.5771272, 127.0305067, 37.5774009], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0304905, 37.5774009], [127.0305067, 37.5771272]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3372138530, 4173056521, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;secondary&quot;, &quot;lanes&quot;: &quot;4&quot;, &quot;length&quot;: 30.468, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 1053996035, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0298449, 37.5769344, 127.0305067, 37.5771272], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0305067, 37.5771272], [127.0298449, 37.5769344]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173056521, 3252764027, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 62.137, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0294917, 37.576833, 127.0298449, 37.5769344], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0298449, 37.5769344], [127.0294917, 37.576833]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764027, 3252764025, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 33.105, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0292832, 37.5767739, 127.0294917, 37.576833], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0294917, 37.576833], [127.0292832, 37.5767739]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764025, 11265836337, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 19.514, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0292444, 37.5767629, 127.0292832, 37.5767739], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0292832, 37.5767739], [127.0292444, 37.5767629]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(11265836337, 3829132997, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.631, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0291478, 37.5767355, 127.0292444, 37.5767629], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0292444, 37.5767629], [127.0291478, 37.5767355]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3829132997, 11265836335, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 9.042, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0289425, 37.5766774, 127.0291478, 37.5767355], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0291478, 37.5767355], [127.0289425, 37.5766774]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(11265836335, 3829132994, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 19.211, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0284854, 37.5765479, 127.0289425, 37.5766774], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0289425, 37.5766774], [127.0284854, 37.5765479]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3829132994, 3252764023, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 42.779, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0280469, 37.5764067, 127.0284854, 37.5765479], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0284854, 37.5765479], [127.0280469, 37.5764067]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764023, 3252764024, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 41.711, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ubb34\ud559\ub85c35\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318882324, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0280469, 37.5758419, 127.0281122, 37.5764067], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0280469, 37.5764067], [127.0281122, 37.5758419]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764024, 3252764018, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 63.066, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c9\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 538878523, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0281122, 37.5753997, 127.0281764, 37.5758419], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0281122, 37.5758419], [127.0281764, 37.5753997]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764018, 3252764017, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 49.495, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c9\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 538878523, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0281764, 37.5749724, 127.028235, 37.5753997], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0281764, 37.5753997], [127.028235, 37.5749724]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764017, 3252764014, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 47.793, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c9\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 538878523, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0281812, 37.5749586, 127.028235, 37.5749724], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.028235, 37.5749724], [127.0281812, 37.5749586]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764014, 6320689241, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 4.983, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: false, &quot;osmid&quot;: 674919851, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0278963, 37.5748855, 127.0281812, 37.5749586], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0281812, 37.5749586], [127.0278963, 37.5748855]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(6320689241, 3252764013, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: &quot;yes&quot;, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 26.391, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: false, &quot;osmid&quot;: 674919850, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0278296, 37.5748678, 127.0278963, 37.5748855], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0278963, 37.5748855], [127.0278296, 37.5748678]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252764013, 6320689240, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: &quot;yes&quot;, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 6.199, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: false, &quot;osmid&quot;: 674919850, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0277897, 37.5748572, 127.0278296, 37.5748678], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0278296, 37.5748678], [127.0277897, 37.5748572]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(6320689240, 3252777645, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 3.709, &quot;maxspeed&quot;: null, &quot;name&quot;: null, &quot;oneway&quot;: false, &quot;osmid&quot;: 538878520, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0277897, 37.5740877, 127.0278945, 37.5748572], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0277897, 37.5748572], [127.0278945, 37.5740877]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252777645, 5226829460, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 86.062, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c7\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318883570, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0278844, 37.5739781, 127.0278945, 37.5740877], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0278945, 37.5740877], [127.0278844, 37.5739781]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(5226829460, 3829262382, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 12.219, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c7\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318883570, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0277017, 37.5739773, 127.0278844, 37.5739781], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0278844, 37.5739781], [127.0277017, 37.5739773]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3829262382, 3252770532, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;3&quot;, &quot;length&quot;: 16.102, &quot;maxspeed&quot;: &quot;60&quot;, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 538878501, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.02735, 37.5739733, 127.0277017, 37.5739773], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0277017, 37.5739773], [127.02735, 37.5739733]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252770532, 3829262375, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;3&quot;, &quot;length&quot;: 30.998, &quot;maxspeed&quot;: &quot;60&quot;, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 538878501, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0268021, 37.573967, 127.02735, 37.5739733], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.02735, 37.5739733], [127.0268021, 37.573967]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3829262375, 1939143856, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;3&quot;, &quot;length&quot;: 48.291, &quot;maxspeed&quot;: &quot;60&quot;, &quot;name&quot;: &quot;\ucc9c\ud638\ub300\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 538878501, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0267792, 37.5738335, 127.0268021, 37.573967], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0268021, 37.573967], [127.0267792, 37.5738335]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939143856, 1939143815, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 14.981, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ud558\uc815\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 204782690, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0267792, 37.573356, 127.0268173, 37.5738335], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0267792, 37.5738335], [127.0268173, 37.573356]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(1939143815, 2147579196, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 53.202, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ud558\uc815\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 204782690, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0268173, 37.5728866, 127.0268366, 37.573356], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0268173, 37.573356], [127.0268366, 37.5728866]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(2147579196, 4173040368, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 52.223, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ud558\uc815\ub85c&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 204782690, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0261741, 37.5728866, 127.0268366, 37.5729059], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0268366, 37.5728866], [127.0261741, 37.5729059]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173040368, 3252777642, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 58.426, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ub09c\uacc4\ub85c30\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318883569, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0261741, 37.5721944, 127.0261988, 37.5729059], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0261741, 37.5729059], [127.0261988, 37.5721944]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252777642, 3252777631, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 79.145, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ub09c\uacc4\ub85c30\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 318883565, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0253614, 37.5721944, 127.0261988, 37.5724363], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0261988, 37.5721944], [127.0253614, 37.5724363]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(3252777631, 4173042495, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;living_street&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 78.55, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\ub09c\uacc4\ub85c28\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 204782689, &quot;ref&quot;: null, &quot;reversed&quot;: true, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0252314, 37.5721602, 127.0253614, 37.5724363], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0253614, 37.5724363], [127.0252314, 37.5721602]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173042495, 4173042500, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 32.769, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c1\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 416556413, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0251756, 37.5720499, 127.0252314, 37.5721602], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0252314, 37.5721602], [127.0251756, 37.5720499]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173042500, 4173042499, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 13.214, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c1\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 416556413, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0250777, 37.571833, 127.0251756, 37.5720499], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0251756, 37.5720499], [127.0250777, 37.571833]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173042499, 4311864846, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 25.615, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c1\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 416556413, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0249257, 37.5715434, 127.0250777, 37.571833], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0250777, 37.571833], [127.0249257, 37.5715434]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4311864846, 4173042496, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;residential&quot;, &quot;lanes&quot;: null, &quot;length&quot;: 34.877, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c1\uae38&quot;, &quot;oneway&quot;: false, &quot;osmid&quot;: 416556413, &quot;ref&quot;: null, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0237217, 37.5715434, 127.0249257, 37.5718874], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0249257, 37.5715434], [127.0237217, 37.5718874]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(4173042496, 8482825417, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 112.795, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 908608295, &quot;ref&quot;: &quot;50&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0235255, 37.5718874, 127.0237217, 37.5719397], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0237217, 37.5718874], [127.0235255, 37.5719397]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(8482825417, 8482825418, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 18.243, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 908608295, &quot;ref&quot;: &quot;50&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}, {&quot;bbox&quot;: [127.0234527, 37.5719397, 127.0235255, 37.571959], &quot;geometry&quot;: {&quot;coordinates&quot;: [[127.0235255, 37.5719397], [127.0234527, 37.571959]], &quot;type&quot;: &quot;LineString&quot;}, &quot;id&quot;: &quot;(8482825418, 8482821116, 0)&quot;, &quot;properties&quot;: {&quot;__folium_color&quot;: &quot;red&quot;, &quot;bridge&quot;: null, &quot;highway&quot;: &quot;primary&quot;, &quot;lanes&quot;: &quot;2&quot;, &quot;length&quot;: 6.765, &quot;maxspeed&quot;: null, &quot;name&quot;: &quot;\uccad\uacc4\ucc9c\ub85c&quot;, &quot;oneway&quot;: true, &quot;osmid&quot;: 908608295, &quot;ref&quot;: &quot;50&quot;, &quot;reversed&quot;: false, &quot;tunnel&quot;: null}, &quot;type&quot;: &quot;Feature&quot;}], &quot;type&quot;: &quot;FeatureCollection&quot;});
+
+        
+    
+    geo_json_af16a6b0b9026f638fc46267dc3e6baf.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create(&#x27;div&#x27;);
+    
+    let handleObject = feature=&gt;typeof(feature)==&#x27;object&#x27; ? JSON.stringify(feature) : feature;
+    let fields = [&quot;osmid&quot;, &quot;oneway&quot;, &quot;highway&quot;, &quot;reversed&quot;, &quot;length&quot;, &quot;lanes&quot;, &quot;name&quot;, &quot;maxspeed&quot;, &quot;bridge&quot;, &quot;tunnel&quot;, &quot;ref&quot;];
+    let aliases = [&quot;osmid&quot;, &quot;oneway&quot;, &quot;highway&quot;, &quot;reversed&quot;, &quot;length&quot;, &quot;lanes&quot;, &quot;name&quot;, &quot;maxspeed&quot;, &quot;bridge&quot;, &quot;tunnel&quot;, &quot;ref&quot;];
+    let table = &#x27;&lt;table&gt;&#x27; +
+        String(
+        fields.map(
+        (v,i)=&gt;
+        `&lt;tr&gt;
+            &lt;th&gt;${aliases[i]}&lt;/th&gt;
+            
+            &lt;td&gt;${handleObject(layer.feature.properties[v])}&lt;/td&gt;
+        &lt;/tr&gt;`).join(&#x27;&#x27;))
+    +&#x27;&lt;/table&gt;&#x27;;
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{&quot;className&quot;: &quot;foliumtooltip&quot;, &quot;sticky&quot;: true});
+                     
+    
+            var marker_5328238897def1b460be76c2ff48785c = L.marker(
+                [37.5806483, 127.0462162],
+                {}
+            ).addTo(map_2f02c25bc07c8d969ae0f9aee394c9f3);
+        
+    
+            var icon_3216a30c76dafbac2279125b7c46c65c = L.AwesomeMarkers.icon(
+                {&quot;extraClasses&quot;: &quot;fa-rotate-0&quot;, &quot;icon&quot;: &quot;info-sign&quot;, &quot;iconColor&quot;: &quot;white&quot;, &quot;markerColor&quot;: &quot;green&quot;, &quot;prefix&quot;: &quot;glyphicon&quot;}
+            );
+            marker_5328238897def1b460be76c2ff48785c.setIcon(icon_3216a30c76dafbac2279125b7c46c65c);
+        
+    
+        var popup_8926a9f4bbc8564d0fd3b77795f0488e = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_2df2d176040514016f7d6f1a28b431be = $(`&lt;div id=&quot;html_2df2d176040514016f7d6f1a28b431be&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;출발지&lt;/div&gt;`)[0];
+                popup_8926a9f4bbc8564d0fd3b77795f0488e.setContent(html_2df2d176040514016f7d6f1a28b431be);
+            
+        
+
+        marker_5328238897def1b460be76c2ff48785c.bindPopup(popup_8926a9f4bbc8564d0fd3b77795f0488e)
+        ;
+
+        
+    
+    
+            var marker_f4003355b497402fa51ec1005e292678 = L.marker(
+                [37.571959, 127.0234527],
+                {}
+            ).addTo(map_2f02c25bc07c8d969ae0f9aee394c9f3);
+        
+    
+            var icon_4d55fe100262018ef659faad5062a28d = L.AwesomeMarkers.icon(
+                {&quot;extraClasses&quot;: &quot;fa-rotate-0&quot;, &quot;icon&quot;: &quot;info-sign&quot;, &quot;iconColor&quot;: &quot;white&quot;, &quot;markerColor&quot;: &quot;red&quot;, &quot;prefix&quot;: &quot;glyphicon&quot;}
+            );
+            marker_f4003355b497402fa51ec1005e292678.setIcon(icon_4d55fe100262018ef659faad5062a28d);
+        
+    
+        var popup_964c4b6fa347b1574522d4a2c9aad807 = L.popup({&quot;maxWidth&quot;: &quot;100%&quot;});
+
+        
+            
+                var html_d031d80cd39781c03999fd7e54f93221 = $(`&lt;div id=&quot;html_d031d80cd39781c03999fd7e54f93221&quot; style=&quot;width: 100.0%; height: 100.0%;&quot;&gt;목적지&lt;/div&gt;`)[0];
+                popup_964c4b6fa347b1574522d4a2c9aad807.setContent(html_d031d80cd39781c03999fd7e54f93221);
+            
+        
+
+        marker_f4003355b497402fa51ec1005e292678.bindPopup(popup_964c4b6fa347b1574522d4a2c9aad807)
+        ;
+
+        
+    
+&lt;/script&gt;
+&lt;/html&gt;" style="position:absolute;width:100%;height:100%;left:0;top:0;border:none !important;" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe></div></div></div></div>
 </div>
 </section>
 <section id="id4">
@@ -1037,6 +1857,112 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;osmid&#39;, &#39;lanes&#39;, &#39;name&#39;, &#39;highway&#39;, &#39;oneway&#39;, &#39;reversed&#39;, &#39;length&#39;,
+       &#39;speed_kph&#39;, &#39;travel_time&#39;, &#39;ref&#39;, &#39;maxspeed&#39;, &#39;bridge&#39;, &#39;width&#39;,
+       &#39;tunnel&#39;, &#39;junction&#39;, &#39;geometry&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>length</th>
+      <th>speed_kph</th>
+      <th>travel_time</th>
+    </tr>
+    <tr>
+      <th>highway</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>busway</th>
+      <td>45.4</td>
+      <td>46.3</td>
+      <td>3.5</td>
+    </tr>
+    <tr>
+      <th>living_street</th>
+      <td>28.0</td>
+      <td>46.3</td>
+      <td>2.2</td>
+    </tr>
+    <tr>
+      <th>primary</th>
+      <td>29.6</td>
+      <td>54.6</td>
+      <td>1.9</td>
+    </tr>
+    <tr>
+      <th>primary_link</th>
+      <td>12.6</td>
+      <td>45.5</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>residential</th>
+      <td>25.4</td>
+      <td>30.7</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>secondary</th>
+      <td>27.7</td>
+      <td>42.4</td>
+      <td>2.4</td>
+    </tr>
+    <tr>
+      <th>secondary_link</th>
+      <td>14.6</td>
+      <td>33.9</td>
+      <td>1.6</td>
+    </tr>
+    <tr>
+      <th>tertiary</th>
+      <td>27.8</td>
+      <td>40.9</td>
+      <td>2.5</td>
+    </tr>
+    <tr>
+      <th>tertiary_link</th>
+      <td>13.7</td>
+      <td>46.3</td>
+      <td>1.1</td>
+    </tr>
+    <tr>
+      <th>trunk</th>
+      <td>53.9</td>
+      <td>76.1</td>
+      <td>2.5</td>
+    </tr>
+    <tr>
+      <th>trunk_link</th>
+      <td>21.9</td>
+      <td>46.3</td>
+      <td>1.7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1059,6 +1985,29 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;osmid&#39;, &#39;lanes&#39;, &#39;name&#39;, &#39;highway&#39;, &#39;oneway&#39;, &#39;reversed&#39;, &#39;length&#39;,
+       &#39;speed_kph&#39;, &#39;travel_time&#39;, &#39;ref&#39;, &#39;maxspeed&#39;, &#39;bridge&#39;, &#39;width&#39;,
+       &#39;tunnel&#39;, &#39;junction&#39;, &#39;geometry&#39;],
+      dtype=&#39;object&#39;)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>u            v            key
+287288045    1943131877   0      50.0
+             3964387739   0      54.6
+287709595    10017702427  0      35.0
+             10017702428  0      35.0
+287709710    287710021    0      35.0
+                                 ... 
+13151968686  3829107194   0      35.0
+             3829107195   0      35.0
+13152002326  3372045530   0      35.0
+             3365345933   0      35.0
+13152003154  1936511629   0      54.6
+Name: speed_kph, Length: 22977, dtype: float64
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1066,7 +2015,7 @@ document.write(`
 
 <span class="c1"># 그래프 내에서 출발지 목적지 가져오기</span>
 <span class="n">orig</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">dest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">111</span><span class="p">]</span>
+<span class="n">dest</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">90</span><span class="p">]</span>
 <span class="n">route1</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;length&quot;</span><span class="p">)</span>
 <span class="n">route2</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;travel_time&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1081,6 +2030,9 @@ document.write(`
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/8f0fa87dc741aa06e636a50b5dcf019e5d73f0c80fe108c1c277dcf88aa39b3f.png" src="../_images/8f0fa87dc741aa06e636a50b5dcf019e5d73f0c80fe108c1c277dcf88aa39b3f.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1105,29 +2057,31 @@ document.write(`
 </pre></div>
 </div>
 </div>
-</div>
-</section>
-<section id="id5">
-<h3>[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
-<p>OSMnx 패키지를 사용하면 도로 네트워크에서 특정 시작점으로부터 일정 거리 또는 시간 내에 도달할 수 있는 영역을 식별하는 데도 활용할 수 있다. 이러한 방법은 주로, 어떤 시설이 주변에 얼마나 영향을 미치는지 분석하거나 접근성을 분석하는데 주로 쓰인다. 아래 코드는 강남구의 도로 네트워크에서 특정 노드를 중심으로 1000m 반경 내의 서브그래프를 추출하고 시각화하는 예제이다.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 네트워크 불러오기</span>
-<span class="n">G</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;Gangnam, Seoul, South Korea&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">)</span>
-
-<span class="c1"># 특정 노드를 선택 (예: 첫 번째 노드를 선택)</span>
-<span class="n">center_node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># 특정 노드를 중심으로 반경 500m 내의 서브그래프를 ego_graph로 추출</span>
-<span class="n">radius</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># 반경 (미터 단위)</span>
-<span class="n">ego_G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ego_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">center_node</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Route 1 is 4065 meters and takes 359 seconds.
+Route 2 is 5104 meters and takes 320 seconds.
 </pre></div>
 </div>
 </div>
 </div>
+</section>
+<section id="id5">
+<h3>[3] 특정 노드에서 지정한 거리/시간에 도달할 수 있는 노드 분석( 버퍼 )<a class="headerlink" href="#id5" title="Permalink to this heading">#</a></h3>
+<p>OSMnx 패키지를 사용하면 도로 네트워크에서 특정 시작점으로부터 일정 거리 또는 시간 내에 도달할 수 있는 영역을 식별하는 데도 활용할 수 있다. 이러한 방법은 주로, 어떤 시설이 주변에 얼마나 영향을 미치는지 분석하거나 접근성을 분석하는데 주로 쓰인다.<br />
+아래 코드는 도로 네트워크에서 특정 노드를 중심으로 1000m 반경 내의 서브그래프를 추출하고 시각화하는 예제이다.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 서브그래프를 시각화</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 네트워크 불러오기</span>
+<span class="c1"># G = ox.graph_from_place(&#39;Gangnam, Seoul, South Korea&#39;, network_type=&#39;drive&#39;)</span>
+
+<span class="c1"># 특정 노드를 선택 (예: 첫 번째 노드를 선택)</span>
+<span class="n">center_node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)[</span><span class="mi">20</span><span class="p">]</span>
+
+<span class="c1"># 특정 노드를 중심으로 반경 1000m 내의 서브그래프를 ego_graph로 추출</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># 반경 (미터 단위)</span>
+<span class="n">ego_G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ego_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">center_node</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;length&#39;</span><span class="p">)</span>
+
+<span class="c1"># 서브그래프를 시각화</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">ego_G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># 중심 노드의 좌표 얻기</span>
@@ -1140,6 +2094,39 @@ document.write(`
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d6d41cb6037edbc861d69d3e2c6f9df062b55a0a53b6d2249e702f08764852ba.png" src="../_images/d6d41cb6037edbc861d69d3e2c6f9df062b55a0a53b6d2249e702f08764852ba.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 도로 네트워크 불러오기</span>
+<span class="c1"># G = ox.graph_from_place(&#39;Gangnam, Seoul, South Korea&#39;, network_type=&#39;drive&#39;)</span>
+
+<span class="c1"># 특정 노드를 선택 (예: 첫 번째 노드를 선택)</span>
+<span class="n">center_node</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">)[</span><span class="mi">20</span><span class="p">]</span>
+
+<span class="c1"># 특정 노드를 중심으로 반경 1000m 내의 서브그래프를 ego_graph로 추출</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">60</span>  <span class="c1"># 시간 (초)</span>
+<span class="n">ego_G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">ego_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">center_node</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="s1">&#39;travel_time&#39;</span><span class="p">)</span>
+
+<span class="c1"># 서브그래프를 시각화</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">ego_G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">edge_linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 중심 노드의 좌표 얻기</span>
+<span class="n">center_node_coords</span> <span class="o">=</span> <span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">center_node</span><span class="p">][</span><span class="s1">&#39;y&#39;</span><span class="p">],</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">center_node</span><span class="p">][</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
+
+<span class="c1"># 중심 노드를 붉은색으로 표시</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">center_node_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">center_node_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/c31a8b983a8ff9f2a6788c2259ecafca04d47d2ac2d7b7df11040eb8e9afdb53.png" src="../_images/c31a8b983a8ff9f2a6788c2259ecafca04d47d2ac2d7b7df11040eb8e9afdb53.png" />
 </div>
 </div>
 </section>
@@ -1155,7 +2142,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the raw graph</span>
-<span class="n">G_raw</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 경기도, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="n">simplify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">G_raw</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">graph_from_place</span><span class="p">(</span><span class="s1">&#39;성남시, 대한민국&#39;</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="n">simplify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1170,12 +2157,29 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\jiho\miniconda3\Lib\site-packages\osmnx\simplification.py:513: UserWarning: Geometry is in a geographic CRS. Results from &#39;buffer&#39; are likely incorrect. Use &#39;GeoSeries.to_crs()&#39; to re-project geometries to a projected CRS before this operation.
+
+  merged = convert.graph_to_gdfs(G, edges=False)[&quot;geometry&quot;].buffer(tolerance).unary_union
+c:\Users\jiho\miniconda3\Lib\site-packages\osmnx\simplification.py:560: UserWarning: Geometry is in a geographic CRS. Results from &#39;centroid&#39; are likely incorrect. Use &#39;GeoSeries.to_crs()&#39; to re-project geometries to a projected CRS before this operation.
+
+  centroids = node_clusters.centroid
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">G_raw</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">G_simple</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">G_consolidated</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MultiDiGraph with 27316 nodes and 50546 edges
+MultiDiGraph with 4966 nodes and 13307 edges
+MultiDiGraph with 714 nodes and 2440 edges
 </pre></div>
 </div>
 </div>
@@ -1192,6 +2196,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/7c29ba614249a731d332c0491a2663805d0a5399de3fdcdc460021e63169d72d.png" src="../_images/7c29ba614249a731d332c0491a2663805d0a5399de3fdcdc460021e63169d72d.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1204,6 +2211,9 @@ document.write(`
                         <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/35762f5c51c2fea81f584e26d8921e4e51c48bb3b8829095920adaf695f00147.png" src="../_images/35762f5c51c2fea81f584e26d8921e4e51c48bb3b8829095920adaf695f00147.png" />
 </div>
 </div>
 </section>
@@ -1223,6 +2233,13 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\jiho\miniconda3\Lib\site-packages\osmnx\graph.py:191: FutureWarning: The expected order of coordinates in `bbox` will change in the v2.0.0 release to `(left, bottom, right, top)`.
+  G = graph_from_bbox(
+</pre></div>
+</div>
+<img alt="../_images/357188c1a89a1f685ed45d52f18ec97247d5f311d8db7ab4f829439037b72cc1.png" src="../_images/357188c1a89a1f685ed45d52f18ec97247d5f311d8db7ab4f829439037b72cc1.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1232,6 +2249,9 @@ document.write(`
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">plot_graph</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">nc</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/69083d3386dfe70b811b6867e4f2b2844c93eb40f256e891167097f4d73e7c7e.png" src="../_images/69083d3386dfe70b811b6867e4f2b2844c93eb40f256e891167097f4d73e7c7e.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1249,189 +2269,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
-</div>
-</section>
-</section>
-</section>
-<section id="id6">
-<h1>2.2 스마트카드 데이터 분석<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h1>
-<ul class="simple">
-<li><p>대중교통 이용자들의 승하차 정보를 담고 있는 스마트카드 데이터는 도시 교통 패턴을 이해하는 데 핵심적인 자료입니다.</p></li>
-<li><p>본 섹션에서는 서울시 지하철 승하차 데이터를 활용하여 기본적인 분석 및 시각화를 수행합니다.</p></li>
-<li><p>스마트카드 데이터는 정확한 시간과 위치 정보를 제공하므로 교통 패턴 분석에 매우 유용합니다.</p></li>
-</ul>
-<section id="id7">
-<h2>2.2.1 활용 데이터<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p>서울시에서 공개하는 지하철 역별 승하차 인원수 데이터를 활용합니다.</p></li>
-<li><p>데이터는 역별, 시간대별 승차 및 하차 인원수를 포함합니다.</p></li>
-<li><p>본 실습에서는 하루 단위의 데이터를 사용하여 시간대별 승하차 패턴을 분석합니다.</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 스마트카드 데이터 생성 (실제 데이터가 없어 샘플 데이터 생성)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
-
-<span class="c1"># 서울시 주요 지하철역 리스트 (샘플)</span>
-<span class="n">subway_stations</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;강남역&#39;</span><span class="p">,</span> <span class="s1">&#39;홍대입구역&#39;</span><span class="p">,</span> <span class="s1">&#39;명동역&#39;</span><span class="p">,</span> <span class="s1">&#39;서울역&#39;</span><span class="p">,</span> <span class="s1">&#39;잠실역&#39;</span><span class="p">,</span> 
-    <span class="s1">&#39;신촌역&#39;</span><span class="p">,</span> <span class="s1">&#39;이태원역&#39;</span><span class="p">,</span> <span class="s1">&#39;여의도역&#39;</span><span class="p">,</span> <span class="s1">&#39;종로3가역&#39;</span><span class="p">,</span> <span class="s1">&#39;동대문역사문화공원역&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;건대입구역&#39;</span><span class="p">,</span> <span class="s1">&#39;성신여대입구역&#39;</span><span class="p">,</span> <span class="s1">&#39;왕십리역&#39;</span><span class="p">,</span> <span class="s1">&#39;구로디지털단지역&#39;</span><span class="p">,</span> <span class="s1">&#39;신림역&#39;</span>
-<span class="p">]</span>
-
-<span class="c1"># 시간대 설정 (05시부터 24시까지)</span>
-<span class="n">hours</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
-
-<span class="c1"># 샘플 스마트카드 데이터 생성</span>
-<span class="n">smartcard_data</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">station</span> <span class="ow">in</span> <span class="n">subway_stations</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">hour</span> <span class="ow">in</span> <span class="n">hours</span><span class="p">:</span>
-        <span class="c1"># 출퇴근 시간대에 더 많은 승하차 인원 설정</span>
-        <span class="n">base_boarding</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-        <span class="n">base_alighting</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-        
-        <span class="c1"># 출근시간 (7-9시) 승차 증가</span>
-        <span class="k">if</span> <span class="n">hour</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
-            <span class="n">boarding</span> <span class="o">=</span> <span class="n">base_boarding</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
-        <span class="c1"># 퇴근시간 (18-20시) 하차 증가  </span>
-        <span class="k">elif</span> <span class="n">hour</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">]:</span>
-            <span class="n">alighting</span> <span class="o">=</span> <span class="n">base_alighting</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
-            <span class="n">boarding</span> <span class="o">=</span> <span class="n">base_boarding</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">boarding</span> <span class="o">=</span> <span class="n">base_boarding</span>
-            <span class="n">alighting</span> <span class="o">=</span> <span class="n">base_alighting</span>
-        
-        <span class="n">smartcard_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="n">station</span><span class="p">,</span>
-            <span class="s1">&#39;hour&#39;</span><span class="p">:</span> <span class="n">hour</span><span class="p">,</span>
-            <span class="s1">&#39;boarding&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">boarding</span><span class="p">),</span>
-            <span class="s1">&#39;alighting&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">alighting</span> <span class="k">if</span> <span class="s1">&#39;alighting&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span> <span class="k">else</span> <span class="n">base_alighting</span><span class="p">)</span>
-        <span class="p">})</span>
-
-<span class="n">smartcard_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">smartcard_data</span><span class="p">)</span>
-<span class="n">smartcard_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="cell_output docutils container">
+<img alt="../_images/aca52aa13b0cc3ba22694ed49f434ce98835042d49ffec4030dce43046b585c2.png" src="../_images/aca52aa13b0cc3ba22694ed49f434ce98835042d49ffec4030dce43046b585c2.png" />
 </div>
 </div>
 </section>
-<section id="id8">
-<h2>2.2.2 시간대별 승하차 패턴 분석<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 시간대별 전체 승하차 인원 집계</span>
-<span class="n">hourly_total</span> <span class="o">=</span> <span class="n">smartcard_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;hour&#39;</span><span class="p">)[[</span><span class="s1">&#39;boarding&#39;</span><span class="p">,</span> <span class="s1">&#39;alighting&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-<span class="c1"># 시간대별 승하차 패턴 시각화</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hourly_total</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span> <span class="n">hourly_total</span><span class="p">[</span><span class="s1">&#39;boarding&#39;</span><span class="p">],</span> 
-        <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;승차 인원&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hourly_total</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">],</span> <span class="n">hourly_total</span><span class="p">[</span><span class="s1">&#39;alighting&#39;</span><span class="p">],</span> 
-        <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;하차 인원&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;시간대&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;승하차 인원수&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;시간대별 지하철 승하차 패턴&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 역별 하루 총 승하차 인원 순위</span>
-<span class="n">station_total</span> <span class="o">=</span> <span class="n">smartcard_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;station_name&#39;</span><span class="p">)[[</span><span class="s1">&#39;boarding&#39;</span><span class="p">,</span> <span class="s1">&#39;alighting&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">station_total</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">station_total</span><span class="p">[</span><span class="s1">&#39;boarding&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">station_total</span><span class="p">[</span><span class="s1">&#39;alighting&#39;</span><span class="p">]</span>
-<span class="n">station_ranking</span> <span class="o">=</span> <span class="n">station_total</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;역별 하루 총 승하차 인원 순위 (Top 10):&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">station_ranking</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id9">
-<h2>2.2.3 역별 승하차 패턴 히트맵 시각화<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 역별-시간대별 승차 인원 피벗 테이블 생성</span>
-<span class="n">boarding_pivot</span> <span class="o">=</span> <span class="n">smartcard_df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;station_name&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;boarding&#39;</span><span class="p">)</span>
-
-<span class="c1"># 히트맵 생성</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">boarding_pivot</span><span class="p">,</span> 
-            <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;YlOrRd&#39;</span><span class="p">,</span> 
-            <span class="n">annot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-            <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.0f&#39;</span><span class="p">,</span>
-            <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;승차 인원수&#39;</span><span class="p">},</span>
-            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;역별-시간대별 지하철 승차 인원 히트맵&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;시간대&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;지하철역&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="id10">
-<h2>2.2.4 출퇴근 시간대 집중도 분석<a class="headerlink" href="#id10" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 출퇴근 시간대 정의</span>
-<span class="n">rush_hour_morning</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>  <span class="c1"># 오전 출근시간</span>
-<span class="n">rush_hour_evening</span> <span class="o">=</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>  <span class="c1"># 오후 퇴근시간</span>
-
-<span class="c1"># 각 역별 출퇴근 시간 집중도 계산</span>
-<span class="n">station_analysis</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">station</span> <span class="ow">in</span> <span class="n">subway_stations</span><span class="p">:</span>
-    <span class="n">station_data</span> <span class="o">=</span> <span class="n">smartcard_df</span><span class="p">[</span><span class="n">smartcard_df</span><span class="p">[</span><span class="s1">&#39;station_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">station</span><span class="p">]</span>
-    
-    <span class="c1"># 전체 승차 인원</span>
-    <span class="n">total_boarding</span> <span class="o">=</span> <span class="n">station_data</span><span class="p">[</span><span class="s1">&#39;boarding&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    
-    <span class="c1"># 출근시간 승차 인원</span>
-    <span class="n">morning_boarding</span> <span class="o">=</span> <span class="n">station_data</span><span class="p">[</span><span class="n">station_data</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">rush_hour_morning</span><span class="p">)][</span><span class="s1">&#39;boarding&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    
-    <span class="c1"># 퇴근시간 하차 인원  </span>
-    <span class="n">evening_alighting</span> <span class="o">=</span> <span class="n">station_data</span><span class="p">[</span><span class="n">station_data</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">rush_hour_evening</span><span class="p">)][</span><span class="s1">&#39;alighting&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    
-    <span class="c1"># 집중도 계산</span>
-    <span class="n">morning_concentration</span> <span class="o">=</span> <span class="n">morning_boarding</span> <span class="o">/</span> <span class="n">total_boarding</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">total_boarding</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-    
-    <span class="n">station_analysis</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-        <span class="s1">&#39;station_name&#39;</span><span class="p">:</span> <span class="n">station</span><span class="p">,</span>
-        <span class="s1">&#39;total_boarding&#39;</span><span class="p">:</span> <span class="n">total_boarding</span><span class="p">,</span>
-        <span class="s1">&#39;morning_boarding&#39;</span><span class="p">:</span> <span class="n">morning_boarding</span><span class="p">,</span>
-        <span class="s1">&#39;evening_alighting&#39;</span><span class="p">:</span> <span class="n">evening_alighting</span><span class="p">,</span>
-        <span class="s1">&#39;morning_concentration&#39;</span><span class="p">:</span> <span class="n">morning_concentration</span>
-    <span class="p">})</span>
-
-<span class="n">concentration_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">station_analysis</span><span class="p">)</span>
-<span class="n">concentration_df</span> <span class="o">=</span> <span class="n">concentration_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;morning_concentration&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;출근시간 승차 집중도가 높은 역 순위:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">concentration_df</span><span class="p">[[</span><span class="s1">&#39;station_name&#39;</span><span class="p">,</span> <span class="s1">&#39;morning_concentration&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
 </section>
 </section>
 <section id="gtfs-general-transit-feed-specification">
@@ -1444,8 +2286,8 @@ document.write(`
 <section id="exercise">
 <h1>2.6 Exercise<a class="headerlink" href="#exercise" title="Permalink to this heading">#</a></h1>
 <p>GPT와 같은 AI 툴을 적극 활용해 문제를 풀어봅시다. 다만, 출력된 코드를 보고 이해하고, 코드가 실행되지 않는다면 어디서 실행되지 않는지 파악하고 올바르게 수정할 수 있어야 합니다.</p>
-<section id="id11">
-<h2>[1] 도로네트워크 분석<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h2>
+<section id="id6">
+<h2>[1] 도로네트워크 분석<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h2>
 <blockquote>
 <div><p>2.4 Section에서 실습한 OSM 데이터를 분석하는 코드를 참고하면서 아래 문제를 풀어보자.</p>
 </div></blockquote>
@@ -1522,16 +2364,9 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 스마트카드 데이터 분석</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.2.1 활용 데이터</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.2.2 시간대별 승하차 패턴 분석</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.2.3 역별 승하차 패턴 히트맵 시각화</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.2.4 출퇴근 시간대 집중도 분석</a></li>
-</ul>
-</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#gtfs-general-transit-feed-specification">2.5 GTFS (General Transit Feed Specification)</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise">2.6 Exercise</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">[1] 도로네트워크 분석</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">[1] 도로네트워크 분석</a></li>
 </ul>
 </li>
 </ul>
