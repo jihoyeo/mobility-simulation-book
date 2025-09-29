@@ -25,6 +25,8 @@ nbclient.exceptions.CellExecutionError: An error occurred while executing the fo
 import pandas as pd
 import os
 from datetime import datetime, timedelta
+import geopandas as gpd
+import numpy as np
 ------------------
 
 
