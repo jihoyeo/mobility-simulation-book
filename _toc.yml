@@ -25,6 +25,7 @@ parts:
           - file: ko/chapter2-1
           - file: ko/chapter2-2
           - file: ko/chapter2-3
+          - file: ko/chapter2-4
       - file: ko/chapter3
       - file: ko/chapter4
 
