@@ -647,35 +647,35 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_OD_data</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generate random origin-destination pairs from given points</span>
-<span class="sd">    </span>
+<span class="sd">    주어진 좌표 딕셔너리(point)에서 임의의 출발지-도착지(OD) 쌍을 지정한 개수(num)만큼 생성하는 함수</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        point (dict): Dictionary containing points data</span>
-<span class="sd">        num (int): Number of OD pairs to generate</span>
-<span class="sd">    </span>
+<span class="sd">        point (dict): 지점 이름이 key, 좌표([경도, 위도])가 value인 딕셔너리</span>
+<span class="sd">        num (int): 생성할 OD(출발-도착) 쌍의 개수</span>
+
 <span class="sd">    Returns:</span>
-<span class="sd">        list: List of OD pairs as [Origin Point, Destination Point]</span>
+<span class="sd">        list: [[O, D], [O, D], ...] 형태의 Origin-이동지점 쌍 리스트</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">OD_data</span> <span class="o">=</span> <span class="p">[]</span>
-    
-    <span class="c1"># Convert dictionary keys to list for random sampling</span>
-    <span class="n">point_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    
-    <span class="c1"># Generate num random pairs of coordinates</span>
+    <span class="n">OD_data</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># OD(출발-도착) 쌍을 저장할 리스트</span>
+
+    <span class="n">point_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># 딕셔너리 key(지점명)만 리스트로 변환</span>
+
+    <span class="c1"># 지정한 개수(num)만큼 OD 쌍을 반복 생성</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-        <span class="c1"># Generate random pair using the point keys</span>
+        <span class="c1"># 출발지와 도착지가 겹치지 않도록 2개를 무작위로 샘플링</span>
         <span class="n">neighborhood1</span><span class="p">,</span> <span class="n">neighborhood2</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">point_keys</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># Get start and end points from the dictionary</span>
+        <span class="c1"># 샘플링된 지점명으로부터 각각의 좌표값 획득</span>
         <span class="n">start_point</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="n">neighborhood1</span><span class="p">]</span>
         <span class="n">end_point</span> <span class="o">=</span> <span class="n">point</span><span class="p">[</span><span class="n">neighborhood2</span><span class="p">]</span>
-        
-        <span class="c1"># Convert to shapely Point objects</span>
-        <span class="n">O</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">start_point</span><span class="p">)</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">end_point</span><span class="p">)</span>
-        <span class="c1"># Add origin-destination pair to list</span>
+
+        <span class="c1"># 좌표값을 shapely의 Point 객체로 변환(추후 공간연산 등 활용 가능)</span>
+        <span class="n">O</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">start_point</span><span class="p">)</span>  <span class="c1"># 출발지</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">end_point</span><span class="p">)</span>    <span class="c1"># 도착지</span>
+
+        <span class="c1"># [출발지, 도착지] 쌍을 OD_data 리스트에 추가</span>
         <span class="n">OD_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">O</span><span class="p">,</span> <span class="n">D</span><span class="p">])</span>
-    
-    <span class="k">return</span> <span class="n">OD_data</span>
+
+    <span class="k">return</span> <span class="n">OD_data</span>  <span class="c1"># OD 쌍 리스트 반환</span>
 </pre></div>
 </div>
 </div>
@@ -790,58 +790,58 @@ document.write(`
   [127.12746, 37.45149],
   [127.12747, 37.4513],
   [127.12748, 37.45091]],
- [0.0,
-  0.026170995935080692,
-  0.11058009073270679,
-  0.22099053779915362,
-  0.303558953892394,
-  0.37215061397786064,
-  0.4070081408012264,
-  0.7951185103074863,
-  0.8331466262246755,
-  0.853788851308073,
-  0.8744310807836705,
-  0.9033179866448533,
-  0.9264252850029249,
-  0.9812827739767823,
-  1.027667294173945,
-  1.0636556383537927,
-  1.0985133820511093,
-  1.1364942555913282,
-  1.1879360033483637,
-  1.2352270555658966,
-  1.2506886262295853,
-  1.265436208908485,
-  1.2801837915873846,
-  1.294627294338715,
-  1.3183463793142836,
-  1.5994116045643216,
-  1.623130620890384,
-  1.6351266933495903,
-  1.6471227644430837,
-  1.6769810800404206,
-  1.7318384196655012,
-  1.7970786762534567,
-  1.859005351484225,
-  1.9057384514906461,
-  2.070743362870307,
-  2.1054606362397252,
-  2.1257488481584694,
-  2.1344632995166415,
-  2.146459445599264,
-  2.4649485056710048,
-  2.483887810075936,
-  2.4986354006413363,
-  2.6126984826278057,
-  2.7149173689957786,
-  2.875309446114456,
-  2.8979131492631627,
-  2.9153421111946605,
-  2.9297544087261365,
-  2.976342964329085,
-  3.008852671978818,
-  3.097170298066176,
-  3.2783333333333338])
+ [1.0,
+  1.0261709959350807,
+  1.1105800907327068,
+  1.2209905377991537,
+  1.303558953892394,
+  1.3721506139778605,
+  1.4070081408012265,
+  1.7951185103074863,
+  1.8331466262246754,
+  1.8537888513080731,
+  1.8744310807836704,
+  1.9033179866448533,
+  1.9264252850029249,
+  1.9812827739767824,
+  2.027667294173945,
+  2.0636556383537927,
+  2.0985133820511095,
+  2.1364942555913284,
+  2.187936003348364,
+  2.235227055565897,
+  2.2506886262295853,
+  2.265436208908485,
+  2.2801837915873846,
+  2.294627294338715,
+  2.3183463793142836,
+  2.5994116045643216,
+  2.623130620890384,
+  2.6351266933495903,
+  2.6471227644430835,
+  2.6769810800404206,
+  2.7318384196655012,
+  2.7970786762534567,
+  2.859005351484225,
+  2.905738451490646,
+  3.070743362870307,
+  3.1054606362397252,
+  3.1257488481584694,
+  3.1344632995166415,
+  3.146459445599264,
+  3.4649485056710048,
+  3.483887810075936,
+  3.4986354006413363,
+  3.6126984826278057,
+  3.7149173689957786,
+  3.875309446114456,
+  3.8979131492631627,
+  3.9153421111946605,
+  3.9297544087261365,
+  3.976342964329085,
+  4.0088526719788184,
+  4.097170298066176,
+  4.278333333333334])
 </pre></div>
 </div>
 </div>
