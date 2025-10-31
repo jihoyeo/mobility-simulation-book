@@ -158,12 +158,21 @@ const Trip = (props) => {
     new TripsLayer({  
       id: 'trips',
       data: trip,
+<<<<<<< HEAD
       getPath: d => d.route,              // trip 객체의 route(위/경도 배열) 반환
       getTimestamps: d => d.timestamp,    // trip 객체의 timestamp(시간 배열) 반환
       getColor: [255, 255, 0],            // 경로의 색상 (노랑)
       opacity: 1,                         // 불투명도 1(완전 불투명)
       widthMinPixels: 7,                  // 선의 최소 두께(7px)
       rounded: true,                      // 선 끝·꺾임부를 둥글게
+=======
+      getPath: d => d.route,
+      getTimestamps: d => d.timestamp,
+      getColor: [255, 100, 100],
+      opacity: 1,
+      widthMinPixels: 7,
+      rounded: true,
+>>>>>>> 91f7ea7 (update chapter 4)
       capRounded : true,
       jointRounded : true,
       trailLength : 0.5,                  // 잔상의 길이
