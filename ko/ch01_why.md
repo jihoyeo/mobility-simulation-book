@@ -178,4 +178,5 @@ print(f"빈 차 평균          {r['empty_vehicle_num'].mean():.1f}대")
 ## 더 읽을거리
 
 - Lopez et al. (2018), *Microscopic Traffic Simulation using SUMO* — SUMO가 무엇을 계산하는지 원저자들이 직접 설명합니다. TraCI 부분만 읽어도 충분합니다.
-- Horni, Nagel & Axhausen (2016), *The Multi-Agent Transport Simulation MATSim* — 도시 전체를 에이전트 기반으로 돌리는 다른 접근입니다.
+- Horni, Nagel & Axhausen (2016), *The Multi-Agent Transport Simulation MATSim*
+  도시 전체를 에이전트 기반으로 돌리는 다른 접근입니다.

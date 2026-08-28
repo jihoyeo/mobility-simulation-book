@@ -13,10 +13,7 @@ execute:
   timeout: 300
   allow_errors: false
   exclude_patterns:
-    # 개편 전 원고. 저장된 출력을 그대로 보여주고 실행하지 않는다.
-    - "ko/chapter*.ipynb"
-    # 무거운 의존성이나 대용량 자산이 필요한 장.
-    - "ko/appendix_*.md"
+    # 서버가 있어야 하는 장. 서술 위주라 실행할 것이 없다.
     - "ko/projects/*"
 
 # 책에 포함하지 않는 경로

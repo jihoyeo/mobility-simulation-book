@@ -1,27 +1,41 @@
 # 목차
 # https://jupyterbook.org/customize/toc.html
-#
-# ko/ch*.md 가 새 원고입니다. ko/chapter*.ipynb 는 개편 전 원고이고,
-# 대응하는 새 장이 완성되는 대로 하나씩 내립니다(계획 Phase 3).
 
 format: jb-book
 root: intro
 
 parts:
-  - caption: 본문
+  - caption: 준비
     numbered: false
     chapters:
       - file: ko/ch00_setup
       - file: ko/ch01_why
 
-  - caption: 개편 전 원고 (교체 예정)
+  - caption: 도로망과 최단경로
     numbered: false
     chapters:
-      - file: ko/chapter2
-        sections:
-          - file: ko/chapter2-1
-          - file: ko/chapter2-2
-          - file: ko/chapter2-3
-          - file: ko/chapter2-4
-      - file: ko/chapter3
-      - file: ko/chapter4
+      - file: ko/ch02_road_network
+      - file: ko/ch03_dijkstra
+      - file: ko/ch04_speeds_engine
+
+  - caption: 대중교통
+    numbered: false
+    chapters:
+      - file: ko/ch05_gtfs
+      - file: ko/ch06_raptor
+      - file: ko/ch07_raptor_fare
+
+  - caption: 시뮬레이션
+    numbered: false
+    chapters:
+      - file: ko/ch08_demand
+      - file: ko/ch09_eta
+      - file: ko/ch10_dispatch
+      - file: ko/ch11_simloop
+      - file: ko/ch12_metrics
+
+  - caption: 부록
+    numbered: false
+    chapters:
+      - file: ko/appendix_a_smartcard
+      - file: ko/appendix_b_ops

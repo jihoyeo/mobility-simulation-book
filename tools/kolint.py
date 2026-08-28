@@ -211,17 +211,35 @@ def check_text(path: str, raw: str, line_offset_map=None) -> list[Finding]:
                  f"빈 마무리 문장 — 삭제 검토: \"{last[:40]}\" — S3-L4")
 
     # KO005/KO006 — 볼드 예산
+    # 목록 항목 맨 앞의 짧은 볼드는 용어 표지이지 강조가 아니므로 예산에서 뺍니다.
     body_len = max(len(re.sub(r"\s", "", text)), 1)
     bolds = list(RE_BOLD.finditer(text))
+    emphasis = [m for m in bolds if not _is_list_label(text, m)]
     budget = body_len * 3 / 1000
-    if len(bolds) > budget:
-        emit(bolds[0].start(), WARN, "KO005",
-             f"볼드 {len(bolds)}개 / 본문 {body_len}자 "
-             f"(1000자당 {len(bolds) * 1000 / body_len:.1f}개, 예산 3.0) — S4")
-    for m in bolds:
+    if len(emphasis) > budget:
+        emit(emphasis[0].start(), WARN, "KO005",
+             f"강조 볼드 {len(emphasis)}개 / 본문 {body_len}자 "
+             f"(1000자당 {len(emphasis) * 1000 / body_len:.1f}개, 예산 3.0) — S4")
+    long_bolds = []
+    for m in emphasis:
         inner = m.group(1).strip()
-        if len(inner) > 12:
-            emit(m.start(), ERROR, "KO006", f"볼드 내부 {len(inner)}자 (12자 초과): \"{inner[:30]}\" — S4")
+        if len(inner) > 40:
+            emit(m.start(), ERROR, "KO006",
+                 f"볼드 내부 {len(inner)}자 (40자 초과): \"{inner[:30]}…\" — S4")
+        elif len(inner) > 12:
+            long_bolds.append(m)
+
+    # KO021 — 문장 볼드는 절(`##`)당 하나까지. 용어 정의(12자 이하)는 예산에 들지 않습니다.
+    if long_bolds:
+        section_of: dict[int, list] = {}
+        heads = [m.start() for m in re.finditer(r"^##\s", text, re.M)] or [0]
+        for m in long_bolds:
+            idx = max(i for i, pos in enumerate(heads) if pos <= m.start()) if heads[0] <= m.start() else 0
+            section_of.setdefault(idx, []).append(m)
+        for _, group in section_of.items():
+            for extra in group[1:]:
+                emit(extra.start(), WARN, "KO021",
+                     f"한 절에 문장 볼드가 여럿입니다({len(group)}개). 절당 하나로 줄입니다 — S4")
 
     # KO007 — 밑줄
     for m in RE_UNDERLINE.finditer(text):
@@ -290,7 +308,10 @@ def check_text(path: str, raw: str, line_offset_map=None) -> list[Finding]:
              "대칭 장단점 불릿 — '언제 쓰는가 / 무엇이 막히는가' 로 다시 쓴다 — S3-L6")
 
     # KO018 — 출처 없는 수치
+    # 코드 셀 바로 뒤 문단은 이 책이 방금 계산한 값이므로 인용 대상이 아닙니다(S8).
     for para_start, para in _paragraphs(text):
+        if _follows_code_cell(raw, para_start):
+            continue
         if RE_NUMBER_CLAIM.search(para) and "{cite" not in para and "](http" not in raw:
             m = RE_NUMBER_CLAIM.search(para)
             emit(para_start + m.start(), INFO, "KO018",
@@ -308,6 +329,23 @@ def check_text(path: str, raw: str, line_offset_map=None) -> list[Finding]:
             emit(m.start(), WARN, "KO020", f"본문에서 참조하지 않는 그림 ':name: {name}' — S7")
 
     return out
+
+
+_LIST_LABEL = re.compile(r"^\s*(?:[-*+]|\d+\.)\s+$")
+
+
+def _is_list_label(text: str, match: re.Match) -> bool:
+    """목록 항목 맨 앞에 붙은 20자 이하 볼드인가. 용어 표지로 보고 예산에서 뺍니다."""
+    if len(match.group(1).strip()) > 20:
+        return False
+    line_start = text.rfind(chr(10), 0, match.start()) + 1
+    return bool(_LIST_LABEL.match(text[line_start:match.start()]))
+
+
+def _follows_code_cell(raw: str, para_start: int, window: int = 400) -> bool:
+    """이 문단 바로 앞이 코드 셀의 끝인가."""
+    before = raw[max(0, para_start - window):para_start].rstrip()
+    return before.endswith("```")
 
 
 def _paragraphs(text: str):
