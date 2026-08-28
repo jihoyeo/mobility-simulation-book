@@ -24,6 +24,9 @@ seaborn==0.13.2
 folium==0.19.3
 pydeck==0.9.1
 
+scikit-learn==1.5.2
+lightgbm==4.5.0
+
 requests==2.32.3
 tqdm==4.67.1
 python-dotenv==1.0.1

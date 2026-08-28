@@ -46,9 +46,7 @@ jobs:
           restore-keys: jcache-
 
       - name: 책 빌드
-        # 구 챕터(chapter1~4)가 새 원고로 교체되면 --warningiserror 를 다시 붙인다.
-        # 현재 경고 28건은 전부 교체 예정 파일에서 나온다.
-        run: jupyter-book build . --keep-going
+        run: jupyter-book build . --warningiserror --keep-going
 
       - uses: actions/upload-pages-artifact@v3
         with:

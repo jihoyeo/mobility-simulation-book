@@ -19,15 +19,22 @@ description = "전국 GTFS 통합본(2024). 프로젝트 A 에서 대상지를 �
 license = "출처 표기 필요 — 국토교통부 TAGO 기반"
 
 # ---------------------------------------------------------------------------
-# 아래는 아직 배포처에 올리지 않았습니다. 학기 시작 전에 HuggingFace 데이터셋
-# CAMUS-LAB/smart-mobility-course-data 로 올린 뒤 url 과 sha256 을 채웁니다.
-# 그때까지는 기존 저장소 히스토리 또는 LMS 에서 받습니다.
+# 저장소에서 내린 자산
 #
-# [asset."chp2_od_data.parquet"]           # 수도권 생활이동 O-D, 56MB — 9장
-# [asset."chp2_HangJeongDong.geojson"]     # 행정동 경계, 35MB — 9장
-# [asset."chp2_tx_data_generated.parquet"] # 가상 택시 통행, 23MB — 9장
-# [asset."chp3_exercise_train.parquet"]    # ETA 학습셋, 83MB — 10장
-# [asset."chp3_exercise_test.parquet"]     # ETA 검증셋, 4.6MB — 10장
+# 아래 파일들은 개편 과정에서 참조가 사라져 HEAD 에서 제거했습니다.
+# git 히스토리의 커밋 7310509 에 그대로 남아 있으므로 언제든 되살릴 수 있습니다.
 #
-# 스마트카드 원자료(TCD_20240923_modify.parquet, 50MB)는 라이선스와 개인정보
-# 검토가 끝나기 전까지 공개 배포하지 않습니다. 부록 A 는 LMS 배포로 진행합니다.
+#     git show 7310509:data/chp2_od_data.parquet > chp2_od_data.parquet
+#
+# 학기 시작 전에 HuggingFace 데이터셋으로 올린 뒤 아래 항목의 주석을 풀고
+# url 과 sha256 을 채웁니다.
+#
+# chp2_od_data.parquet            57MB  수도권 생활이동 O-D 전체
+#                                       → 하남 부분만 data/hanam/od_2024.parquet 으로 남겼습니다
+# chp2_HangJeongDong_*.geojson    35MB  행정동 경계
+# chp2_tx_data_generated.parquet  23MB  가상 택시 통행 기록
+# chp3_exercise_train.parquet     83MB  제주 링크 속도 학습셋
+# chp3_exercise_test.parquet     4.6MB  같은 자료의 검증셋
+#
+# 스마트카드 원자료(data/smartcard/, 54MB)는 부록 A 가 쓰므로 저장소에 남겨 두었습니다.
+# 라이선스와 개인정보 검토가 끝나기 전까지 외부 공개 배포는 하지 않습니다.

@@ -1,10 +1,7 @@
-# 9장(ETA 예측 모델)과 2장 OSM 원본 실습에만 필요한 무거운 의존성.
-# CI 는 이 파일을 설치하지 않는다. 해당 장은 픽스처로 빌드된다.
+# 2장의 OSM 원본 내려받기 실습에만 필요합니다. CI 는 설치하지 않습니다.
 #
-#   pip install -r requirements.txt -r requirements-heavy.txt
+#     pip install -r requirements.txt -r requirements-heavy.txt
 
 -r requirements.txt
 
-scikit-learn==1.5.2
-lightgbm==4.5.0
 osmnx==2.0.1
