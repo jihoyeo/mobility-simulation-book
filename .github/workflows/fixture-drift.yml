@@ -1,0 +1,69 @@
+name: fixture-drift
+
+# 커밋된 녹화본이 실제 DTUMOS 엔진과 어긋나지 않는지 주 1회 확인합니다.
+# 어긋나면 CI 는 초록불인 채로 낡은 숫자를 가르치게 되므로, 이슈를 띄웁니다.
+#
+# 저장소 시크릿 두 개가 필요합니다.
+#   DTUMOS_URL      공용 서버 주소 (예: https://dtumos.example.ac.kr)
+#   DTUMOS_API_KEY  인증 프록시를 쓰는 경우
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"   # 매주 일요일 03:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    if: vars.DTUMOS_ENABLED == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt pytest
+
+      - name: 서버 연결 확인
+        env:
+          SMARTMOB_DTUMOS_URL: ${{ secrets.DTUMOS_URL }}
+        run: python -c "from smartmob import Dtumos; print(Dtumos(mode='live').health())"
+
+      - name: 녹화본 재실행 후 비교
+        env:
+          SMARTMOB_DTUMOS_URL: ${{ secrets.DTUMOS_URL }}
+          DTUMOS_API_KEY: ${{ secrets.DTUMOS_API_KEY }}
+        run: python tools/check_fixture_drift.py
+
+      - name: 어긋나면 이슈 생성
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "fixture drift: 녹화본과 실제 엔진 결과가 다릅니다";
+            const body = [
+              "주간 검사에서 `data/fixtures/` 의 녹화본이 실제 DTUMOS 결과와 달라졌습니다.",
+              "",
+              `실행 로그: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              "",
+              "조치:",
+              "1. 로그에서 어떤 지표가 얼마나 달라졌는지 확인합니다.",
+              "2. 엔진 변경이 의도된 것이면 녹화본을 다시 만들고, 본문에 인용된 숫자도 같이 고칩니다.",
+              "3. `tests/test_fixtures.py` 의 고정값도 갱신합니다.",
+            ].join("\n");
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: "open", labels: "fixture-drift",
+            });
+            if (existing.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ["fixture-drift"],
+              });
+            }

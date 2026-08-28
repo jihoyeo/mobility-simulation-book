@@ -1,0 +1,33 @@
+# 대용량 실습 자산 목록.
+#
+# 저장소에는 15MB 이하의 작은 데이터만 넣습니다. 나머지는 여기 적힌 주소에서
+# 처음 쓸 때 내려받아 data/_downloads/ 에 둡니다.
+#
+#     from smartmob.data import ensure
+#     path = ensure("GTFS_Korea_2024.zip")
+#
+# sha256 은 선택이지만, 적어 두면 내려받은 파일이 손상됐는지 확인합니다.
+# 값을 구하는 법:
+#     python -c "from smartmob.data.paths import sha256; from pathlib import Path; print(sha256(Path('파일')))"
+#
+# gdown 은 쓰지 않습니다. 레이트리밋이 있고 체크섬을 확인할 수 없어서,
+# 수업 중 30명이 동시에 받으면 실패합니다.
+
+[asset."GTFS_Korea_2024.zip"]
+url = "https://huggingface.co/datasets/CAMUS-LAB/GTFS-2024/resolve/main/GTFS_Korea_2024.zip"
+description = "전국 GTFS 통합본(2024). 프로젝트 A 에서 대상지를 잘라 낼 때 씁니다."
+license = "출처 표기 필요 — 국토교통부 TAGO 기반"
+
+# ---------------------------------------------------------------------------
+# 아래는 아직 배포처에 올리지 않았습니다. 학기 시작 전에 HuggingFace 데이터셋
+# CAMUS-LAB/smart-mobility-course-data 로 올린 뒤 url 과 sha256 을 채웁니다.
+# 그때까지는 기존 저장소 히스토리 또는 LMS 에서 받습니다.
+#
+# [asset."chp2_od_data.parquet"]           # 수도권 생활이동 O-D, 56MB — 9장
+# [asset."chp2_HangJeongDong.geojson"]     # 행정동 경계, 35MB — 9장
+# [asset."chp2_tx_data_generated.parquet"] # 가상 택시 통행, 23MB — 9장
+# [asset."chp3_exercise_train.parquet"]    # ETA 학습셋, 83MB — 10장
+# [asset."chp3_exercise_test.parquet"]     # ETA 검증셋, 4.6MB — 10장
+#
+# 스마트카드 원자료(TCD_20240923_modify.parquet, 50MB)는 라이선스와 개인정보
+# 검토가 끝나기 전까지 공개 배포하지 않습니다. 부록 A 는 LMS 배포로 진행합니다.

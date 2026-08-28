@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smartmob"
+version = "0.1.0"
+description = "가천대 스마트시티학과 '스마트 교통물류' 교재의 실습 헬퍼 패키지"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "여지호", email = "jihoyeo@gachon.ac.kr" }]
+
+# 버전 고정은 requirements.txt 가 담당한다. 여기서는 하한만 둔다.
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.26",
+    "pyarrow>=14",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.8", "pydeck>=0.9", "folium>=0.17", "geopandas>=1.0"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["smartmob*"]
+
+[tool.jupytext]
+formats = "md:myst"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: DTUMOS 서버가 실제로 떠 있어야 실행되는 테스트",
+]
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,19 @@
+{
+  "d7105afc6c42": {
+    "dir": "hanam_taxi_V80_1000p_seed42",
+    "kind": "simulation",
+    "note": "DTUMOS 2.0.0 실행본. viz_ratio=0.1 이라 trip.json 은 전체 통행의 10%.",
+    "payload": {
+      "city": "hanam",
+      "dispatch_mode": "optimization",
+      "fleet_size": 80,
+      "matrix_mode": "street_distance",
+      "mode": "taxi",
+      "num_passengers": 1000,
+      "random_seed": 42,
+      "time_end": 1440,
+      "time_start": 1080,
+      "vehicle_capacity": 1
+    }
+  }
+}
