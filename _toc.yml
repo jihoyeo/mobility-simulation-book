@@ -34,6 +34,12 @@ parts:
       - file: ko/ch11_simloop
       - file: ko/ch12_metrics
 
+  - caption: 프로젝트
+    numbered: false
+    chapters:
+      - file: ko/projects/project_a
+      - file: ko/projects/project_b
+
   - caption: 부록
     numbered: false
     chapters:

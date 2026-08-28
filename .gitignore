@@ -11,6 +11,17 @@ data/**/*.html
 # 릴리스에서 내려받는 대용량 자산 (data/MANIFEST.toml 참조)
 data/_downloads/
 
+# 프로젝트 실습 산출물 (학생이 직접 만드는 것)
+projects/**/starter/demand.csv
+projects/**/starter/baseline.csv
+projects/**/starter/sweep_results.csv
+projects/**/starter/*.png
+projects/**/starter/shuttle_gtfs/
+projects/**/starter/gtfs/
+projects/**/starter/gtfs_scenario/
+boundary.geojson
+simul_result/
+
 # Python
 __pycache__/
 *.py[cod]

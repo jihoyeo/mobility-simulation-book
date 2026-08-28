@@ -95,6 +95,66 @@ def load_gtfs(city: str = "hanam", tables=GTFS_TABLES) -> dict:
     return feed
 
 
+def load_gtfs_feed(source) -> dict:
+    """폴더나 zip 에서 GTFS 를 읽습니다.
+
+    ``load_gtfs`` 는 저장소에 준비된 도시(`data/<city>/gtfs/`)를 읽고,
+    이쪽은 아무 경로나 받습니다. 프로젝트에서 전국 GTFS zip 을 읽을 때 씁니다.
+
+    ``stop_times.txt`` 는 전국 파일에서 수백 MB 가 되므로 필요한 컬럼만 읽습니다.
+    """
+    import zipfile
+
+    import pandas as pd
+
+    path = Path(source)
+    if not path.exists():
+        raise FileNotFoundError(f"{path} 가 없습니다")
+
+    usecols = {
+        "stop_times": ["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"],
+    }
+
+    def _read(handle, name):
+        return pd.read_csv(
+            handle, dtype=str, encoding="utf-8-sig",
+            usecols=lambda c, n=name: (c in usecols[n]) if n in usecols else True,
+        )
+
+    feed: dict = {}
+    if path.is_dir():
+        for name in GTFS_TABLES:
+            for suffix in (".parquet", ".txt"):
+                candidate = path / f"{name}{suffix}"
+                if candidate.exists():
+                    feed[name] = (
+                        pd.read_parquet(candidate) if suffix == ".parquet"
+                        else _read(candidate, name)
+                    )
+                    break
+    else:
+        with zipfile.ZipFile(path) as zf:
+            members = {Path(n).name: n for n in zf.namelist() if n.endswith(".txt")}
+            for name in GTFS_TABLES:
+                member = members.get(f"{name}.txt")
+                if member is None:
+                    continue
+                with zf.open(member) as handle:
+                    feed[name] = _read(handle, name)
+
+    if not feed:
+        raise GtfsFormatError(f"{path} 에서 GTFS 표를 찾지 못했습니다")
+    return feed
+
+
+def save_gtfs(feed: dict, output_dir) -> None:
+    """GTFS 를 폴더에 씁니다. 표준 형식이라 다른 도구도 읽을 수 있습니다."""
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    for name, table in feed.items():
+        table.to_csv(out / f"{name}.txt", index=False, encoding="utf-8")
+
+
 def validate_feed(feed: dict) -> None:
     """필수 표와 컬럼이 있는지 검사합니다."""
     problems: list[str] = []
