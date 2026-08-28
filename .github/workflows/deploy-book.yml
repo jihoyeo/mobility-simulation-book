@@ -2,30 +2,64 @@ name: deploy-book
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  deploy-book:
+  build:
     runs-on: ubuntu-latest
+    env:
+      # DTUMOS 서버에 붙지 않는다. 모든 엔진 호출은 data/fixtures/ 의 녹화본으로 대체된다.
+      SMARTMOB_OFFLINE: "1"
+      MPLBACKEND: Agg
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
 
-    - name: Install dependencies
-      run: |
-        pip install jupyter-book
+      - name: 한글 폰트 설치
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-nanum
+          fc-cache -fv
 
-    - name: Build the book
-      run: |
-        jupyter-book build .
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./_build/html
+      - name: 실행 캐시 복원
+        uses: actions/cache@v4
+        with:
+          path: _build/.jupyter_cache
+          key: jcache-${{ hashFiles('ko/**/*.md', 'smartmob/**/*.py', 'data/fixtures/**') }}
+          restore-keys: jcache-
+
+      - name: 책 빌드
+        # 구 챕터(chapter1~4)가 새 원고로 교체되면 --warningiserror 를 다시 붙인다.
+        # 현재 경고 28건은 전부 교체 예정 파일에서 나온다.
+        run: jupyter-book build . --keep-going
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

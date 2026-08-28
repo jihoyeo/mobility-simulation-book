@@ -1,39 +1,76 @@
-# Book settings
-# Learn more at https://jupyterbook.org/customize/config.html
+# Jupyter Book 설정
+# https://jupyterbook.org/customize/config.html
 
-title: Digital Twin for Urban Mobility Systems
-author: Jiho Yeo
+title: 스마트 교통물류 — 모빌리티 시뮬레이션
+author: 여지호 (가천대학교 스마트시티학과)
 logo: logo.png
 
-# Force re-execution of notebooks on each build.
-# See https://jupyterbook.org/content/execute.html
+# _toc.yml 에 등록된 파일만 빌드한다.
+only_build_toc_files: true
+
 execute:
-  execute_notebooks: force
+  execute_notebooks: cache
+  timeout: 300
+  allow_errors: false
+  exclude_patterns:
+    # 개편 전 원고. 저장된 출력을 그대로 보여주고 실행하지 않는다.
+    - "ko/chapter*.ipynb"
+    # 무거운 의존성이나 대용량 자산이 필요한 장.
+    - "ko/appendix_*.md"
+    - "ko/projects/*"
 
-# Define the name of the latex output file for PDF builds
-latex:
-  latex_documents:
-    targetname: book.tex
+# 책에 포함하지 않는 경로
+exclude_patterns:
+  - _build
+  - solutions
+  - simulation_base
+  - test
+  - tools
+  - exercises
+  - projects
+  - docs
+  - README.md
+  - .venv
+  - .pytest_cache
+  - _notebooks
+  - "**/.ipynb_checkpoints"
 
-# Add a bibtex file so that we can create citations
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - dollarmath
+    - linkify
+    - substitution
+    - tasklist
+    - attrs_inline
+    - deflist
+
 bibtex_bibfiles:
   - references.bib
 
-# Information about where the book exists on the web
 repository:
-  url: https://github.com/executablebooks/jupyter-book  # Online location of your book
-  path_to_book: docs  # Optional path to your book, relative to the repository root
-  branch: master  # Which branch of the repository should be used when creating links (optional)
+  url: https://github.com/jihoyeo/mobility-simulation-book
+  path_to_book: ""
+  branch: main
 
-# Add GitHub buttons to your book
-# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:
+  baseurl: https://jihoyeo.github.io/mobility-simulation-book/
   use_issues_button: true
   use_repository_button: true
   extra_css:
     - _static/custom.css
-  # extra_navbar: |
-  #   <div id="langSwitch" style="cursor: pointer; padding: 10px; background-color: #f0f0f0; border-radius: 5px; margin: 10px 0;">Switch to 한국어</div>
-  # extra_footer: |
-  #   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  #   <script src="_static/language_switch.js"></script>
+
+launch_buttons:
+  colab_url: https://colab.research.google.com
+  notebook_interface: jupyterlab
+
+# LaTeX/PDF 는 비활성. pdflatex 는 한글에서 실패한다.
+# PDF 가 필요하면 xelatex + Noto Sans KR 로 별도 설정한다.
+
+sphinx:
+  config:
+    nb_execution_raise_on_error: true
+    nb_merge_streams: true
+    nb_execution_cache_path: _build/.jupyter_cache
+    language: ko
+    html_show_copyright: false

@@ -1,26 +1,23 @@
-# Table of contents
-# Learn more at https://jupyterbook.org/customize/toc.html
+# 목차
+# https://jupyterbook.org/customize/toc.html
+#
+# ko/ch*.md 가 새 원고입니다. ko/chapter*.ipynb 는 개편 전 원고이고,
+# 대응하는 새 장이 완성되는 대로 하나씩 내립니다(계획 Phase 3).
 
 format: jb-book
 root: intro
-# parts:
-#   - caption: Chapters
-#     numbered: false
-#     chapters:
-#       - file: ko/chapter1
-#       - file: ko/chapter2-1
-#       - file: ko/chapter2-2
-#       - file: ko/chapter2-3
-#       - file: ko/chapter3
-#       - file: ko/chapter4
 
 parts:
-  - caption: Chapters
-    # 전반에 번호 매기기. 깊이를 2까지(장/절)로 제한하려면 2로 설정
+  - caption: 본문
     numbered: false
     chapters:
-      - file: ko/chapter1
-      - file: ko/chapter2      # 또는 ko/chapter2 (확장자/경로는 실제 파일에 맞추세요)
+      - file: ko/ch00_setup
+      - file: ko/ch01_why
+
+  - caption: 개편 전 원고 (교체 예정)
+    numbered: false
+    chapters:
+      - file: ko/chapter2
         sections:
           - file: ko/chapter2-1
           - file: ko/chapter2-2
@@ -28,8 +25,3 @@ parts:
           - file: ko/chapter2-4
       - file: ko/chapter3
       - file: ko/chapter4
-
-  # - caption: English Version
-  #   chapters:
-  #     - file: en/chapter1
-  #     - file: en/chapter2

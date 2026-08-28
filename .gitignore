@@ -1,10 +1,36 @@
-# Jupyter Book build files
+# Jupyter Book 빌드 산출물
 _build/
-simulation_base/simulation/node_modules/
-simulation_base/simulation_modify/node_modules/
-simulation_base/simulation/package-lock.json
-simulation_base/simulation_modify/package-lock.json
+.jupyter_cache/
+_notebooks/
 
-# Final folder (not tracked)
+# 노트북이 생성하는 시각화 산출물 (커밋하지 않는다)
+outputs/
+data/*.html
+data/**/*.html
+
+# 릴리스에서 내려받는 대용량 자산 (data/MANIFEST.toml 참조)
+data/_downloads/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Node
+simulation_base/**/node_modules/
+simulation_base/**/package-lock.json
+
+# 환경 변수 / 자격 증명
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 강의 운영 폴더 (추적하지 않는다)
 final/
 mid-term/

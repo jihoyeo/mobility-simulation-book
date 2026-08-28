@@ -1,0 +1,14 @@
+{
+  "crs": "EPSG:4326",
+  "is_simplified": true,
+  "original_node_count": 25219,
+  "original_edge_count": 65724,
+  "bounds": {
+    "min_lat": 37.4315261,
+    "max_lat": 37.6125215,
+    "min_lon": 127.1103178,
+    "max_lon": 127.3027968
+  },
+  "node_count": 21931,
+  "edge_count": 59873
+}
