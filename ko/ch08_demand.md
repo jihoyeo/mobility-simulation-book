@@ -272,7 +272,7 @@ sim = dt.run_simulation(city="hanam", fleet_size=80, num_passengers=len(realisti
 sim.summary()
 ```
 
-이것이 파일럿 프로젝트의 뼈대입니다. 대상지의 수요를 만들고, 올리고, 조건을 바꿔 가며 돌립니다.
+파일럿 프로젝트도 같은 순서로 진행합니다. 대상지의 수요를 만들고, 올리고, 조건을 바꿔 가며 돌립니다.
 
 ```{note}
 `upload_demand` 는 올리기 전에 `validate_demand` 를 먼저 돌립니다. 형식이 틀린 수요가 서버에 올라가 이상한 결과를 내는 것보다, 올리기 전에 막히는 편이 낫습니다.
