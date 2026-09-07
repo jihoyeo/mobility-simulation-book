@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12장 실습 — 통행 애니메이션</title>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, sans-serif; }
+  #map { position: absolute; inset: 0; background: #eef1f4; }
+  #panel {
+    position: absolute; left: 16px; top: 16px; z-index: 10;
+    background: rgba(255,255,255,.94); border: 1px solid #d8dde3; border-radius: 10px;
+    padding: 14px 16px; width: 300px; box-shadow: 0 2px 12px rgba(0,0,0,.10);
+  }
+  #panel h1 { margin: 0 0 4px; font-size: 15px; }
+  #meta { margin: 0 0 12px; font-size: 12px; color: #5a6472; line-height: 1.5; }
+  .row { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 13px; }
+  .row label { width: 52px; color: #5a6472; }
+  input[type=range] { flex: 1; min-width: 0; }
+  button {
+    font: inherit; padding: 5px 14px; border: 1px solid #c2c9d2;
+    border-radius: 6px; background: #fff; cursor: pointer;
+  }
+  button:hover { background: #f3f5f8; }
+  #clock { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 52px; }
+  #legend { margin-top: 12px; font-size: 12px; color: #5a6472; line-height: 1.7; }
+  .chip { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; }
+  #todo {
+    margin-top: 12px; padding: 9px 11px; border-radius: 7px; font-size: 12px; line-height: 1.6;
+    background: #fff5e6; border: 1px solid #f0d5a8; color: #7a5312;
+  }
+  #todo code { background: rgba(0,0,0,.06); padding: 1px 4px; border-radius: 3px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="panel">
+  <h1>통행 애니메이션</h1>
+  <p id="meta">데이터를 읽는 중입니다.</p>
+
+  <div class="row">
+    <button id="play">재생</button>
+    <span id="clock">--:--</span>
+  </div>
+  <div class="row">
+    <label for="time">시각</label>
+    <input id="time" type="range" min="0" max="1" step="0.1" value="0">
+  </div>
+  <div class="row">
+    <label for="speed">속도</label>
+    <input id="speed" type="range" min="0.2" max="8" step="0.2" value="2">
+    <span id="speedText">2.0x</span>
+  </div>
+  <div class="row">
+    <label for="trail">꼬리</label>
+    <input id="trail" type="range" min="1" max="60" step="1" value="20">
+    <span id="trailText">20분</span>
+  </div>
+
+  <div id="legend">
+    <div><span class="chip" style="background:#d66028"></span>승객을 태우고 가는 중</div>
+    <div><span class="chip" style="background:#9aa4b0"></span>태우러 가는 중 (공차)</div>
+    <div><span class="chip" style="background:#2f7fbf"></span>기다리는 승객</div>
+  </div>
+
+  <div id="todo" hidden></div>
+</div>
+
+<script type="module" src="/src/viewer.js"></script>
+</body>
+</html>

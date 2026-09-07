@@ -339,6 +339,23 @@ for method in ("optimal", "greedy"):
           f"서비스율 {s['service_rate']:.3f}")
 ```
 
+## 이 장의 실습
+
+노트북 `labs/ch11_simloop.ipynb` 를 열어 함께 돌립니다.
+
+1시간짜리로 먼저 돌려 보고 전체로 늘린 뒤, 녹화된 엔진 결과와 나란히 놓고 비교합니다.
+
+```bash
+jupyter lab labs/ch11_simloop.ipynb
+```
+
+이 장은 채점받는 실습입니다. 노트북이 아니라 옆의 `labs/ch11_simloop.py` 의 빈칸을 채웁니다.
+채운 뒤 자가 채점을 돌립니다. 이 기준이 곧 과제 채점 기준입니다.
+
+```bash
+python labs/check.py ch11
+```
+
 ## 정리
 
 - 한 스텝은 다섯 가지입니다. 호출 접수 → 포기 처리 → 배차 → 차량 상태 갱신 → 기록

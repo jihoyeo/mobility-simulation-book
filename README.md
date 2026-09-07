@@ -11,10 +11,10 @@
 | `smartmob/` | 실습 헬퍼 패키지. 엔진 클라이언트, 데이터 로더, 교육용 구현체, 시각화 |
 | `data/hanam/` | 하남시 실습 데이터(도로망 parquet, GTFS parquet, 수요·차량 CSV) |
 | `data/fixtures/` | DTUMOS 실행 결과 녹화본. 서버 없이 책을 빌드할 때 씁니다 |
-| `exercises/` | 학생 배포용 스켈레톤 |
+| `labs/` | 장별 실습 노트북, 채점받는 빈칸판, 자가 채점기, 12장 웹 뷰어 |
 | `projects/` | 파일럿 프로젝트 안내와 스타터 코드 |
 | `tests/` | 교육용 구현체의 검증 기준 |
-| `tools/` | 문체 린터(`kolint.py`), 녹화본 드리프트 검사 |
+| `tools/` | 문체 린터(`kolint.py`), 녹화본 드리프트 검사, 실습 노트북 실행 검사 |
 | `docs/` | 집필 스타일 가이드. 책에는 포함되지 않습니다 |
 
 ## 빌드
@@ -40,6 +40,23 @@ SMARTMOB_DTUMOS_URL=http://localhost:8000 jupyter-book build .
 pip install pytest
 SMARTMOB_OFFLINE=1 pytest          # 서버 없이 도는 전체 테스트
 pytest -m live                      # DTUMOS 서버가 필요한 대조 테스트
+```
+
+## 실습
+
+교재의 장마다 노트북이 하나씩 있습니다. 자세한 것은 [`labs/README.md`](labs/README.md) 를 보세요.
+
+```bash
+jupyter lab labs/ch00_setup.ipynb   # 학생이 여는 것
+python labs/check.py all            # 채점받는 셋의 자가 채점
+python tools/run_labs.py            # 노트북 13개가 전부 도는지 확인
+node tools/check_viewer.mjs         # 12장 웹 뷰어 빈칸 채점
+```
+
+12장 웹 뷰어는 Node 20.19 이상이 필요합니다. 이 책에서 파이썬이 아닌 유일한 부분입니다.
+
+```bash
+cd labs/ch12_viewer && npm install && npm run dev
 ```
 
 ## 데이터

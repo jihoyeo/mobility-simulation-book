@@ -290,6 +290,16 @@ longest = drive_edges.nlargest(3, "length")[["highway", "name", "length", "free_
 longest
 ```
 
+## 이 장의 실습
+
+노트북 `labs/ch02_road_network.ipynb` 를 열어 함께 돌립니다.
+
+노드 표와 엣지 표를 열어 `modes` 필터 전후를 비교하고, 속도가 없는 엣지를 찾아 봅니다.
+
+```bash
+jupyter lab labs/ch02_road_network.ipynb
+```
+
 ## 정리
 
 - 도로망은 노드 표와 엣지 표 두 개입니다. 노드는 교차로, 엣지는 교차로 사이 구간입니다
