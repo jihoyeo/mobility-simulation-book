@@ -22,9 +22,10 @@ license = "출처 표기 필요 — 국토교통부 TAGO 기반"
 # 저장소에서 내린 자산
 #
 # 아래 파일들은 개편 과정에서 참조가 사라져 HEAD 에서 제거했습니다.
-# git 히스토리의 커밋 7310509 에 그대로 남아 있으므로 언제든 되살릴 수 있습니다.
+# git 히스토리의 커밋 7ee6f54 에 그대로 남아 있으므로 언제든 되살릴 수 있습니다.
+# (히스토리를 다시 쓰면서 해시가 7310509 에서 바뀌었습니다.)
 #
-#     git show 7310509:data/chp2_od_data.parquet > chp2_od_data.parquet
+#     git show 7ee6f54:data/chp2_od_data.parquet > chp2_od_data.parquet
 #
 # 학기 시작 전에 HuggingFace 데이터셋으로 올린 뒤 아래 항목의 주석을 풀고
 # url 과 sha256 을 채웁니다.
