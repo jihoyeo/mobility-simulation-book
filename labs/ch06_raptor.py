@@ -1,8 +1,9 @@
-"""6주차 실습 — RAPTOR (교재 6장)
+"""6장 실습 — RAPTOR
 
-빈칸을 채운 뒤 자가 채점을 돌립니다.
+노트북 `labs/ch06_raptor.ipynb` 를 열어 놓고 이 파일의 빈칸을 채웁니다.
+채운 뒤 자가 채점을 돌립니다.
 
-    python exercises/check.py w06
+    python labs/check.py ch06
 
 채점은 두 단계입니다. 먼저 답을 손으로 아는 작은 시간표로 정확성을 봅니다.
 그다음 실제 하남 GTFS 로 불변식을 확인합니다.

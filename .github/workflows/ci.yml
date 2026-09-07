@@ -30,8 +30,37 @@ jobs:
       - name: 테스트
         run: pytest -m "not live"
 
+      # 학생이 노트북을 처음 열었을 때 오류가 나면 안 됩니다.
+      # 빈칸이 비어 있는 상태 그대로 전부 실행해 봅니다.
+      - name: 실습 노트북 실행
+        run: python tools/run_labs.py
+
       - name: 책 빌드 (배포 없음)
         run: jupyter-book build . --warningiserror --keep-going
+
+  # 12장 웹 뷰어. 이 책에서 유일하게 파이썬이 아닌 부분입니다.
+  # 빈칸 채점은 순수 함수를 직접 부르고, 전체가 컴파일되는지는 빌드로 확인합니다.
+  viewer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: labs/ch12_viewer/package-lock.json
+
+      - name: 의존성 설치
+        run: npm ci
+        working-directory: labs/ch12_viewer
+
+      - name: 뷰어 빌드
+        run: npm run build
+        working-directory: labs/ch12_viewer
+
+      - name: 빈칸 채점
+        run: node tools/check_viewer.mjs
 
   style:
     runs-on: ubuntu-latest

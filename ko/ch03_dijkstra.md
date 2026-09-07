@@ -308,6 +308,23 @@ print(f"{p.duration_min:.1f}분, {p.distance_km(G):.2f}km, 확정 {p.settled:,}�
 p.coords(G)[:3]
 ```
 
+## 이 장의 실습
+
+노트북 `labs/ch03_dijkstra.ipynb` 를 열어 함께 돌립니다.
+
+노드 여섯 개짜리 그래프에서 시작해 하남시 도로망으로 옮기고, NetworkX 와 대조합니다.
+
+```bash
+jupyter lab labs/ch03_dijkstra.ipynb
+```
+
+이 장은 채점받는 실습입니다. 노트북이 아니라 옆의 `labs/ch03_dijkstra.py` 의 빈칸을 채웁니다.
+채운 뒤 자가 채점을 돌립니다. 이 기준이 곧 과제 채점 기준입니다.
+
+```bash
+python labs/check.py ch03
+```
+
 ## 정리
 
 - 다익스트라의 핵심은 "미확정 노드 중 가장 가까운 것은 이미 최종 답이다"입니다. 엣지 비용이 음수가 아니어야 성립합니다

@@ -232,6 +232,16 @@ summary["운행수"] = summary["route_id"].map(n_trips)
 summary.sort_values("운행수", ascending=False).head(8)[["route_short_name", "운행수"]]
 ```
 
+## 이 장의 실습
+
+노트북 `labs/ch05_gtfs.ipynb` 를 열어 함께 돌립니다.
+
+표 다섯 개를 열어 보고, 24시를 넘는 시각을 다루고, 경계로 잘라 봅니다.
+
+```bash
+jupyter lab labs/ch05_gtfs.ipynb
+```
+
 ## 정리
 
 - GTFS 는 `routes`(노선) → `trips`(운행) → `stop_times`(시각표) → `stops`(정류장) 순으로 이어집니다
