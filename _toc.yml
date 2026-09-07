@@ -43,5 +43,4 @@ parts:
   - caption: 부록
     numbered: false
     chapters:
-      - file: ko/appendix_a_smartcard
       - file: ko/appendix_b_ops
