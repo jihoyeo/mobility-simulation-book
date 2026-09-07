@@ -13,7 +13,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PROJECT = path.join(ROOT, "labs", "ch12_viewer");
@@ -155,12 +155,8 @@ async function main() {
     meta: readJson("meta.json"),
   };
 
-  const student = await import(
-    path.join(PROJECT, "src", "main.js").replace(/\\/g, "/")
-  );
-  const palette = await import(
-    path.join(PROJECT, "src", "palette.js").replace(/\\/g, "/")
-  );
+  const student = await import(pathToFileURL(path.join(PROJECT, "src", "main.js")).href);
+  const palette = await import(pathToFileURL(path.join(PROJECT, "src", "palette.js")).href);
 
   filledCount = grade(student, data, { label: "12장 웹 뷰어 자가 채점" });
 

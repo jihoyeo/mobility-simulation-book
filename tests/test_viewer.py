@@ -188,7 +188,8 @@ def test_checker_reports_the_blank_state():
         pytest.skip("node 가 없습니다")
 
     proc = subprocess.run(
-        ["node", str(CHECKER)], cwd=ROOT, capture_output=True, text=True, timeout=180
+        ["node", str(CHECKER)], cwd=ROOT, capture_output=True, text=True,
+        encoding="utf-8", errors="replace", timeout=180
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "0/7 통과" in proc.stdout, proc.stdout
