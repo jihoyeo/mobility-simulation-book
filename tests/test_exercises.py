@@ -1,4 +1,4 @@
-"""실습 스켈레톤과 자가 채점기.
+"""실습 스켈레톤과 자가 채점기 (`labs/`).
 
 두 방향을 다 확인합니다.
 
@@ -22,11 +22,11 @@ from smartmob.testing import (
     toy_feed,
 )
 
-EXERCISES = Path(__file__).resolve().parent.parent / "exercises"
+LABS = Path(__file__).resolve().parent.parent / "labs"
 
 
 def _load(name: str):
-    spec = importlib.util.spec_from_file_location(name, EXERCISES / f"{name}.py")
+    spec = importlib.util.spec_from_file_location(name, LABS / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[name] = module
     spec.loader.exec_module(module)
@@ -38,27 +38,27 @@ def _load(name: str):
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.parametrize("name", ["w03_dijkstra", "w06_raptor", "w11_simloop"])
+@pytest.mark.parametrize("name", ["ch03_dijkstra", "ch06_raptor", "ch11_simloop"])
 def test_skeleton_imports(name):
     """빈칸판도 불러와지기는 해야 합니다. 문법 오류가 있으면 학생이 시작을 못 합니다."""
     assert _load(name) is not None
 
 
-def test_w03_skeleton_fails_everything():
-    sol = _load("w03_dijkstra")
+def test_ch03_skeleton_fails_everything():
+    sol = _load("ch03_dijkstra")
     report = check_dijkstra(sol.dijkstra)
     assert not report.ok
     assert all("아직 구현하지 않았습니다" in r.detail for r in report.results)
 
 
-def test_w06_skeleton_fails_everything():
-    sol = _load("w06_raptor")
+def test_ch06_skeleton_fails_everything():
+    sol = _load("ch06_raptor")
     report = check_raptor(sol.TransitData.from_gtfs, sol.raptor)
     assert not report.ok
 
 
-def test_w11_skeleton_raises():
-    sol = _load("w11_simloop")
+def test_ch11_skeleton_raises():
+    sol = _load("ch11_simloop")
     from smartmob.data import load_demand, load_vehicles
 
     with pytest.raises(NotImplementedError):

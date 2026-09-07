@@ -43,6 +43,8 @@ pip install -r requirements.txt
 pip install -r requirements-heavy.txt
 ```
 
+12장의 웹 뷰어는 파이썬이 아니라 Node 로 돕니다. 이 책에서 유일한 예외입니다. 12주차에 가서 설치해도 됩니다. [nodejs.org](https://nodejs.org) 에서 LTS 판을 받습니다. 20.19 이상이면 됩니다.
+
 ```{note}
 구글 코랩에서 읽는다면 각 장 위쪽의 Colab 배지를 누르고, 첫 셀에서 `smartmob.colab.bootstrap()` 을 실행합니다. 한글 폰트를 깔고 패키지를 설치합니다.
 ```
@@ -152,6 +154,16 @@ print("마지막 시각 대기 승객:", sim.record["waiting_passenger_cnt"].ilo
 ```
 
 시뮬레이션이 "차량 80대"를 항상 80대로 다루지 않는다는 뜻입니다. 이런 것을 미리 알고 있어야 결과를 잘못 읽지 않습니다.
+
+## 이 장의 실습
+
+노트북 `labs/ch00_setup.ipynb` 를 열어 함께 돌립니다.
+
+설치 확인부터 첫 시뮬레이션까지 이 장의 순서를 그대로 따라갑니다. 마지막에 빈칸이 하나 있습니다.
+
+```bash
+jupyter lab labs/ch00_setup.ipynb
+```
 
 ## 정리
 

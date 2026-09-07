@@ -1,0 +1,24 @@
+{
+  "name": "ch12-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "12장 실습 — 통행 애니메이션 뷰어. DTUMOS 프론트엔드의 핵심만 남긴 것입니다.",
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@deck.gl/core": "9.4.0",
+    "@deck.gl/geo-layers": "9.4.0",
+    "@deck.gl/layers": "9.4.0"
+  },
+  "devDependencies": {
+    "vite": "7.3.6"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

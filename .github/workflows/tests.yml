@@ -1,0 +1,65 @@
+name: tests
+
+# 서버 없이 도는 것만 확인합니다. 실서버가 필요한 검사는 fixture-drift.yml 이 따로 돌립니다.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SMARTMOB_OFFLINE: "1"
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: 한글 폰트 설치
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-nanum
+          fc-cache -fv
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt pytest
+
+      - name: 문체 검사
+        run: python tools/kolint.py ko/ intro.md
+
+      - name: 테스트
+        run: pytest -q
+
+      # 학생이 노트북을 처음 열었을 때 오류가 나면 안 됩니다.
+      # 빈칸이 비어 있는 상태 그대로 전부 실행해 봅니다.
+      - name: 실습 노트북 실행
+        run: python tools/run_labs.py
+
+      # 12장 웹 뷰어. 브라우저 없이 확인합니다.
+      # 빈칸 채점은 순수 함수를 직접 부르고, 전체가 컴파일되는지는 빌드로 봅니다.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: labs/ch12_viewer/package-lock.json
+
+      - name: 웹 뷰어 의존성 설치
+        run: npm ci
+        working-directory: labs/ch12_viewer
+
+      - name: 웹 뷰어 빌드
+        run: npm run build
+        working-directory: labs/ch12_viewer
+
+      - name: 웹 뷰어 빈칸 채점
+        run: node tools/check_viewer.mjs

@@ -10,12 +10,14 @@ from smartmob.viz.trips import (
     save_deck,
     trips_deck,
 )
+from smartmob.viz.viewer import export_viewer, viewer_payload
 
 __all__ = [
     "CARTYPE_LABEL",
     "DeckTooLarge",
     "available_korean_fonts",
     "deck_size_guard",
+    "export_viewer",
     "plot_comparison",
     "plot_record",
     "plot_waiting_time",
@@ -23,4 +25,5 @@ __all__ = [
     "save_deck",
     "trips_deck",
     "use_korean_font",
+    "viewer_payload",
 ]
