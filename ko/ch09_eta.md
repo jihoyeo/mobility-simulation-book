@@ -43,6 +43,8 @@ df = build_dataset("hanam", n=20_000, seed=0)
 df.to_parquet("data/hanam/eta_samples.parquet", index=False)
 ```
 
+`build_dataset` 이 하는 일은 세 줄입니다. 도로망 노드 둘을 무작위로 뽑고, 3장의 다익스트라로 소요시간을 구하고, 분으로 바꿔 한 행으로 적습니다. 이것을 2만 번 합니다.
+
 만들어 둔 것을 읽습니다.
 
 ```{code-cell} python
@@ -54,7 +56,7 @@ print(f"{len(df):,}건")
 df.head(3)
 ```
 
-`duration_min` 이 정답입니다. 나머지 중 `network_km`(실제 도로 거리)도 라우팅을 해야 알 수 있으므로 특징으로 쓸 수 없습니다. **예측할 때 얻을 수 없는 값을 특징에 넣으면 안 됩니다.**
+`duration_min` 이 정답입니다. 나머지 중 `network_km`(실제 도로 거리)도 라우팅을 해야 알 수 있으므로 특징으로 쓸 수 없습니다. **예측할 때 얻을 수 없는 값을 특징에 넣으면 안 됩니다.** 이것을 데이터 누수(data leakage)라고 합니다. 학습할 때는 잘 맞다가, 실제로 쓸 때는 그 값이 없어서 무너집니다.
 
 ```{code-cell} python
 from smartmob.teaching.eta import FEATURES, TARGET
@@ -67,7 +69,7 @@ print("정답:", TARGET)
 
 | 특징 | 왜 넣는가 |
 |---|---|
-| `straight_km` | 멀수록 오래 걸립니다. 가장 중요한 신호입니다 |
+| `straight_km` | 거리가 늘면 시간이 늡니다 |
 | `hour` | 4장에서 봤듯 시간대마다 속도가 다릅니다 |
 | `sin_bearing`, `cos_bearing` | 방향. 한강을 건너는 남북 방향과 강변을 따르는 동서 방향은 다릅니다 |
 | `origin_lat/lon`, `dest_lat/lon` | 어느 지역인지. 시가지와 외곽의 도로 사정이 다릅니다 |
@@ -84,13 +86,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 print(f"학습 {len(X_train):,}건, 검증 {len(X_test):,}건")
 ```
 
-검증 데이터를 떼어 두는 이유는 하나입니다. 학습에 쓴 데이터로 평가하면 외운 것과 이해한 것을 구분할 수 없습니다.
+검증 데이터를 떼어 두는 이유는 하나입니다. 학습에 쓴 데이터로 평가하면, 그 데이터에서만 잘 맞는 것인지 새 데이터에서도 맞는 것인지 알 수 없습니다.
 
 ## 9.2 기준선 — 직선거리를 평균 속도로 나누기
 
-모델을 만들기 전에 기준선을 정합니다. 기준선보다 못하면 그 모델은 쓸모가 없습니다.
+모델을 만들기 전에 기준선을 정합니다. 기준선보다 MAE 가 크면 그 모델을 쓸 이유가 없습니다.
 
-가장 단순한 예측은 "직선거리 ÷ 평균 속도"입니다.
+가장 단순한 예측은 "직선거리 ÷ 평균 속도"입니다. 평균 속도는 학습 데이터의 직선거리 합을 소요시간 합으로 나눠 구합니다. 통행마다 속도를 내서 평균을 내는 것이 아니라, 전체 거리를 전체 시간으로 나눈 값입니다.
+
+평가에는 지표 두 개를 씁니다.
+
+- **MAE**(평균절대오차) — 평균 몇 분 틀리는가. 단위가 분이라 바로 해석됩니다
+- **R²**(결정계수) — 정답의 변동 중 몇 %를 설명하는가. 1에 가까울수록 좋고, 0이면 평균값을 답하는 것과 같습니다
 
 ```{code-cell} python
 from sklearn.metrics import mean_absolute_error, r2_score
@@ -102,12 +109,7 @@ print(f"평균 속도 {avg_speed:.1f} km/h")
 print(f"MAE {mean_absolute_error(y_test, baseline):.2f}분   R² {r2_score(y_test, baseline):.3f}")
 ```
 
-평균 2분 32초 틀립니다. 통행 자체가 평균 11.8분이므로 20% 넘게 틀리는 셈입니다.
-
-지표 두 개를 씁니다.
-
-- **MAE**(평균절대오차) — 평균 몇 분 틀리는가. 단위가 분이라 바로 해석됩니다
-- **R²**(결정계수) — 정답의 변동 중 몇 %를 설명하는가. 1에 가까울수록 좋고, 0이면 평균값을 답하는 것과 같습니다
+평균 2분 31초 틀립니다. 통행 자체가 평균 11.8분이므로 20% 넘게 틀리는 셈입니다.
 
 ## 9.3 선형회귀
 
@@ -141,7 +143,25 @@ print(f"MAE {mean_absolute_error(y_test, pred2):.2f}분   R² {r2_score(y_test, 
 
 특징이 서로 얽힌 관계를 다루려면 모델을 바꿔야 합니다.
 
-의사결정나무는 "위도가 37.55보다 크고, 직선거리가 4km보다 길면, 예상 12분" 같은 규칙을 만듭니다. 얽힌 조건을 자연스럽게 표현합니다. 나무 하나는 약하지만, 앞 나무가 틀린 만큼을 다음 나무가 맞추도록 여러 개를 이어 붙이면 강해집니다. 이것이 그래디언트 부스팅입니다.
+의사결정나무는 데이터를 조건으로 쪼개고, 조각마다 평균을 답합니다. 가장 작은 나무는 조건 하나짜리입니다. 직선거리 하나로 만들어 봅니다.
+
+```{code-cell} python
+from sklearn.tree import DecisionTreeRegressor
+
+stump = DecisionTreeRegressor(max_depth=1).fit(X_train[["straight_km"]], y_train)
+split = stump.tree_.threshold[0]
+short, long = stump.tree_.value[1][0][0], stump.tree_.value[2][0][0]
+print(f"직선거리가 {split:.2f}km 보다 짧으면 {short:.1f}분, 길면 {long:.1f}분")
+print(f"MAE {mean_absolute_error(y_test, stump.predict(X_test[['straight_km']])):.2f}분")
+```
+
+질문 하나로는 3분 넘게 틀립니다. 조건을 더 붙이면 "위도가 37.55보다 크고, 직선거리가 4km보다 길면 12분" 같은 규칙이 되어 얽힌 조건을 표현합니다. 그래도 나무 하나는 약합니다. 앞 나무가 틀린 만큼을 다음 나무가 맞추고, 그 나무가 틀린 만큼을 또 다음 나무가 맞추도록 수백 개를 이어 붙이면 강해집니다. 이것이 그래디언트 부스팅입니다.
+
+인자는 셋만 알면 됩니다.
+
+- `n_estimators` — 나무 개수
+- `learning_rate` — 나무 하나가 앞의 오차를 얼마나 고치는가. 작을수록 조금씩 고치므로 나무가 더 필요합니다
+- `num_leaves` — 나무 하나가 데이터를 몇 조각으로 나누는가
 
 ```{code-cell} python
 import time
@@ -165,7 +185,7 @@ print(f"학습 {train_time:.1f}초")
 
 ## 9.5 무엇이 예측에 쓰였는가
 
-어떤 특징이 많이 쓰였는지 봅니다.
+어떤 특징이 많이 쓰였는지 봅니다. LightGBM 의 `feature_importances_` 는 그 특징으로 데이터를 쪼갠 횟수입니다. 예측을 얼마나 좋게 했는가가 아니라 몇 번 쓰였는가입니다.
 
 ```{code-cell} python
 importance = sorted(zip(FEATURES, model.feature_importances_), key=lambda x: -x[1])
@@ -176,7 +196,7 @@ for name, score in importance:
 
 좌표 네 개가 가장 많이 쓰였습니다. 직선거리보다도 많습니다.
 
-처음에는 이상해 보입니다. 거리가 가장 중요할 것 같은데요. 그런데 좌표 네 개만 있으면 거리도 계산됩니다. 게다가 지역별 도로 사정까지 함께 배울 수 있습니다. 나무가 좌표를 여러 번 쪼개면서 두 가지를 동시에 담습니다.
+처음에는 이상해 보입니다. 거리가 가장 중요할 것 같은데요. 그런데 좌표 네 개만 있으면 거리도 계산되고, 지역별 도로 사정까지 함께 배울 수 있습니다. 여기에 하나 더 있습니다. 좌표처럼 값이 촘촘한 특징은 잘게 여러 번 쪼개기 좋아서, 쪼갠 횟수로 세면 크게 나오기 마련입니다. 그래서 이 순서가 곧 중요도는 아닙니다. 특징을 하나씩 빼 보는 연습 9.2 에서 확인합니다.
 
 `hour` 가 가장 적게 쓰였습니다. 4장에서 시간대별 속도 차이가 컸는데 왜일까요.
 
@@ -198,7 +218,7 @@ model.predict(sample)
 per_query_us = (time.perf_counter() - t0) / len(sample) * 1e6
 
 print(f"모델 예측     {per_query_us:8.1f} µs/건")
-print(f"다익스트라    {7400:8.1f} µs/건  (3장에서 측정)")
+print(f"다익스트라    {7400:8.1f} µs/건  (3.6절에서 잰 값)")
 print(f"                 {7400 / per_query_us:,.0f}배 빠릅니다")
 ```
 
@@ -210,7 +230,7 @@ print(f"                 {7400 / per_query_us:,.0f}배 빠릅니다")
 - **승객에게 보여 주는 도착 예정시간**: 곤란합니다. 실제 경로를 계산해야 합니다
 - **차량이 실제로 움직이는 경로**: 안 됩니다. 좌표열이 나와야 지도에 그립니다
 
-그래서 시뮬레이터는 둘을 섞어 씁니다. **후보를 고를 때는 예측, 확정된 통행을 그릴 때는 라우팅**입니다.
+그래서 시뮬레이터는 둘을 섞어 씁니다. 어느 차를 보낼지 후보를 고를 때는 예측을 쓰고, 정해진 통행의 경로를 그릴 때는 라우팅을 씁니다.
 
 ## 9.7 어디서 틀리는가
 
@@ -255,10 +275,11 @@ pd.DataFrame({
 거리가 멀수록 오차가 큽니다. 먼 통행일수록 지날 수 있는 경로가 많아지고, 좌표만으로는 어느 길로 갈지 알 수 없기 때문입니다.
 
 ```{code-cell} python
-worst = abs(error).nlargest(5).index
-df.loc[worst, ["straight_km", "network_km", "hour", "duration_min"]].assign(
-    예측=pred3[[X_test.index.get_loc(i) for i in worst]].round(1)
+check = X_test[["straight_km", "hour"]].assign(
+    network_km=df.loc[X_test.index, "network_km"],
+    실제=y_test, 예측=pred3.round(1), 오차=abs(error).round(1),
 )
+check.nlargest(5, "오차")
 ```
 
 가장 많이 틀린 통행을 보면 `network_km` 이 `straight_km` 보다 훨씬 큽니다. 직선으로는 가까운데 도로로는 크게 돌아가는 경우입니다. 강 건너편이거나 산을 우회해야 하는 곳입니다. 좌표만 보는 모델이 이걸 알아내기 어렵습니다.
@@ -271,7 +292,7 @@ df.loc[worst, ["straight_km", "network_km", "hour", "duration_min"]].assign(
 
 노트북 `labs/ch09_eta.ipynb` 를 열어 함께 돌립니다.
 
-학습 데이터를 만들고 기준선·선형회귀·LightGBM 을 비교한 뒤, 예측값으로 배차 비용행렬을 만들어 봅니다.
+학습 데이터를 만들고 기준선·선형회귀·LightGBM 을 비교한 뒤, 10장에서 쓸 배차 비용행렬을 예측값으로 미리 만들어 봅니다.
 
 ```bash
 jupyter lab labs/ch09_eta.ipynb
