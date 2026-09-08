@@ -18,61 +18,13 @@ from smartmob.teaching.raptor import (
     journey,
     raptor,
     summarize,
+    toy_feed,
 )
-
-
-# --------------------------------------------------------------------------- #
-# 손으로 답을 아는 작은 피드
-# --------------------------------------------------------------------------- #
-#
-#   A --(1호선)--> B --(1호선)--> C        1호선: 08:00 A, 08:10 B, 08:20 C
-#                  |                                08:30 A, 08:40 B, 08:50 C
-#              도보 100m
-#                  |
-#                  D --(2호선)--> E        2호선: 08:15 D, 08:25 E
-#
-# A 에서 08:00 출발 → C 는 08:20 (환승 0회)
-# A 에서 08:00 출발 → E 는 B(08:10) → 도보 → D(08:15) → E(08:25), 환승 1회
-
-
-def _toy_feed() -> dict:
-    stops = pd.DataFrame(
-        [
-            ("A", "A역", 37.5000, 127.0000),
-            ("B", "B역", 37.5100, 127.0000),
-            ("C", "C역", 37.5200, 127.0000),
-            ("D", "D역", 37.5100, 127.0011),   # B 에서 동쪽으로 약 100m
-            ("E", "E역", 37.5300, 127.0011),
-        ],
-        columns=["stop_id", "stop_name", "stop_lat", "stop_lon"],
-    )
-    routes = pd.DataFrame(
-        [("L1", "1호선", 1), ("L2", "2호선", 1)],
-        columns=["route_id", "route_short_name", "route_type"],
-    )
-    trips = pd.DataFrame(
-        [("L1", "S", "L1-1"), ("L1", "S", "L1-2"), ("L2", "S", "L2-1")],
-        columns=["route_id", "service_id", "trip_id"],
-    )
-    rows = [
-        ("L1-1", "08:00:00", "08:00:00", "A", 1),
-        ("L1-1", "08:10:00", "08:10:00", "B", 2),
-        ("L1-1", "08:20:00", "08:20:00", "C", 3),
-        ("L1-2", "08:30:00", "08:30:00", "A", 1),
-        ("L1-2", "08:40:00", "08:40:00", "B", 2),
-        ("L1-2", "08:50:00", "08:50:00", "C", 3),
-        ("L2-1", "08:15:00", "08:15:00", "D", 1),
-        ("L2-1", "08:25:00", "08:25:00", "E", 2),
-    ]
-    stop_times = pd.DataFrame(
-        rows, columns=["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"]
-    )
-    return {"stops": stops, "routes": routes, "trips": trips, "stop_times": stop_times}
 
 
 @pytest.fixture(scope="module")
 def toy() -> TransitData:
-    return TransitData.from_gtfs(_toy_feed(), max_transfer_m=300)
+    return TransitData.from_gtfs(toy_feed(), max_transfer_m=300)
 
 
 def _at(data: TransitData, stop_id: str) -> int:
