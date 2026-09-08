@@ -14,7 +14,7 @@ kernelspec:
 
 # 4장 시간대별 속도와 실제 라우팅 엔진
 
-3장에서 하남시청에서 미사역까지 5분 30초가 나왔습니다. 오전 8시에도 그럴까요.
+3장에서 하남시청에서 미사역까지 5분 34초가 나왔습니다. 오전 8시에도 그럴까요.
 
 그렇지 않습니다. 우리가 쓴 `free_flow_speed_kmh` 는 **막히지 않았을 때의 속도**입니다. 도로 표지판에 적힌 제한속도에 가깝고, 실제로 그 속도로 달릴 수 있는 시간대는 새벽뿐입니다.
 
@@ -34,8 +34,10 @@ kernelspec:
 ```{code-cell} python
 import pandas as pd
 from smartmob.data import data_path
+from smartmob.teaching.graph import DRIVE_HIGHWAYS
 
 edges = pd.read_parquet(data_path("hanam/road_graph_edges.parquet"))
+edges = edges[edges["highway"].isin(DRIVE_HIGHWAYS)]      # 2장처럼 자동차 도로만 남깁니다
 [c for c in edges.columns if "speed" in c or "weekday" in c]
 ```
 
@@ -77,7 +79,7 @@ edges.loc[missing, "highway"].value_counts().head(5)
 
 ## 4.2 같은 구간, 다른 시간
 
-`load_road_graph` 에 `speed_column` 을 주면 그 컬럼으로 비용을 계산합니다.
+`load_road_graph` 에 `speed_column` 을 주면 그 컬럼으로 비용을 계산합니다. 여기서 부르는 `dijkstra` 는 3.8절에서 본 정리된 판입니다. `Path` 객체를 돌려주고, 길이 없으면 `NoPath` 를 던집니다.
 
 ```{code-cell} python
 from smartmob.data import load_road_graph
@@ -123,7 +125,25 @@ for label, p in results.items():
     print(f"{label:8s} 자유류 경로와 {same}")
 ```
 
-실측 속도를 넣는 순간 전부 다른 길로 갑니다. 자유류에서는 큰길이 빨랐는데, 큰길이 막히는 시간대에는 골목이 나아지기 때문입니다.
+실측 속도를 넣는 순간 전부 다른 길로 갑니다. 어느 길을 버리고 어느 길을 택했는지 도로 종류별 거리로 봅니다.
+
+```{code-cell} python
+from collections import Counter
+
+
+def km_by_highway(g, p):
+    km = Counter()
+    for u, v in zip(p.nodes, p.nodes[1:]):
+        idx = next(i for nb, _, i in g.neighbors(u) if nb == v)
+        km[g.edges.loc[idx, "highway"]] += g.edges.loc[idx, "length"] / 1000
+    return {h: round(float(d), 2) for h, d in km.most_common(3)}
+
+
+for label in ["자유류", "오후 6시"]:
+    print(f"{label:6s} {km_by_highway(graphs[label], results[label])}")
+```
+
+자유류 경로는 4.2km 중 3.1km 가 2차 간선(`secondary`)입니다. 실측 속도를 넣으면 그 길을 버리고 1차 간선(`primary`)과 3차 도로(`tertiary`)를 잇는 길로 갑니다. 큰길이 막혀 골목으로 가는 것이 아니라, 관측 속도가 낮게 잡힌 구간을 피해 다른 큰길로 가는 것입니다.
 
 한 쌍만으로는 우연일 수 있으니 여러 쌍으로 확인합니다.
 
@@ -179,7 +199,7 @@ print(f"호출 {n_requests}건 × 대기 차량 평균 {avg_idle:.0f}대 = 약 {
 
 3만 번이 넘습니다. 여기에 실제 주행 경로까지 뽑아야 하므로 더 늘어납니다.
 
-우리 다익스트라는 한 번에 7밀리초쯤 걸렸습니다.
+3.6절에서 잰 다익스트라 중앙값이 7.4ms 였습니다.
 
 ```{code-cell} python
 python_ms = 7.4
@@ -187,17 +207,17 @@ total_seconds = n_requests * avg_idle * python_ms / 1000
 print(f"파이썬 다익스트라로만 하면 {total_seconds / 60:.0f}분")
 ```
 
-시뮬레이션 한 번에 몇 분입니다. 차량 대수를 바꿔 가며 스무 번 돌리려면 한 시간이 넘습니다. 파일럿 프로젝트에서 파라미터를 훑으려면 이 속도로는 부족합니다.
+시뮬레이션 한 번에 몇 분입니다. 차량 대수를 바꿔 가며 스무 번 돌리려면 한 시간이 넘습니다. 기말 프로젝트에서 차량 대수와 배차 규칙을 훑으려면 이 속도로는 부족합니다.
 
 ## 4.5 실제 엔진이 하는 일
 
 DTUMOS 의 라우팅 엔진은 세 가지를 다르게 합니다.
 
-**첫째, 축약 계층을 미리 만듭니다.** Contraction Hierarchies 라고 부릅니다. 3장 끝에서 말한 그것입니다. 도로망을 한 번 전처리해 지름길을 넣어 두면, 질의당 확정 노드가 수백 개로 줄어듭니다. 전처리에 몇 초가 들지만 시뮬레이션은 같은 도로망에 수만 번 질의하므로 곧 회수됩니다.
+첫째, 축약 계층(Contraction Hierarchies)을 미리 만듭니다. 3장 끝에서 이름만 말한 방법입니다. 질의를 받기 전에 그래프를 한 번 전처리해서, 중요하지 않은 노드를 하나씩 없애면서 그 자리를 대신하는 지름길 엣지를 넣습니다. 이렇게 만든 계층 위에서 출발점과 도착점 양쪽에서 위로만 탐색하면 확정 노드가 크게 줄어듭니다. 전처리에 몇 초가 들지만 시뮬레이션은 같은 도로망에 수만 번 질의하므로 곧 회수됩니다.
 
-둘째, 한 대 한 대 묻지 않고 행렬로 한 번에 계산합니다. "승객 20명 × 대기 차량 30대"는 600번의 개별 질의가 아니라 20×30 행렬 하나입니다. 출발지 하나에서 모든 도착지까지를 한 번의 탐색으로 얻는 방법(PHAST)이 있습니다. 600번이 아니라 20번이면 됩니다.
+둘째, 한 대 한 대 묻지 않고 행렬로 한 번에 계산합니다. "승객 20명 × 대기 차량 30대"는 600번의 개별 질의가 아니라 20×30 행렬 하나입니다. 출발지 하나에서 모든 도착지까지를 한 번의 탐색으로 얻으면 600번이 아니라 20번이면 됩니다.
 
-셋째, 시간대가 바뀔 때 속도만 갈아 끼웁니다. 4.3절에서 본 문제입니다. 시뮬레이션 시각이 오후 7시를 넘으면 `pm_peak` 에서 `pm_shoulder` 로 넘어갑니다. 이때 그래프를 새로 만들지 않고 엣지 속도 배열만 바꿔 축약 계층을 갱신합니다. 처음부터 다시 만드는 것보다 다섯 배 빠릅니다.
+셋째, 시간대가 바뀔 때 속도만 갈아 끼웁니다. 4.3절에서 본 문제입니다. 시뮬레이션 시각이 오후 7시를 넘으면 `pm_peak` 에서 `pm_shoulder` 로 넘어갑니다. 이때 그래프를 새로 만들지 않고 엣지 속도 배열만 바꿔 축약 계층을 갱신합니다. 처음부터 다시 만드는 것보다 빠릅니다.
 
 이 셋 중 어느 것도 우리가 직접 짜지 않습니다. 필요할 때 HTTP로 부릅니다.
 
@@ -255,7 +275,7 @@ ax.spines[["top", "right"]].set_visible(False)
 fig.tight_layout();
 ```
 
-자유류 선이 모든 시간대보다 아래에 있습니다. 자유류 속도만 쓰는 시뮬레이션은 언제나 실제보다 낙관적인 결과를 냅니다.
+자유류 선이 모든 시간대보다 아래에 있습니다. 이 구간에서는 어느 시간대도 자유류보다 느립니다. 자유류 속도만 쓰는 시뮬레이션은 그만큼 낙관적인 결과를 냅니다.
 
 ## 이 장의 실습
 
@@ -276,7 +296,7 @@ jupyter lab labs/ch04_speeds_engine.ipynb
 - 관측이 없는 엣지가 21.7%이고 대부분 이면도로입니다. 자유류로 채웁니다
 - 시뮬레이션 한 번에 3만 회 이상 질의합니다. 파이썬 다익스트라로는 몇 분이 걸립니다
 - 실제 엔진은 축약 계층 + 행렬 질의 + 속도 교체로 이를 감당합니다. 우리는 HTTP로 부릅니다
-- 5장에서는 차 대신 버스와 지하철로 갑니다. 시간표가 있는 세계는 규칙이 다릅니다
+- 5장에서는 차 대신 버스와 지하철로 갑니다. 시간표라는 새 입력이 들어옵니다
 
 ## 연습문제
 
