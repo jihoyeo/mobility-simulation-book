@@ -65,7 +65,13 @@ class Pattern:
     def earliest_trip(self, position, not_before):
         """position 에서 not_before 이후 가장 이르게 출발하는 운행 번호. 없으면 None.
 
-        운행이 첫 정류장 출발 시각 순으로 정렬되어 있으면 `bisect_left` 로 찾습니다.
+        `build_index()` 가 만들어 둔 `self._dep_by_pos[position]` 이 이 위치의
+        출발 시각을 운행 순서대로 늘어놓은 리스트입니다. 운행이 첫 정류장 출발
+        시각 순으로 정렬되어 있으므로 이 리스트도 오름차순입니다.
+
+        `bisect_left(리스트, not_before)` 가 "not_before 이상인 첫 원소의 번호"를
+        돌려줍니다. 그 번호가 리스트 길이와 같으면 탈 차가 없으니 None 입니다.
+        교재 6.2절 끝의 두 줄짜리 예제가 그대로 이 함수입니다.
         """
         raise NotImplementedError("earliest_trip 을 구현하세요")
 
@@ -97,8 +103,19 @@ class TransitData:
         5. 정류장 → 패턴 역색인을 만듭니다
         6. 가까운 정류장 사이를 도보 환승으로 잇습니다
 
+        만들 것: `Pattern` 목록, `routes_by_stop`, `transfers`, `index_of`.
+        `Pattern` 하나를 만든 뒤에는 반드시 `build_index()` 를 불러 둡니다.
+        그래야 `earliest_trip` 이 쓸 열이 생깁니다.
+
+        3번 힌트: `collections.defaultdict(list)` 에 열쇠별로 trip_id 를 모읍니다.
+        패턴의 `name` 은 `routes` 의 `route_short_name`, `route_type` 은 정수로 둡니다.
+
+        4번 힌트: 운행별 첫 출발 시각은 정렬된 `stop_times` 를
+        `groupby("trip_id")["dep"].first()` 로 얻습니다.
+
         6번 힌트: `scipy.spatial.cKDTree` 의 `query_ball_point` 로 후보를 좁힌 뒤
         `haversine_m` 으로 정확한 거리를 재고 `DETOUR_FACTOR` 를 곱합니다.
+        도보 초는 거리를 `WALK_SPEED_MPS` 로 나눈 값이고, 자기 자신은 넣지 않습니다.
         """
         raise NotImplementedError("TransitData.from_gtfs 를 구현하세요")
 
@@ -159,6 +176,10 @@ def raptor(data, origins, departure_secs, max_rounds=MAX_ROUNDS):
     - 2번에서 "타기"와 "내리기"의 순서가 중요합니다. 먼저 내려 보고, 그다음 갈아탑니다
     - 타는 판단에는 **직전 라운드**의 도착시각을 씁니다. 이번 라운드 값을 쓰면
       한 라운드에 여러 번 갈아타게 되어 환승 횟수가 무너집니다
+    - `max_rounds=0` 이면 라운드 0 만 하고 돌아옵니다. 노트북이 라운드별로
+      새로 도달한 정류장을 찍어 볼 때 이 성질을 씁니다
+    - 교재 6.5절은 이 함수를 collect_patterns / scan_pattern / walk_transfers /
+      raptor_core 네 개로 나눠 보여 줍니다. 여기서는 하나로 적어도 됩니다
     """
     raise NotImplementedError("raptor 를 구현하세요")
 

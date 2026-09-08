@@ -22,10 +22,11 @@ node --version
 ```bash
 cd labs/ch12_viewer
 npm install        # 처음 한 번만
-npm run dev        # npm start 도 같습니다
+npm run dev        # npm start 도 같습니다. 끄기 전까지 이 터미널을 차지합니다
 ```
 
 브라우저가 자동으로 열립니다. 열리지 않으면 터미널에 뜬 주소를 직접 엽니다.
+Node 설치가 안 되면 교재 12.7절의 pydeck 으로 같은 통행을 노트북 안에서 재생합니다. 뷰어는 그다음에 해도 됩니다.
 
 처음에는 지도와 배경만 나오고 차가 움직이지 않습니다. 빈칸이 다섯 자리 있기 때문입니다.
 화면 왼쪽 패널이 무엇이 남았는지 알려 줍니다.
@@ -34,7 +35,7 @@ npm run dev        # npm start 도 같습니다
 
 ## 채울 것
 
-`src/main.js` 하나만 고칩니다. 다섯 함수가 전부 한두 줄입니다.
+`src/main.js` 하나만 고칩니다. 파일 맨 위에 채워진 예제 함수 `tripId` 가 있고, 빈칸 다섯 자리도 같은 모양입니다.
 
 | 함수 | 하는 일 |
 |---|---|
@@ -44,12 +45,15 @@ npm run dev        # npm start 도 같습니다
 | `waitingPassengers` | 지금 기다리는 승객만 고릅니다 |
 | `nextTime` | 한 프레임만큼 시간을 흘립니다 |
 
+네 개는 한 줄이고, 색을 정하는 `tripColor` 만 조건이 셋이라 서너 줄입니다.
+파이썬과 다른 자바스크립트 문법은 여섯 가지뿐입니다. 교재 12.8절에 파이썬과 나란히 놓은 표가 있습니다.
+
 `src/viewer.js` 는 이 다섯 함수를 deck.gl 레이어로 엮는 배선입니다. 고칠 것이 없습니다.
 `src/palette.js` 의 색은 바꿔도 됩니다. 채점 대상이 아닙니다.
 
 ## 채점
 
-저장소 뿌리에서 실행합니다.
+`npm run dev` 가 켜진 터미널은 쓸 수 없으므로 새 터미널을 열어 저장소 뿌리에서 실행합니다.
 
 ```bash
 node tools/check_viewer.mjs
@@ -102,4 +106,4 @@ VITE_VWORLD_KEY=여기에-발급받은-키
 `npm install` 이 취약점 경고를 냅니다. deck.gl 이 3D 타일과 텍스처를 읽으려고 딸려 오는
 `image-size` 와 `fflate` 때문입니다. 이 실습은 그 경로를 부르지 않고, 빌드할 때 걷어냅니다.
 
-`npm audit fix --force` 는 deck.gl 을 낮춰 버려서 빌드가 깨집니다. 실행하지 마세요.
+`npm audit fix --force` 는 deck.gl 을 낮춰 버려서 빌드가 깨집니다. 실행하지 않습니다.
