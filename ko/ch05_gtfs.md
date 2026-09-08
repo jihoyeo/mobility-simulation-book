@@ -18,18 +18,18 @@ kernelspec:
 
 차와 달리 버스는 아무 때나 출발하지 않습니다. 시간표가 있습니다. 오후 6시 3분에 정류장에 도착했는데 버스가 6시 1분에 떠났다면 다음 차까지 기다려야 합니다. 도로망만으로는 이 계산을 할 수 없습니다.
 
-전 세계 대중교통 시간표는 GTFS 라는 공통 형식으로 공개됩니다. 이 장에서 그 형식을 열어 봅니다.
+여러 교통기관이 대중교통 시간표를 GTFS(General Transit Feed Specification) 형식으로 공개합니다. 이 장에서는 하남시 실습 파일의 표와 식별자 관계를 확인합니다.
 
 ## 학습 목표
 
-- GTFS 다섯 개 표의 관계를 그림으로 설명합니다
-- 한국 GTFS 의 `route_type` 이 국제 표준과 다르다는 것을 확인하고 올바르게 해석합니다
+- 실습에 사용하는 GTFS 표 다섯 개의 관계를 설명합니다
+- 하남시 자료의 `route_type` 을 국제 명세와 구분해 해석합니다
 - 24시를 넘는 시각 표기를 처리합니다
 - 경계를 그려 노선 전체를 잘라 냅니다
 
 ## 5.1 표 다섯 개
 
-GTFS 는 텍스트 파일 여덟 개짜리 zip 입니다. 이 책에서 쓰는 것은 다섯 개입니다.
+GTFS는 확장자가 `.txt` 인 CSV 표의 묶음입니다. 하남시 실습 파일에서는 다섯 개 표를 사용합니다.
 
 ```{code-cell} python
 from smartmob.data import load_gtfs
@@ -42,18 +42,13 @@ for name, table in feed.items():
 관계는 이렇습니다.
 
 ```
-routes.txt      노선          "340번 버스"
-   ↓ route_id
-trips.txt       운행          "340번의 오전 7시 12분 차"
-   ↓ trip_id
-stop_times.txt  시각표        "그 차가 각 정류장에 몇 시에 서는가"
-   ↓ stop_id
-stops.txt       정류장        "그 정류장의 이름과 위경도"
-
-calendar.txt    운행일        "이 운행이 무슨 요일에 다니는가"
+routes.txt     ─ route_id   → trips.txt
+calendar.txt   ─ service_id → trips.txt
+trips.txt      ─ trip_id    → stop_times.txt
+stop_times.txt ─ stop_id    → stops.txt
 ```
 
-핵심은 **노선(route)과 운행(trip)이 다르다**는 것입니다. 340번 버스는 노선 하나이지만, 하루에 수십 번 다닙니다. 각각이 별개의 운행입니다.
+노선(route)과 운행(trip)은 서로 다른 단위입니다. 340번 버스는 노선 하나지만 시간표에 등록된 출발편은 각각 별도의 운행입니다.
 
 ```{code-cell} python
 feed["routes"].head(3)
@@ -65,26 +60,26 @@ print(f"노선 {len(trips_per_route)}개")
 print(f"노선당 운행 수  중앙값 {trips_per_route.median():.0f}회, 최대 {trips_per_route.max()}회")
 ```
 
-가장 많이 다니는 노선은 하루 293회입니다. 3분에 한 대꼴입니다.
+운행이 가장 많은 `route_id` 에는 293개 운행이 등록되어 있습니다. 배차간격은 293개 운행의 첫 출발시각 차이로 따로 계산합니다.
 
 ```{code-cell} python
 stops_per_trip = feed["stop_times"].groupby("trip_id").size()
 print(f"운행당 정류장 수  중앙값 {stops_per_trip.median():.0f}개, 최대 {stops_per_trip.max()}개")
 ```
 
-## 5.2 route_type 이 국제 표준과 다릅니다
+## 5.2 `route_type` 코드 확인
 
-`routes.txt` 의 `route_type` 이 수단을 나타냅니다. GTFS 국제 명세로는 `0`=트램, `1`=지하철, `2`=철도, `3`=버스입니다.
+`routes.txt` 의 `route_type` 은 교통수단을 나타냅니다. [GTFS 명세][gtfs-reference]에서는 `0`=트램, `1`=지하철, `2`=철도, `3`=버스입니다.
 
-한국 데이터는 다릅니다.
+하남시 실습 자료의 코드는 이 명세와 다릅니다.
 
 ```{code-cell} python
 feed["routes"]["route_type"].value_counts().sort_index()
 ```
 
-`0` 이 132개로 가장 많습니다. 국제 명세대로 읽으면 하남시에 트램이 132개 노선 있다는 뜻이 됩니다. 물론 아닙니다.
+`0` 이 132개로 가장 많습니다. 국제 명세대로 읽으면 이 132개 노선을 트램으로 잘못 분류합니다.
 
-한국 GTFS 는 국토교통부 TAGO 코드를 씁니다.
+이 자료는 국토교통부 TAGO의 교통수단 코드를 사용합니다.
 
 ```{code-cell} python
 from smartmob.data import KOREAN_ROUTE_TYPE
@@ -93,7 +88,7 @@ for code, label in KOREAN_ROUTE_TYPE.items():
     print(f"{code}  {label}")
 ```
 
-`0` 은 시내·농어촌·마을버스입니다. 그러면 말이 됩니다.
+`0` 은 시내·농어촌·마을버스를 묶은 코드입니다.
 
 ```{code-cell} python
 from smartmob.data import describe_feed
@@ -101,7 +96,7 @@ from smartmob.data import describe_feed
 describe_feed(feed)["route_type"]
 ```
 
-시내버스 132개, 도시철도 15개, 공항리무진 8개, 일반철도 6개. 하남시에는 5호선과 9호선이 지나고, 인근 철도역이 포함되어 있습니다.
+분류 결과는 시내·농어촌·마을버스 132개, 도시철도 15개, 공항리무진 8개, 일반철도 6개입니다. 이 수치는 하남시 행정구역 안의 노선 수가 아니라 실습 파일에 포함된 `route_id` 수입니다.
 
 ```{warning}
 국제 명세대로 `route_type == 3` 을 버스로 걸러 내면 하남시 버스가 4개(시외버스)만 나오고, 코드는 오류 없이 잘 돌아갑니다. 결과 숫자가 이상해야 알아차립니다. 다른 나라 데이터로 만든 코드를 한국 데이터에 그대로 쓰면 이런 일이 생깁니다.
@@ -115,7 +110,7 @@ describe_feed(feed)["route_type"]
 feed["stop_times"].head(3)[["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"]]
 ```
 
-`arrival_time` 이 `HH:MM:SS` 문자열입니다. 그대로 `datetime` 으로 파싱하면 터집니다.
+`arrival_time` 은 `HH:MM:SS` 문자열입니다. 시가 23을 넘는 값은 일반적인 `datetime` 시각으로 바로 변환할 수 없습니다.
 
 ```{code-cell} python
 times = feed["stop_times"]["arrival_time"].dropna()
@@ -124,11 +119,11 @@ print(f"시(hour) 최댓값: {hours.max()}")
 print(f"24 이상인 행: {(hours >= 24).sum():,}개")
 ```
 
-30시가 나옵니다. 새벽 6시라는 뜻입니다.
+가장 큰 시 값은 30입니다. 운행일 다음 날 오전 6시를 뜻합니다.
 
 왜 이렇게 쓸까요. 밤 11시 50분에 출발해 새벽 0시 20분에 도착하는 버스를 생각해 봅시다. 도착 시각을 `00:20:00` 으로 쓰면 출발보다 **이른** 시각이 되어 순서가 뒤집힙니다. 운행일도 애매해집니다. 그날 밤차인지 다음날 첫차인지 알 수 없습니다.
 
-`24:20:00` 으로 쓰면 둘 다 해결됩니다. 시각은 계속 증가하고, 운행일은 출발일 하나로 고정됩니다.
+`24:20:00` 으로 쓰면 출발 뒤에 도착한다는 순서가 유지되고 같은 운행일에 속한 것으로 처리할 수 있습니다.
 
 그래서 파싱은 이렇게 합니다.
 
@@ -162,7 +157,7 @@ ax.set_aspect(1 / 0.79)   # 위도 37도에서 경도 1도가 더 짧습니다
 fig.tight_layout();
 ```
 
-하남시 밖까지 넓게 퍼져 있습니다. 하남시를 지나는 노선의 정류장 전체가 들어 있어서입니다. 340번 버스가 서울 강변역까지 간다면 강변역 정류장도 함께 들어옵니다.
+정류장은 하남시 밖에도 분포합니다. 실습 자료가 선택된 노선의 경계 밖 정류장까지 포함하기 때문입니다.
 
 ## 5.5 잘라 낼 때 노선 전체를 남깁니다
 
@@ -198,11 +193,11 @@ for name in ["stops", "routes", "trips", "stop_times"]:
     print(f"{name:12s} {len(feed[name]):>8,} → {len(clipped[name]):>8,}")
 ```
 
-버퍼 500m를 두는 이유는 경계 바로 바깥의 정류장 때문입니다. 시 경계에서 30m 떨어진 정류장은 사실상 그 동네 사람이 쓰는 정류장인데, 딱 잘라 내면 사라집니다.
+500 m 버퍼를 적용하면 행정경계 바로 밖에 있는 정류장도 후보에 포함됩니다. 이 실습에서는 `buffer_m=500` 을 사용합니다.
 
 ## 5.6 실습: 우리 동네 노선 세어 보기
 
-기말 프로젝트에서 할 일의 축소판입니다. 특정 정류장을 지나는 노선을 찾아봅니다.
+종강 후 P-실무프로젝트에서 할 일의 축소판입니다. 특정 정류장을 지나는 노선을 찾아봅니다.
 
 ```{code-cell} python
 target = stops[stops["stop_name"].str.contains("하남시청", na=False)]
@@ -223,10 +218,10 @@ print(f"하남시청 정류장을 지나는 노선 {len(here)}개")
 here[["route_short_name", "route_type"]].head(10)
 ```
 
-운행 횟수까지 세면 그 정류장의 공급 수준이 나옵니다.
+해당 정류장을 실제로 지나는 운행만 노선별로 셉니다.
 
 ```{code-cell} python
-n_trips = trips[trips["route_id"].isin(route_ids)].groupby("route_id").size()
+n_trips = trips[trips["trip_id"].isin(trip_ids)].groupby("route_id").size()
 summary = here[["route_id", "route_short_name"]].copy()
 summary["운행수"] = summary["route_id"].map(n_trips)
 summary.sort_values("운행수", ascending=False).head(8)[["route_short_name", "운행수"]]
@@ -283,3 +278,5 @@ jupyter lab labs/ch05_gtfs.ipynb
 
 산출물: 노선당 정류장 순서 종류 수의 분포, 가장 많은 노선의 사례 설명.
 ```
+
+[gtfs-reference]: https://gtfs.org/documentation/schedule/reference/
