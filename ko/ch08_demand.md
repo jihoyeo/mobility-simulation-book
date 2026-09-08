@@ -93,11 +93,11 @@ for hour, count in top.items():
     print(f"{hour:2d}시  {count:>9,.0f}명")
 ```
 
-새벽 3~4시가 가장 낮습니다. 0장에서 저녁 6시~자정을 시뮬레이션했던 이유가 여기 있습니다. 그 시간대에 통행이 많으면서 하루를 통째로 돌리지 않아도 되기 때문입니다.
+새벽 3~4시가 가장 낮습니다. 0장에서 저녁 6시부터 자정까지만 돌린 이유가 여기 있습니다. 오후 첨두를 포함하면서 여섯 시간이면 끝나기 때문입니다.
 
 ## 8.3 공간 패턴
 
-하남에서 출발한 통행이 어디로 가는지 봅니다. 행정동 코드 앞 다섯 자리가 시군구입니다.
+하남에서 출발한 통행이 어디로 가는지 봅니다. 행정동 코드는 여덟 자리입니다. 앞 다섯 자리가 시군구, 뒤 세 자리가 동이므로 1000으로 나눈 몫이 시군구 코드입니다. 통행량이 많은 시군구 여덟 개만 이름을 붙이고 나머지는 기타로 묶습니다.
 
 ```{code-cell} python
 SIGUNGU = {
@@ -122,6 +122,8 @@ print(f"하남 출발 총 통행  {from_hanam['CNT'].sum():>10,.0f}명")
 print(f"하남 안에서 끝남   {inside['CNT'].sum():>10,.0f}명 ({inside['CNT'].sum() / from_hanam['CNT'].sum():.0%})")
 print(f"하남 행정동 수     {from_hanam['O_ADMDONG_CD'].nunique():>10}개")
 ```
+
+하루 57만 건 중 31만 건이 하남 안에서 끝납니다. 이 31만 건이 행정동 14개 사이를 오갑니다.
 
 ## 8.4 시뮬레이터가 받는 형식
 
@@ -174,7 +176,7 @@ import geopandas as gpd
 from smartmob.teaching.demand_gen import generate_demand
 
 boundary = gpd.read_file(data_path("hanam/boundary.geojson")).geometry.iloc[0]
-uniform = generate_demand(boundary=boundary, n=800, seed=1, hourly=None)
+uniform = generate_demand(boundary=boundary, n=800, seed=1, hourly=None)   # hourly=None: 시각을 균등하게 뽑습니다
 uniform.head(3)
 ```
 
@@ -229,6 +231,8 @@ for hour in (3, 8, 12, 17, 22):
     print(f"{hour:2d}시  {profile[hour]:.1%}")
 ```
 
+하루 통행의 7.9%가 8시대에 몰리고 3시대는 0.6%입니다. 열세 배 차이입니다. 이 비율대로 호출 시각을 뽑습니다.
+
 이 프로파일을 넣고 하루치를 만듭니다.
 
 ```{code-cell} python
@@ -248,6 +252,8 @@ fig.tight_layout();
 
 8.2절의 실제 통행량 그래프와 모양이 같습니다. 오전 8시와 오후 5~6시에 봉우리가 있습니다.
 
+시간만 실제 데이터를 따랐습니다. 공간은 여전히 도로 길이에 비례해 뽑았고, 8.3절에서 본 O-D 쌍은 쓰지 않았습니다. 출발지와 목적지를 쌍으로 뽑는 것은 연습 8.2 입니다.
+
 ```{code-cell} python
 from smartmob.data import validate_demand
 
@@ -255,6 +261,8 @@ validate_demand(realistic)
 print(f"{len(realistic):,}건, 계약 통과")
 realistic.head(3)
 ```
+
+만든 수요도 실제 수요와 같은 다섯 컬럼이고 같은 검사를 통과합니다. 8.8절에서 이 표를 그대로 서버에 올립니다.
 
 ## 8.8 만든 수요를 엔진에 넣기
 
@@ -271,8 +279,6 @@ dt.upload_demand(city="hanam", df=realistic)
 sim = dt.run_simulation(city="hanam", fleet_size=80, num_passengers=len(realistic))
 sim.summary()
 ```
-
-파일럿 프로젝트도 같은 순서로 진행합니다. 대상지의 수요를 만들고, 올리고, 조건을 바꿔 가며 돌립니다.
 
 ```{note}
 `upload_demand` 는 올리기 전에 `validate_demand` 를 먼저 돌립니다. 형식이 틀린 수요가 서버에 올라가 이상한 결과를 내는 것보다, 올리기 전에 막히는 편이 낫습니다.
