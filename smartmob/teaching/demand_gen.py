@@ -2,13 +2,12 @@
 
 8장에서 다루는 코드입니다. 직접 짜지는 않고, 읽고 인자를 바꿔 가며 실험합니다.
 
-시뮬레이터에 넣을 수요는 "누가 몇 시에 어디서 어디로 가려 하는가"의 목록입니다.
-실제 데이터가 있으면 그대로 쓰고, 없으면 만들어야 합니다. 만드는 방법이 세 단계로
-점점 그럴듯해집니다.
+시뮬레이터에 넣을 수요는 요청 시각과 출발지·목적지를 행마다 적은 목록입니다.
+개인 단위 자료가 없을 때 사용할 수 있는 세 가지 표집 조건을 구현합니다.
 
-1. **경계 안에 균등하게** — 산과 강 위에서도 택시를 부릅니다
-2. **도로 위에** — 길이 있는 곳에서만 부릅니다
-3. **시간대 프로파일을 반영해** — 출퇴근 첨두가 생깁니다
+1. 경계 안에서 균등 표집
+2. 자동차 도로망의 엣지 위에서 표집
+3. 시간대 프로파일에 따라 요청 시각 표집
 
     from smartmob.teaching.demand_gen import generate_demand
     demand = generate_demand(boundary, graph, n=1000, seed=42)
@@ -21,6 +20,7 @@ import random
 from typing import Sequence
 
 from smartmob.data.demand import REQUIRED_COLUMNS
+from smartmob.teaching.graph import haversine_km
 
 # 수도권 생활이동 하남시 자료에서 뽑은 시간대별 통행 비중(0시~23시).
 # 8장에서 이 값을 직접 계산합니다.
@@ -64,15 +64,17 @@ def uniform_in_boundary(boundary, n: int, rng: random.Random) -> list[tuple[floa
 
 
 def _edge_weights(graph) -> tuple[list[tuple[str, str]], list[float]]:
-    """엣지 목록과 누적 길이. 긴 도로가 뽑힐 확률이 높아야 합니다."""
+    """엣지 목록과 직선거리의 누적값을 반환합니다."""
     pairs: list[tuple[str, str]] = []
     cumulative: list[float] = []
     total = 0.0
     for u, out in graph.adj.items():
-        for v, seconds, _ in out:
+        for v, _seconds, _ in out:
             lat1, lon1 = graph.coord[u]
             lat2, lon2 = graph.coord[v]
-            length = abs(lat2 - lat1) + abs(lon2 - lon1)   # 상대 가중치면 충분합니다
+            # 위도·경도의 각도 차이를 그대로 더하면 동서와 남북 거리가 다르게
+            # 반영됩니다. 같은 거리 단위로 바꾼 뒤 누적 가중치로 사용합니다.
+            length = haversine_km(lat1, lon1, lat2, lon2)
             if length <= 0:
                 continue
             total += length
@@ -82,7 +84,7 @@ def _edge_weights(graph) -> tuple[list[tuple[str, str]], list[float]]:
 
 
 def sample_on_edges(graph, n: int, rng: random.Random) -> list[tuple[float, float]]:
-    """도로 위에 점 n개를 찍습니다. 긴 도로일수록 많이 뽑힙니다."""
+    """도로 엣지의 직선 길이에 비례해 점 n개를 표집합니다."""
     pairs, cumulative = _edge_weights(graph)
     if not pairs:
         raise ValueError("그래프에 엣지가 없습니다")
@@ -161,8 +163,6 @@ def generate_demand(
     출발지와 목적지가 ``min_km`` 보다 가까우면 다시 뽑습니다.
     """
     import pandas as pd
-
-    from smartmob.teaching.graph import haversine_km
 
     if graph is None and boundary is None:
         raise ValueError("graph 또는 boundary 중 하나는 있어야 합니다")
