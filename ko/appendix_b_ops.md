@@ -142,7 +142,7 @@ docker compose exec dtumos dtumos data generate-vehicles --city gwangju --count 
 ```{warning}
 학생 30명이 각자 `data prepare` 를 부르면 1GB짜리 다운로드가 30번 일어납니다. **학기 시작 전에 필요한 도시를 미리 준비해 두고, 학생은 준비된 목록에서 고르게 합니다.**
 
-기말 프로젝트 대상지를 미리 설문으로 받아 상위 10개 시군구를 준비해 두는 것을 권합니다.
+P-실무프로젝트 대상지를 미리 설문으로 받아 상위 10개 시군구를 준비해 두는 것을 권합니다.
 ```
 
 프로젝트의 대중교통 부분은 GTFS 만 있으면 되므로 도로망 없이도 대부분 진행됩니다. 6~7장의 RAPTOR 는 GTFS 만 씁니다.
