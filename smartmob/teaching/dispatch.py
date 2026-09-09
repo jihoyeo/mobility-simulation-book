@@ -1,12 +1,11 @@
-"""배차 — 누구에게 어느 차를 보낼 것인가.
+"""요청과 차량의 일대일 배차.
 
 10장에서 다루는 코드입니다.
 
-승객 여러 명과 빈 차 여러 대가 동시에 있을 때, 짝을 어떻게 지을지 정해야 합니다.
-방법이 두 가지입니다.
+승객 여러 명과 빈 차 여러 대가 동시에 있을 때 사용할 두 가지 배차 방법을 구현합니다.
 
-- **탐욕(greedy)** — 먼저 부른 사람부터 가장 가까운 차를 줍니다. 빠르고 단순합니다
-- **할당 문제(assignment)** — 전체 대기시간의 합이 가장 작아지도록 한꺼번에 정합니다
+- 탐욕 배차 — 입력 순서대로 남은 차량 중 비용이 가장 작은 차량을 선택합니다
+- 선형합 할당 — 전체 비용의 합을 최소화합니다
 
 같은 수학이 물류 배송에도 쓰입니다. 배송지 여러 곳을 도는 순서를 정하는 문제는
 외판원 문제(TSP)이고, 차량이 여러 대면 차량경로 문제(VRP)가 됩니다.
@@ -71,7 +70,7 @@ def cost_matrix(
 ):
     """직선거리를 평균 속도로 나눈 도착 예상시간(분) 행렬.
 
-    행이 승객, 열이 차량입니다. 가장 싼 방법이고, 강 건너 차를 가깝다고 잘못 고릅니다.
+    행이 승객, 열이 차량입니다. 도로 연결성과 시간대별 속도는 반영하지 않습니다.
     """
     import numpy as np
 
@@ -91,7 +90,7 @@ def cost_matrix_from_model(
     """9장의 ETA 모델로 만든 비용행렬.
 
     ``predict`` 는 특징 DataFrame 을 받아 분 단위 예측을 돌려주는 함수입니다.
-    한 쌍씩 부르지 않고 전부 모아 한 번에 부릅니다. 그래야 빠릅니다.
+    모든 조합의 특징을 한 DataFrame으로 만들어 일괄 예측합니다.
     """
     import numpy as np
     import pandas as pd
@@ -165,8 +164,8 @@ def greedy_match(costs, order: Sequence[int] | None = None) -> MatchResult:
 def optimal_match(costs) -> MatchResult:
     """전체 비용의 합이 가장 작아지도록 한꺼번에 정합니다.
 
-    이것을 할당 문제(assignment problem)라고 하고, 헝가리안 알고리즘으로 풉니다.
-    `scipy` 가 구현을 제공하므로 직접 짜지 않습니다.
+    이것을 선형합 할당 문제라고 합니다. SciPy의 ``linear_sum_assignment``를
+    사용합니다.
     """
     import numpy as np
     from scipy.optimize import linear_sum_assignment
@@ -205,7 +204,7 @@ def route_length_km(points: Sequence[Point], order: Sequence[int], closed: bool 
 
 
 def nearest_neighbour(points: Sequence[Point], start: int = 0) -> list[int]:
-    """가장 가까운 곳부터 차례로 방문합니다. 빠르지만 마지막이 멀어집니다."""
+    """현재 위치에서 가장 가까운 미방문 지점을 차례로 선택합니다."""
     remaining = set(range(len(points))) - {start}
     order = [start]
     while remaining:
@@ -222,8 +221,8 @@ def nearest_neighbour(points: Sequence[Point], start: int = 0) -> list[int]:
 def two_opt(points: Sequence[Point], order: Sequence[int], max_passes: int = 20) -> list[int]:
     """경로에서 교차하는 두 구간을 뒤집어 짧게 만듭니다.
 
-    더 이상 줄지 않을 때까지 반복합니다. 최적해를 보장하지는 않지만
-    가장 가까운 곳부터 도는 방법보다 눈에 띄게 낫습니다.
+    더 이상 줄지 않거나 ``max_passes``에 도달할 때까지 반복합니다.
+    최적해를 보장하지 않으며 입력 경로와 길이가 같을 수 있습니다.
     """
     best = list(order)
     best_len = route_length_km(points, best)
