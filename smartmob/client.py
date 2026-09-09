@@ -12,11 +12,16 @@
 동작 모드
 ---------
 ``auto``(기본)
-    ``GET /health`` 를 2초 안에 시도합니다. 붙으면 실서버, 안 붙으면 녹화본.
+    ``GET /health`` 를 2초 안에 시도합니다. 붙으면 실서버, 안 붙으면 ``local``.
 ``live``
     반드시 실서버. 못 붙으면 :class:`DtumosUnavailable`.
+``local``
+    서버 없이 돕니다. 녹화본(``data/fixtures/``)이 있는 요청은 그것을 돌려주고,
+    없으면 내장 파이썬 엔진(:mod:`smartmob.local`)으로 그 자리에서 계산합니다.
+    ``SMARTMOB_OFFLINE=1`` 이면 이 모드입니다.
 ``fixture``
     반드시 녹화본. 녹화가 없으면 :class:`~smartmob.fixtures.FixtureMissing`.
+    책을 빌드하는 CI 와 회귀 테스트가 씁니다.
 """
 
 from __future__ import annotations
@@ -30,7 +35,7 @@ from typing import Any, Iterable, Literal
 from smartmob import fixtures
 from smartmob.config import dtumos_url, offline
 
-Mode = Literal["auto", "live", "fixture"]
+Mode = Literal["auto", "live", "local", "fixture"]
 
 # 서버가 강제하는 상한. 넘기면 요청 전에 막습니다.
 MAX_PASSENGERS = 10_000
@@ -70,7 +75,8 @@ class SimulationResult:
 
     path: Path
     id: str
-    from_fixture: bool = False
+    from_fixture: bool = False      # data/fixtures/ 의 녹화본
+    from_local: bool = False        # 내장 파이썬 엔진(smartmob.local)
     _cache: dict[str, Any] = field(default_factory=dict, repr=False)
 
     # -- 원본 파일 ---------------------------------------------------------- #
@@ -207,7 +213,7 @@ class SimulationResult:
         return self._cache[name]
 
     def __repr__(self) -> str:  # pragma: no cover - 표시용
-        src = "녹화본" if self.from_fixture else "실행"
+        src = "녹화본" if self.from_fixture else "내장 엔진" if self.from_local else "실서버"
         return f"<SimulationResult {self.id} ({src}) at {self.path}>"
 
 
@@ -279,8 +285,9 @@ class Dtumos:
         self.base_url = (base_url or dtumos_url()).rstrip("/")
         self.timeout = timeout
         self.api_key = api_key
-        self._mode: Mode = "fixture" if offline() else mode
-        self._resolved: Mode | None = "fixture" if self._mode == "fixture" else None
+        # 인자로 준 mode 가 환경변수보다 우선입니다. auto 일 때만 SMARTMOB_OFFLINE 을 봅니다.
+        self._mode: Mode = ("local" if offline() else "auto") if mode == "auto" else mode
+        self._resolved: Mode | None = self._mode if self._mode in ("fixture", "local") else None
 
     # -- 접속 ---------------------------------------------------------------- #
 
@@ -288,14 +295,17 @@ class Dtumos:
     def mode(self) -> Mode:
         """실제로 쓰이는 모드. auto 였다면 여기서 판정합니다."""
         if self._resolved is None:
-            self._resolved = "live" if self._probe() else "fixture"
-            if self._resolved == "fixture":
+            self._resolved = "live" if self._probe() else "local"
+            if self._resolved == "local":
                 print(
-                    f"[smartmob] {self.base_url} 에 연결하지 못해 녹화된 결과를 사용합니다.\n"
-                    f"           실서버로 돌리려면 DTUMOS 를 띄우고 "
-                    f"SMARTMOB_DTUMOS_URL 을 설정하세요."
+                    f"[smartmob] 서버({self.base_url})가 없어 내장 파이썬 엔진으로 돌립니다. "
+                    f"책의 기준 실험은 녹화된 DTUMOS 결과를 그대로 씁니다."
                 )
         return self._resolved
+
+    @property
+    def is_live(self) -> bool:
+        return self.mode == "live"
 
     def _probe(self) -> bool:
         try:
@@ -309,6 +319,8 @@ class Dtumos:
     def health(self) -> dict[str, Any]:
         if self.mode == "fixture":
             return {"status": "fixture", "base_url": self.base_url}
+        if self.mode == "local":
+            return {"status": "local", "engine": "smartmob.local", "base_url": self.base_url}
         return self._get("/health")
 
     # -- 시뮬레이션 ---------------------------------------------------------- #
@@ -350,9 +362,13 @@ class Dtumos:
         }
         _check_simulation_limits(payload)
 
-        if self.mode == "fixture":
-            path = fixtures.replay("simulation", payload)
-            return SimulationResult(path=path, id=path.name, from_fixture=True)
+        if not self.is_live:
+            recorded = fixtures.directory_for(fixtures.key_for(payload))
+            if recorded is not None:
+                return SimulationResult(path=recorded, id=recorded.name, from_fixture=True)
+            if self.mode == "fixture":
+                raise fixtures.FixtureMissing("simulation", fixtures.key_for(payload), payload)
+            return self._run_local(payload, progress)
 
         job = self._post("/api/simulation/jobs", payload)
         job_id = job.get("job_id") or job.get("id")
@@ -365,6 +381,19 @@ class Dtumos:
         sim_id = info.get("simulation_id") or info.get("result", {}).get("simulation_id") or job_id
         local = self._download_result(str(sim_id))
         return SimulationResult(path=local, id=str(sim_id))
+
+    def _run_local(self, payload: dict[str, Any], progress: bool) -> SimulationResult:
+        """내장 파이썬 엔진으로 그 자리에서 돌립니다. 1,000건·80대 기준 1초 안쪽입니다."""
+        from smartmob import local
+
+        started = time.perf_counter()
+        path = local.run_simulation(payload)
+        if progress:
+            print(
+                f"[smartmob] 내장 엔진 실행: {payload['city']} 차량 {payload['fleet_size']}대, "
+                f"호출 {payload['num_passengers']}건 ({time.perf_counter() - started:.1f}초)"
+            )
+        return SimulationResult(path=path, id=path.name, from_local=True)
 
     def _wait_for_job(
         self, job_id: str, poll_interval: float, job_timeout: float, progress: bool
@@ -419,9 +448,15 @@ class Dtumos:
             "origin": {"lat": origin[0], "lon": origin[1]},
             "destination": {"lat": destination[0], "lon": destination[1]},
         }
-        if self.mode == "fixture":
-            path = fixtures.replay("route", payload)
-            return json.loads((path / "response.json").read_text(encoding="utf-8"))
+        if not self.is_live:
+            recorded = fixtures.directory_for(fixtures.key_for(payload))
+            if recorded is not None:
+                return json.loads((recorded / "response.json").read_text(encoding="utf-8"))
+            if self.mode == "fixture":
+                raise fixtures.FixtureMissing("route", fixtures.key_for(payload), payload)
+            from smartmob import local
+
+            return local.route(city, origin, destination)
         return self._post("/api/routing/route", payload)
 
     def transit_route(
@@ -449,7 +484,13 @@ class Dtumos:
             "compare": False,
             "max_itineraries": int(max_itineraries),
         }
-        if self.mode == "fixture":
+        if not self.is_live:
+            recorded = fixtures.directory_for(fixtures.key_for(payload))
+            if recorded is None and self.mode == "local":
+                raise DtumosUnavailable(
+                    "대중교통 경로 질의는 실서버가 필요합니다. 서버 없이 할 때는 "
+                    "7장의 smartmob.teaching.raptor 를 직접 씁니다."
+                )
             path = fixtures.replay("transit_route", payload)
             body = json.loads((path / "response.json").read_text(encoding="utf-8"))
             return _unwrap_itineraries(body)
@@ -476,7 +517,7 @@ class Dtumos:
     # -- 데이터 -------------------------------------------------------------- #
 
     def regions(self) -> list[dict[str, Any]]:
-        if self.mode == "fixture":
+        if not self.is_live:
             path = fixtures.directory_for(fixtures.key_for({"endpoint": "regions"}))
             if path is None:
                 return []
@@ -488,9 +529,10 @@ class Dtumos:
         from smartmob.data.demand import validate_demand
 
         validate_demand(df)
-        if self.mode == "fixture":
+        if not self.is_live:
             raise DtumosUnavailable(
-                "수요 업로드는 실서버가 필요합니다. DTUMOS 를 띄우고 다시 실행하세요."
+                "수요 업로드는 실서버가 필요합니다. 서버 없이 할 때는 만든 수요를 "
+                "11장의 simulate(demand, vehicles) 에 바로 넣습니다."
             )
         import io
 

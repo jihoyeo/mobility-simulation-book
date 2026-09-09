@@ -51,6 +51,11 @@ class Vehicle:
     busy_min: float = 0.0
     empty_km: float = 0.0        # 승객을 태우러 가는 거리(공차)
     loaded_km: float = 0.0       # 승객을 태우고 가는 거리
+    start_location: Point | None = None   # 근무 시작 위치. 결과를 지도에 그릴 때 씁니다
+
+    def __post_init__(self) -> None:
+        if self.start_location is None:
+            self.start_location = self.location
 
     def on_duty(self, minute: int) -> bool:
         return self.work_start <= minute < self.work_end

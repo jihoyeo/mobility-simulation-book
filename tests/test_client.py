@@ -200,14 +200,19 @@ def test_missing_files_are_tolerated(tmp_path):
 def test_offline_mode_never_touches_network(monkeypatch):
     monkeypatch.setenv("SMARTMOB_OFFLINE", "1")
     dt = Dtumos()
-    assert dt.mode == "fixture"
-    assert dt.health()["status"] == "fixture"
+    assert dt.mode == "local"
+    assert dt.health()["status"] == "local"
 
 
-def test_offline_missing_fixture_fails_loudly(monkeypatch, tmp_path):
+def test_explicit_mode_beats_environment(monkeypatch):
     monkeypatch.setenv("SMARTMOB_OFFLINE", "1")
+    assert Dtumos(mode="fixture").mode == "fixture"
+    assert Dtumos(mode="fixture").health()["status"] == "fixture"
+
+
+def test_fixture_mode_missing_fixture_fails_loudly(monkeypatch, tmp_path):
     monkeypatch.setenv("SMARTMOB_DATA_DIR", str(tmp_path))
-    dt = Dtumos()
+    dt = Dtumos(mode="fixture")
     with pytest.raises(FixtureMissing) as exc:
         dt.run_simulation(city="nowhere", num_passengers=7)
     assert "녹화" in str(exc.value)

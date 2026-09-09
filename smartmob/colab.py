@@ -22,7 +22,7 @@ def in_colab() -> bool:
 def bootstrap(repo_url: str = REPO_URL, dtumos_url: str | None = None, quiet: bool = True) -> None:
     """Colab 에서 한글 폰트와 smartmob 패키지를 준비합니다.
 
-    ``dtumos_url`` 을 주면 그 서버를 쓰고, 안 주면 녹화본으로 동작합니다.
+    ``dtumos_url`` 을 주면 그 서버를 쓰고, 안 주면 서버 없이 내장 파이썬 엔진으로 돕니다.
     교내망 서버는 Colab 에서 닿지 않으므로 공개 주소(터널)를 받아 넣어야 합니다.
     """
     if not in_colab():
@@ -40,7 +40,7 @@ def bootstrap(repo_url: str = REPO_URL, dtumos_url: str | None = None, quiet: bo
         os.environ.pop("SMARTMOB_OFFLINE", None)
     else:
         os.environ["SMARTMOB_OFFLINE"] = "1"
-        print("[smartmob] DTUMOS 주소가 없어 녹화된 결과로 동작합니다.")
+        print("[smartmob] DTUMOS 주소가 없어 내장 파이썬 엔진으로 돕니다.")
 
     from smartmob.viz import use_korean_font
 

@@ -26,7 +26,7 @@ SMARTMOB_OFFLINE=1 jupyter-book build .
 open _build/html/index.html
 ```
 
-`SMARTMOB_OFFLINE=1` 은 시뮬레이션 엔진에 접속하지 않고 `data/fixtures/` 의 녹화본을 쓰라는 뜻입니다. CI 도 이 모드로 빌드합니다.
+`SMARTMOB_OFFLINE=1` 은 서버에 접속하지 않는다는 뜻입니다. 녹화본(`data/fixtures/`)이 있는 요청은 녹화본을 돌려주고, 없는 요청은 내장 파이썬 엔진(`smartmob/local.py`)이 그 자리에서 계산합니다. 서버가 없으면 이 값을 설정하지 않아도 같은 동작입니다. CI 도 이 모드로 빌드합니다.
 
 실서버에 붙여 빌드하려면 DTUMOS 를 띄운 뒤 주소를 지정합니다.
 
