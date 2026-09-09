@@ -69,10 +69,68 @@ print(f"직선거리 {haversine_km(*hanam_city_hall, *misa_station):.2f} km")
 엣지 비용이 음수가 아니라는 조건이 중요합니다. 소요시간은 음수가 될 수 없으니 우리 문제에는 항상 맞습니다. 음수 비용이 있는 문제(예: 통행료 환급)라면 다익스트라를 쓸 수 없고 벨만-포드를 써야 합니다.
 ```
 
+하남시로 가기 전에 손으로 한 번 돌려 봅니다. 노드 여섯 개짜리 그래프이고, 실습 노트북에 있는 것과 같습니다.
+
+```
+       (600m)        (900m)
+  A ────────────► B ────────────► C
+  │               │               ▲
+  │(2000m)        │(300m)         │(300m)
+  │               ▼               │
+  └──────────────►D───────────────┘
+
+  E ────────────► F        (A 쪽과 이어져 있지 않습니다)
+         (300m)
+```
+
+모든 도로가 시속 36km, 즉 초속 10m입니다. 거리를 10으로 나누면 초가 됩니다.
+
+```{code-cell} python
+import pandas as pd
+from smartmob.teaching.graph import RoadGraph
+
+toy_nodes = pd.DataFrame([
+    {"node_id": "n1", "lat": 37.5000, "lon": 127.2000},   # A
+    {"node_id": "n2", "lat": 37.5030, "lon": 127.2000},   # B
+    {"node_id": "n3", "lat": 37.5080, "lon": 127.2000},   # C
+    {"node_id": "n4", "lat": 37.5050, "lon": 127.2010},   # D
+    {"node_id": "n5", "lat": 37.5500, "lon": 127.2500},   # E
+    {"node_id": "n6", "lat": 37.5520, "lon": 127.2500},   # F
+])
+toy_edges = pd.DataFrame([
+    {"edge_id": "e1_f_1_2", "length": 600.0},
+    {"edge_id": "e2_f_1_3", "length": 2000.0},
+    {"edge_id": "e3_f_2_3", "length": 900.0},
+    {"edge_id": "e4_f_2_4", "length": 300.0},
+    {"edge_id": "e5_f_4_3", "length": 300.0},
+    {"edge_id": "e6_f_5_6", "length": 300.0},
+]).assign(highway="residential", free_flow_speed_kmh=36.0)
+
+toy = RoadGraph.from_frames(toy_nodes, toy_edges, modes=("drive",))
+toy
+```
+
+A에서 C까지 위의 네 단계를 따라가면 힙에서 꺼내는 순서가 이렇게 됩니다. 괄호 안은 (출발점에서의 초, 노드)입니다.
+
+| 꺼낸 것 | 확정 | 이웃을 보고 갱신한 뒤 힙에 남은 것 |
+|---|---|---|
+| (0, A) | A | (60, B), (200, C) |
+| (60, B) | B | (90, D), (150, C), (200, C) |
+| (90, D) | D | (120, C), (150, C), (200, C) |
+| (120, C) | C | 끝 |
+
+C 가 힙에 세 번 들어갔습니다. 120초짜리가 먼저 나오고, 남은 둘은 나중에 나와도 이미 확정된 노드이므로 버립니다. 답은 120초, 경로는 A→B→D→C, 확정한 노드는 4개입니다. 이 표를 코드로 옮긴 것이 다음 절입니다.
+
 ## 3.3 구현
+
+`graph.neighbors(u)` 는 (이웃 노드, 소요시간 초, 엣지 번호) 세 값을 돌려줍니다. 2장에서 손으로 만든 인접 리스트에 엣지 번호가 하나 더 붙은 것입니다. 지금은 쓰지 않으므로 `_` 로 받습니다.
 
 ```{code-cell} python
 import heapq
+
+
+class NoPath(Exception):
+    """두 노드가 이어져 있지 않습니다."""
 
 
 def dijkstra(graph, source, target):
@@ -99,7 +157,7 @@ def dijkstra(graph, source, target):
                 prev[v] = u
                 heapq.heappush(heap, (nd, v))
 
-    raise ValueError(f"{source} 에서 {target} 로 가는 길이 없습니다")
+    raise NoPath(f"{source} 에서 {target} 로 가는 길이 없습니다")
 
 
 def _trace(prev, source, target):
@@ -110,16 +168,24 @@ def _trace(prev, source, target):
     return path
 ```
 
-돌려 봅니다.
+작은 그래프로 먼저 확인합니다.
+
+```{code-cell} python
+seconds, path, settled = dijkstra(toy, "n1", "n3")
+print(f"{seconds:.0f}초  경로 {path}  확정 {settled}개")
+```
+
+3.2절의 표와 같습니다. 이제 하남시 도로망에서 돌립니다.
 
 ```{code-cell} python
 seconds, path, settled = dijkstra(G, start, goal)
-print(f"소요시간 {seconds / 60:.1f}분")
+km = sum(haversine_km(*G.coord[u], *G.coord[v]) for u, v in zip(path, path[1:]))
+print(f"소요시간 {seconds / 60:.1f}분   경로 길이 {km:.1f}km")
 print(f"거친 노드 {len(path)}개")
 print(f"확정한 노드 {settled:,}개")
 ```
 
-계산 결과는 5분 32초입니다. 두 좌표의 직선거리는 3.0 km이고, 선택된 경로의 길이는 4.2 km입니다. 엣지 비용에는 자유류 속도를 사용했으며 신호 대기는 포함하지 않았습니다.
+5분 32초입니다. 직선 3km 자리를 도로로 4.2km 달렸으니 평균 시속 45km 정도입니다. 자유류 속도로 계산한 값이라 신호 대기가 빠져 있습니다. 실제로는 더 걸립니다.
 
 눈여겨볼 것은 마지막 줄입니다. 83개 노드짜리 경로를 얻으려고 **4,500개가 넘는 노드를 확정**했습니다. 전체 12,566개의 3분의 1입니다. 출발점에서 도착점 방향으로만 퍼지는 게 아니라 사방으로 고르게 퍼지기 때문입니다.
 
@@ -178,7 +244,7 @@ for _ in range(200):
 print(f"200쌍 중 경로 없음: {no_path}개")
 ```
 
-현재 난수 시드에서는 200쌍 중 18쌍에서 경로를 찾지 못합니다. 도로망이 방향 그래프이고 시 경계에서 잘렸기 때문에 모든 노드 쌍의 연결을 가정할 수 없습니다. 이 경우를 처리하지 않으면 시뮬레이션이 예외와 함께 중단됩니다.
+6% 남짓입니다. 일방통행만 있는 막다른 골목이나, 시 경계에서 잘려 나머지와 끊어진 조각이 있기 때문입니다. 그래서 `dijkstra` 는 이 경우에 `NoPath` 예외를 던지고, 부르는 쪽이 `except NoPath:` 로 받아 그 쌍을 건너뜁니다. 4장에서 그렇게 씁니다. 조용히 무한대를 돌려주면 시뮬레이터가 그 승객을 영원히 기다리게 만듭니다.
 
 ## 3.5 A\* — 휴리스틱으로 탐색 범위 줄이기
 
@@ -219,7 +285,7 @@ def astar(graph, source, target):
                 prev[v] = u
                 heapq.heappush(heap, (nd + h(v), nd, v))
 
-    raise ValueError(f"{source} 에서 {target} 로 가는 길이 없습니다")
+    raise NoPath(f"{source} 에서 {target} 로 가는 길이 없습니다")
 ```
 
 ```{code-cell} python
@@ -250,18 +316,25 @@ while len(pairs) < 30:
 
 d_ms, a_ms, d_set, a_set = [], [], [], []
 for s, t in pairs:
-    t0 = time.perf_counter(); _, _, n1 = dijkstra(G, s, t); d_ms.append((time.perf_counter() - t0) * 1000); d_set.append(n1)
-    t0 = time.perf_counter(); _, _, n2 = astar(G, s, t);    a_ms.append((time.perf_counter() - t0) * 1000); a_set.append(n2)
+    t0 = time.perf_counter()
+    _, _, n1 = dijkstra(G, s, t)
+    d_ms.append((time.perf_counter() - t0) * 1000)
+    d_set.append(n1)
+
+    t0 = time.perf_counter()
+    _, _, n2 = astar(G, s, t)
+    a_ms.append((time.perf_counter() - t0) * 1000)
+    a_set.append(n2)
 
 print(f"확정 노드   다익스트라 {st.median(d_set):7,.0f}   A* {st.median(a_set):7,.0f}   ({st.median(d_set) / st.median(a_set):.2f}배 적음)")
 print(f"실행 시간   다익스트라 {st.median(d_ms):7.1f}ms   A* {st.median(a_ms):7.1f}ms")
 ```
 
-이 표본에서 확정 노드 중앙값은 다익스트라 7,320개, A\* 3,978.5개입니다. A\*가 탐색한 노드는 약 46% 적지만 이 컴퓨터에서 잰 실행시간 중앙값은 더 깁니다.
+확정 노드는 A\*가 1.7배쯤 적은데, 실행 시간은 오히려 더 깁니다. 다익스트라는 한 번에 7ms 안팎입니다. 이 책을 만든 컴퓨터에서 중앙값이 7.4ms 였고, 4장에서 이 값을 씁니다.
 
 두 구현의 차이는 `h(n)` 계산입니다. A\*는 후보 노드를 힙에 넣을 때마다 하버사인 거리를 계산합니다. 이 코드에서는 탐색 노드 감소로 절약한 시간보다 파이썬에서 휴리스틱을 계산한 시간이 더 큽니다.
 
-이 결과만으로 다른 그래프나 구현에서도 다익스트라가 빠르다고 결론 내릴 수는 없습니다. 실행시간은 그래프 구조, 휴리스틱 계산 비용, 구현 언어에 따라 달라집니다.
+C나 Rust로 짜면 하버사인 계산이 훨씬 싸지므로 A\*가 이깁니다. 그래프가 커질수록 확정 노드 차이가 벌어지므로, 그때도 A\*가 유리해집니다.
 
 ```{tip}
 확정 노드 수가 줄었다고 실행시간도 줄었다고 가정해서는 안 됩니다. 알고리즘을 바꾸면 같은 입력으로 실행시간을 다시 측정합니다.
@@ -269,11 +342,9 @@ print(f"실행 시간   다익스트라 {st.median(d_ms):7.1f}ms   A* {st.median
 
 ## 3.7 전용 라우팅 엔진 호출
 
-[공개된 DTUMOS 구현][dtumos-repo]은 차량 경로 계산에 `OSRM` 을 사용합니다. [`OSRM` 공식 문서][osrm-repo]는 두 가지 전처리 방식을 제시합니다. 축약 계층(Contraction Hierarchies)과 다단계 다익스트라(Multi-Level Dijkstra)입니다.
+DTUMOS 의 라우팅 엔진은 A\*를 쓰지 않습니다. 질의를 받기 전에 그래프를 전처리해 지름길 엣지를 넣어 두는 **축약 계층(Contraction Hierarchies)** 을 씁니다. 전처리에 시간이 들지만 그 뒤의 질의는 훨씬 빨라집니다. 어떻게 하는지는 4.5절에서 봅니다.
 
-축약 계층은 경로 질의 전에 도로망을 전처리합니다. 노드를 줄이는 과정에서 기존 최단거리를 보존하는 지름길 엣지를 만들고, 질의할 때 탐색할 범위를 줄입니다.
-
-`Dtumos.route` 응답만으로는 서버가 두 알고리즘 중 무엇을 쓰는지 확인할 수 없습니다. 여기서는 내부 구현을 단정하지 않고 HTTP로 경로 한 건을 요청합니다.
+우리가 축약 계층을 직접 짜지는 않습니다. 대신 필요할 때 HTTP로 부릅니다.
 
 ```{code-cell} python
 :tags: [skip-execution]
@@ -294,13 +365,20 @@ print(result["duration"] / 60, "분")
 지금까지 만든 것이 `smartmob.teaching.dijkstra` 에 들어 있습니다. 4장부터는 이걸 씁니다.
 
 ```{code-cell} python
-from smartmob.teaching.dijkstra import shortest_path
+from smartmob.teaching.dijkstra import NoPath, dijkstra, shortest_path
 
+p = dijkstra(G, start, goal)
+print(f"{p.duration_min:.1f}분, 확정 {p.settled:,}개")
+```
+
+이름은 우리가 짠 것과 같지만 반환값이 다릅니다. 튜플 셋 대신 `Path` 객체 하나를 돌려주고, `duration_s`, `nodes`, `settled` 를 속성으로 꺼냅니다. 길이 없으면 같은 이름의 `NoPath` 를 던집니다.
+
+```{code-cell} python
 p = shortest_path(G, hanam_city_hall, misa_station, algorithm="dijkstra")
 print(f"{p.duration_min:.1f}분, {p.distance_km(G):.2f}km, 확정 {p.settled:,}개")
 ```
 
-`shortest_path` 는 좌표를 받아 스냅부터 해 줍니다. 반환값 `Path` 에는 노드 목록, 소요시간, 확정 노드 수가 들어 있고, `coords(G)` 로 지도에 그릴 좌표열을 얻을 수 있습니다.
+`shortest_path` 는 좌표를 받아 스냅부터 해 줍니다. `coords(G)` 로 지도에 그릴 좌표열을 얻을 수 있습니다.
 
 ```{code-cell} python
 p.coords(G)[:3]
@@ -325,8 +403,8 @@ python labs/check.py ch03
 
 ## 정리
 
-- 미확정 노드 중 거리가 가장 작은 노드는 그 값으로 확정됩니다. 엣지 비용이 음수가 아니어야 성립합니다
-- 최소 힙으로 구현하면 90줄입니다. `prev` 를 따라가 경로를 복원합니다
+- 다익스트라의 핵심은 "미확정 노드 중 가장 가까운 것은 이미 최종 답이다"입니다. 엣지 비용이 음수가 아니어야 성립합니다
+- 최소 힙으로 구현하면 90줄입니다. `prev` 를 따라가 경로를 복원하고, 길이 없으면 `NoPath` 를 던집니다
 - 하남시청→미사역 질의 하나에 4,500개가 넘는 노드를 확정합니다. 정작 경로에 쓰인 노드는 83개입니다
 - A\*는 직선거리를 최고 속도로 나눈 값을 힌트로 씁니다. 이 값이 실제보다 작아야(허용 가능) 최적해가 유지됩니다
 - 이 표본에서 A\*는 확정 노드 중앙값을 7,320개에서 3,978.5개로 줄였지만 실행시간은 더 길었습니다

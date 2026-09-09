@@ -93,8 +93,13 @@ class RoadGraph:
         modes: Sequence[str] = ("drive",),
         speed_column: str = "free_flow_speed_kmh",
         root: str | Path | None = None,
+        speed_kmh: float | None = None,
     ) -> "RoadGraph":
-        """`data/<city>/road_graph_{nodes,edges}.parquet` 에서 그래프를 만듭니다."""
+        """`data/<city>/road_graph_{nodes,edges}.parquet` 에서 그래프를 만듭니다.
+
+        ``speed_kmh`` 를 주면 속도 컬럼 대신 그 값을 모든 엣지에 씁니다.
+        보행망처럼 엣지 표의 속도가 자동차 기준이라 쓸 수 없을 때 씁니다.
+        """
         import pandas as pd
 
         base = Path(root) if root else None
@@ -109,7 +114,9 @@ class RoadGraph:
 
         nodes = pd.read_parquet(nodes_path, columns=["node_id", "lat", "lon"])
         edges = pd.read_parquet(edges_path)
-        return cls.from_frames(nodes, edges, modes=modes, speed_column=speed_column)
+        return cls.from_frames(
+            nodes, edges, modes=modes, speed_column=speed_column, speed_kmh=speed_kmh
+        )
 
     @classmethod
     def from_frames(
@@ -118,7 +125,10 @@ class RoadGraph:
         edges,
         modes: Sequence[str] = ("drive",),
         speed_column: str = "free_flow_speed_kmh",
+        speed_kmh: float | None = None,
     ) -> "RoadGraph":
+        import pandas as pd
+
         allowed: set[str] = set()
         for mode in modes:
             if mode not in MODE_FILTERS:
@@ -138,7 +148,10 @@ class RoadGraph:
         }
 
         adj: dict[str, list[tuple[str, float, int]]] = {}
-        speeds = edges[speed_column].fillna(edges["free_flow_speed_kmh"]).fillna(30.0)
+        if speed_kmh is not None:
+            speeds = pd.Series(float(speed_kmh), index=edges.index)
+        else:
+            speeds = edges[speed_column].fillna(edges["free_flow_speed_kmh"]).fillna(30.0)
         lengths = edges["length"].astype(float)
         for idx, (edge_id, length_m, speed_kmh) in enumerate(
             zip(edges["edge_id"], lengths, speeds)

@@ -50,8 +50,12 @@ __all__ = [
 ]
 
 
-def load_road_graph(city: str = "hanam", modes=("drive",), speed_column="free_flow_speed_kmh"):
-    """도로망을 :class:`~smartmob.teaching.graph.RoadGraph` 로 읽습니다."""
+def load_road_graph(city: str = "hanam", modes=("drive",), speed_column="free_flow_speed_kmh",
+                    speed_kmh=None):
+    """도로망을 :class:`~smartmob.teaching.graph.RoadGraph` 로 읽습니다.
+
+    ``speed_kmh`` 를 주면 속도 컬럼 대신 그 값을 모든 엣지에 씁니다. 보행망에 씁니다.
+    """
     from smartmob.teaching.graph import RoadGraph
 
-    return RoadGraph.from_parquet(city, modes=modes, speed_column=speed_column)
+    return RoadGraph.from_parquet(city, modes=modes, speed_column=speed_column, speed_kmh=speed_kmh)

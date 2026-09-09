@@ -370,6 +370,12 @@ class Dtumos:
                 raise fixtures.FixtureMissing("simulation", fixtures.key_for(payload), payload)
             return self._run_local(payload, progress)
 
+        if progress:
+            print(
+                f"[smartmob] 실서버 {self.base_url} 에서 시뮬레이션을 실행합니다. "
+                f"승객 {payload['num_passengers']}명·차량 {payload['fleet_size']}대면 몇 분 걸릴 수 있습니다. "
+                f"녹화본으로 바로 보려면 SMARTMOB_OFFLINE=1 로 둡니다."
+            )
         job = self._post("/api/simulation/jobs", payload)
         job_id = job.get("job_id") or job.get("id")
         if job_id is None:

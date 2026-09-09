@@ -15,8 +15,13 @@
     demand = load_demand("hanam")      # id, request_time, origin_lat/lon, dest_lat/lon
     vehicles = load_vehicles("hanam")  # id, work_start, work_end, lat, lon
 
-    from smartmob.teaching.dispatch import optimal_match
+    from smartmob.teaching.dispatch import greedy_match, optimal_match
     result = optimal_match(비용행렬)   # result.matches -> [Match(passenger, vehicle, cost), ...]
+    result = greedy_match(비용행렬)    # match="greedy" 일 때 씁니다. 반환 형태는 같습니다
+
+교재 11.3절의 receive_and_expire / dispatch / assign / run_loop 가 이 파일의
+simulate 와 같은 일을 합니다. 교재는 하남 도로망 위에서만 돌아가는 축약본이고,
+이 파일은 DataFrame 을 받아 SimResult 를 돌려주는 완성본입니다.
 """
 
 from __future__ import annotations
@@ -82,6 +87,22 @@ class Request:
             return None
         return self.pickup_time - self.request_time
 
+    # -- 아래 둘은 만들어 두었습니다. 교재 11.6절이 씁니다 ---------------------- #
+
+    @property
+    def assign_wait_min(self):
+        """호출부터 배차 확정까지. 포기 기준(fail_after_min)은 이 값에 걸립니다."""
+        if self.assigned_time is None:
+            return None
+        return self.assigned_time - self.request_time
+
+    @property
+    def pickup_travel_min(self):
+        """배차 확정부터 차가 도착하기까지. 공차 주행 시간입니다."""
+        if self.pickup_time is None or self.assigned_time is None:
+            return None
+        return self.pickup_time - self.assigned_time
+
 
 @dataclass
 class SimResult:
@@ -97,9 +118,15 @@ class SimResult:
         --------------
         total_passengers, served_passengers, failed_passengers,
         service_rate, avg_waiting_time_min, max_waiting_time_min,
+        avg_assign_wait_min, avg_pickup_travel_min,
         utilization, empty_km, loaded_km
 
-        `utilization` 은 (전체 차량이 실제로 일한 분) / (근무한 분) 입니다.
+        - avg_waiting_time_min: 배차받은 승객의 `wait_min` 평균
+        - avg_assign_wait_min / avg_pickup_travel_min: 같은 승객들의
+          `assign_wait_min`, `pickup_travel_min` 평균. 둘을 더하면 위 값입니다
+        - `utilization` 은 (전체 차량의 `busy_min` 합) / (근무한 분의 합) 입니다.
+          근무한 분은 차량마다 `work_end - work_start` 입니다.
+          엔진의 utilization(승객을 태운 시간만)과 정의가 다르므로 그 값과 맞추지 않습니다
         """
         raise NotImplementedError("SimResult.summary 를 구현하세요")
 
@@ -122,6 +149,8 @@ def assign(req, veh, minute, pickup_min, travel_time):
     - `req.pickup_time` = 지금 + 차가 오는 시간 + 승차 시간
     - `req.dropoff_time` = 탑승 시각 + 이동 시간 + 하차 시간
     - 차량의 `empty_km`(태우러 간 거리)와 `loaded_km`(태우고 간 거리) 누적
+    - 차량의 `busy_min` 에 (차가 오는 시간 + 승차 + 이동 + 하차) 누적. `summary` 의
+      `utilization` 이 이 값을 씁니다
     - `veh.free_at` = 하차 시각, `veh.location` = 목적지
 
     순서 주의
@@ -133,15 +162,24 @@ def assign(req, veh, minute, pickup_min, travel_time):
 
 
 def simulate(demand, vehicles, time_start=1080, time_end=1440,
-             travel_time=None, fail_after_min=DEFAULT_FAIL_MIN):
+             travel_time=None, fail_after_min=DEFAULT_FAIL_MIN, match="optimal"):
     """1분 단위 시뮬레이션.
+
+    먼저 할 것
+    ----------
+    - `demand` 의 각 행을 `Request` 로, `vehicles` 의 각 행을 `Vehicle` 로 바꿉니다.
+      `demand` 컬럼: id, request_time, origin_lat, origin_lon, dest_lat, dest_lon
+      `vehicles` 컬럼: id, work_start, work_end, lat, lon
+      `time_start` 이전이나 `time_end` 이후의 호출은 넣지 않습니다
+    - `travel_time` 이 None 이면 `straight_line_time` 을 씁니다
+    - `match` 가 "optimal" 이면 `optimal_match`, "greedy" 면 `greedy_match` 를 씁니다
 
     매 분에 하는 일
     ---------------
     1. 이번 분에 들어온 호출을 대기 목록에 넣습니다
     2. `fail_after_min` 이상 기다린 호출을 포기 처리합니다
-    3. 대기 승객과 빈 차가 둘 다 있으면 비용행렬을 만들고 `optimal_match` 로 배차합니다
-    4. 배차된 승객을 대기 목록에서 뺍니다
+    3. 대기 승객과 빈 차가 둘 다 있으면 `build_costs` 로 비용행렬을 만들고 배차합니다
+    4. 배차된 승객을 대기 목록에서 뺍니다 (차량 상태 갱신은 `assign` 안에서)
     5. 이번 분의 상태를 기록합니다
 
     기록 컬럼 (엔진의 record.csv 와 같아야 합니다)
@@ -153,6 +191,8 @@ def simulate(demand, vehicles, time_start=1080, time_end=1440,
     ----
     - 포기 기준은 **배차까지**의 시간에 걸립니다. 차가 오는 시간은 별개입니다
     - `driving_vehicle_cnt` 는 근무 중이면서 `free_at > minute` 인 차량 수입니다
+    - 돌려주는 `SimResult.config` 에 time_start, time_end, fleet_size, num_passengers,
+      fail_after_min, match 를 넣어 둡니다. 교재 11.6절이 `config["fail_after_min"]` 을 읽습니다
     """
     raise NotImplementedError("simulate 를 구현하세요")
 

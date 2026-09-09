@@ -18,13 +18,13 @@ kernelspec:
 
 3장의 다익스트라를 그대로 적용할 수는 없습니다. 도로 엣지에는 42초처럼 고정된 비용이 있었습니다. 대중교통에서는 정류장 도착시각에 따라 대기시간이 달라집니다. 오전 8시 3분에 도착해 8시 1분 차를 놓치면 다음 차까지 12분을 기다리지만, 8시 정각에 도착하면 1분만 기다립니다.
 
-이 장에서는 시간표를 노선 단위로 훑는 RAPTOR를 구현합니다{cite:p}`delling_raptor_2015`. 이 책에서 직접 구현하는 세 가지 기능 중 두 번째입니다.
+이 장에서 시간표를 직접 훑는 알고리즘 RAPTOR 를 구현합니다. 직접 구현하는 세 가지 중 두 번째입니다. 빈칸 세 자리를 채우면 150줄쯤 됩니다.
 
 ## 학습 목표
 
 - 대중교통 경로 탐색이 그래프 최단경로와 왜 다른지 설명합니다
 - GTFS 를 RAPTOR 가 쓰는 네 개의 자료구조로 바꿉니다
-- 라운드 기반 탐색을 구현하고 경로를 복원합니다
+- 라운드 기반 탐색을 구현하고, 복원된 경로를 읽습니다
 - 손으로 답을 아는 작은 시간표로 구현을 검증합니다
 
 ## 6.1 시간표를 그래프로 표현하면
@@ -52,7 +52,7 @@ RAPTOR는 시각 사건을 노드로 만들지 않고 환승 횟수를 기준으
 
 라운드마다 직전 라운드에서 도착시각이 개선된 정류장을 표시하고, 해당 정류장을 지나는 패턴을 훑습니다. 이 장에서는 `max_rounds=5` 로 운행 탑승 횟수를 제한합니다.
 
-패턴과 운행을 미리 정렬해 두면 질의 중에는 우선순위 큐 없이 배열을 순서대로 훑을 수 있습니다.
+탐색하는 동안에는 우선순위 큐를 쓰지 않고 노선을 순서대로 훑기만 합니다. 정렬은 탐색 전에 시간표를 준비하면서 한 번만 합니다. 이 단순함이 RAPTOR 가 빠른 이유입니다.
 
 ## 6.2 준비 1 — 노선이 아니라 패턴으로 묶습니다
 
@@ -96,7 +96,33 @@ print("노선당 패턴 수:", dict(sorted(Counter(by_route.values()).items())))
 
 패턴이 22개인 노선도 있습니다. 이 결과만으로 지선, 구간 운행, 회차 방식 중 무엇이 원인인지는 알 수 없습니다. 다만 같은 `route_id` 안에 서로 다른 정류장 순서가 22개 있다는 것은 확인할 수 있습니다.
 
-패턴 안의 운행은 첫 정류장 출발 시각 순으로 정렬해 둡니다. 그래야 "8시 3분 이후에 오는 첫 차"를 이분 탐색으로 찾을 수 있습니다.
+패턴 안의 운행은 첫 정류장 출발 시각 순으로 정렬해 둡니다. GTFS 의 시각은 `"08:03:00"` 같은 문자열이라 먼저 초로 바꿉니다. 5장의 `parse_gtfs_time` 이 24시를 넘는 표기까지 받습니다.
+
+```{code-cell} python
+from smartmob.data import parse_gtfs_time
+
+st["dep_s"] = st["departure_time"].map(parse_gtfs_time)
+first_dep = st.groupby("trip_id")["dep_s"].first()      # 운행별 첫 정류장 출발 시각
+
+for trips in patterns.values():
+    trips.sort(key=first_dep.get)
+
+busiest_key = max(patterns, key=lambda k: len(patterns[k]))
+deps = [int(first_dep[t]) for t in patterns[busiest_key]]
+print(f"운행이 가장 많은 패턴: 노선 {busiest_key[0]}, {len(deps)}회")
+print("앞의 다섯 출발:", [f"{d // 3600:02d}:{d % 3600 // 60:02d}" for d in deps[:5]])
+```
+
+정렬해 두면 "8시 3분 이후에 오는 첫 차"를 전부 훑지 않고 이분 탐색으로 찾습니다. 정렬된 목록에서 어떤 값이 들어갈 자리를 찾는 `bisect_left` 를 씁니다.
+
+```{code-cell} python
+from bisect import bisect_left
+
+i = bisect_left(deps, 8 * 3600 + 180)                     # 08:03 이후 첫 운행의 번호
+print(f"{len(deps)}회 중 {i}번째 운행, 출발 {deps[i] // 3600:02d}:{deps[i] % 3600 // 60:02d}")
+```
+
+실습 파일의 `earliest_trip` 이 하는 일이 이 두 줄입니다. 정류장 위치마다 출발 시각 열을 하나씩 두고, 거기에 `bisect_left` 를 겁니다.
 
 ## 6.3 준비 2 — 정류장에서 노선을 거꾸로 찾기
 
@@ -128,7 +154,9 @@ data = TransitData.from_gtfs(feed)
 data.describe()
 ```
 
-방향을 구분한 도보 환승 쌍은 28,818개입니다. 정류장 하나당 연결 수의 단순 평균은 6.9개입니다.
+`from_gtfs` 는 지금까지 한 일을 한 번에 합니다. 6.2절의 패턴 묶기·시각 파싱·운행 정렬, 6.3절의 역색인, 그리고 여기서 말한 도보 환승입니다. 실습 파일에서 여러분이 채우는 것이 이 함수이고, 순서가 그 자리에 여섯 줄로 적혀 있습니다.
+
+도보 환승이 28,818쌍입니다. 정류장 4,203개당 평균 7개꼴입니다. 버스 정류장이 도로 양쪽에 하나씩 있는 경우가 많아서 그렇습니다.
 
 ```{warning}
 직선거리만으로 만든 환승에는 건널 수 없는 하천이나 도로가 반영되지 않습니다. 예를 들어 강을 사이에 둔 두 정류장의 직선거리가 400 m라면 실제 보행로가 없어도 환승 쌍에 들어갈 수 있습니다. 결과를 사용할 때는 보행 네트워크로 연결 여부와 거리를 다시 확인해야 합니다.
@@ -136,7 +164,28 @@ data.describe()
 
 ## 6.5 알고리즘
 
-RAPTOR가 저장하는 상태부터 확인합니다.
+준비가 끝났습니다. 하남 GTFS 로 가기 전에 답을 손으로 아는 작은 시간표로 생각합니다. 정류장 다섯 개, 노선 둘입니다.
+
+```
+A --(1호선)--> B --(1호선)--> C     1호선  08:00 A → 08:10 B → 08:20 C
+               |                            08:30 A → 08:40 B → 08:50 C
+           도보 100m
+               |
+               D --(2호선)--> E     2호선  08:15 D → 08:25 E
+```
+
+8시에 A에서 출발합니다. 환승 횟수를 라운드로 삼으면 이렇게 진행됩니다.
+
+| 라운드 | 무엇을 하는가 | 새로 도달한 정류장 |
+|---|---|---|
+| 0 | 출발지 A 에 08:00 을 적습니다 | A 08:00 |
+| 1 | A 를 지나는 1호선을 훑습니다. 08:00 차를 타고 B, C 에 내려 봅니다. 내린 B 에서 걸어서 D 로 갑니다 | B 08:10, C 08:20, D 08:11 |
+| 2 | B, C, D 를 지나는 노선을 훑습니다. D 에서 08:15 2호선을 타고 E 에 내립니다. B 에서 다시 1호선을 타도 C 가 나아지지 않습니다 | E 08:25 |
+| 3 | E 를 지나는 노선을 훑어도 나아지는 곳이 없습니다 | 없음, 끝 |
+
+C 는 라운드 1에서 08:20, E 는 라운드 2에서 08:25 입니다. 라운드 번호가 곧 탄 횟수이므로 E 는 환승 1회입니다. 8시 5분에 출발하면 08:00 차를 놓쳐 08:30 차를 타고 C 에 08:50 에 닿습니다.
+
+이 표를 코드로 옮깁니다.
 
 상태
 
@@ -155,21 +204,69 @@ RAPTOR가 저장하는 상태부터 확인합니다.
 3. 이번 라운드에 도달한 정류장에서 걸어갈 수 있는 곳을 채웁니다
 4. 개선된 정류장이 없으면 끝냅니다
 
-`trip` 은 현재 패턴을 훑으면서 이용 중인 운행을 가리킵니다. 다음 정류장에서 내리는 경우와, 현재 정류장에서 더 일찍 출발하는 운행으로 바꾸는 경우를 차례로 검사합니다.
+2번의 "손에 든 차"는 패턴을 훑는 동안 현재 타고 있는 운행 번호 하나를 뜻합니다. 타고 있으면 계속 타고, 더 이른 차가 있으면 갈아탑니다.
+
+네 단계를 함수 하나씩으로 씁니다. 먼저 1번, 표시된 정류장을 지나는 패턴을 모읍니다. 같은 패턴이 여러 정류장에서 걸리면 가장 앞 위치 하나만 남깁니다.
 
 ```{code-cell} python
-:tags: [remove-output]
-
-# smartmob/teaching/raptor.py 의 raptor() 를 간추린 것입니다.
 INF = float("inf")
 
+
+def collect_patterns(data, marked):
+    queue = {}                                   # 패턴 번호 → 훑기 시작할 위치
+    for stop in marked:
+        for pattern_idx, pos in data.routes_by_stop[stop]:
+            if pattern_idx not in queue or pos < queue[pattern_idx]:
+                queue[pattern_idx] = pos
+    return queue
+```
+
+2번, 패턴 하나를 그 위치부터 끝까지 훑습니다. `trip` 이 손에 든 차입니다. 정류장마다 먼저 내려 보고, 그다음 더 이른 차로 갈아탈 수 있는지 봅니다. 갈아타는 판단에는 직전 라운드의 도착시각 `prev` 를 씁니다.
+
+```{code-cell} python
+def scan_pattern(p, start_pos, prev, cur, best, new_marked):
+    trip = None
+    for pos in range(start_pos, len(p.stops)):
+        stop = p.stops[pos]
+        if trip is not None:                      # 내려 보기
+            arrive = p.arrivals[trip][pos]
+            if arrive < best[stop]:
+                best[stop] = cur[stop] = arrive
+                new_marked.add(stop)
+        ready = prev[stop]                        # 더 이른 차로 갈아타기
+        if ready < INF:
+            cand = p.earliest_trip(pos, int(ready))
+            if cand is not None and (
+                trip is None or p.departures[cand][pos] < p.departures[trip][pos]
+            ):
+                trip = cand
+```
+
+순서가 중요합니다. 갈아타기를 먼저 하면 방금 탄 차에서 같은 정류장에 바로 내리는 셈이 됩니다. `prev` 대신 이번 라운드의 `cur` 를 쓰면 한 라운드에 여러 번 갈아타게 되어 라운드 번호가 환승 횟수가 아니게 됩니다.
+
+3번, 이번 라운드에 내린 정류장에서 걸어갈 수 있는 곳을 채웁니다.
+
+```{code-cell} python
+def walk_transfers(data, cur, best, new_marked):
+    for stop in list(new_marked):
+        for other, seconds in data.transfers[stop]:
+            arrive = cur[stop] + seconds
+            if arrive < best[other]:
+                best[other] = cur[other] = arrive
+                new_marked.add(other)
+```
+
+셋을 라운드 안에 넣습니다. 라운드 0은 출발지에서 걸어갈 수 있는 정류장에 시각을 적는 것이고, 4번은 새로 나아진 정류장이 없으면 끝내는 것입니다.
+
+```{code-cell} python
+# smartmob/teaching/raptor.py 의 raptor() 를 간추린 것입니다.
 def raptor_core(data, origins, departure, max_rounds=5):
     n = data.n_stops
     best = [INF] * n
     rounds = [[INF] * n]
 
     marked = set()
-    for stop, walk in origins:                      # 라운드 0: 접근 도보
+    for stop, walk in origins:                       # 라운드 0: 접근 도보
         t = departure + walk
         if t < rounds[0][stop]:
             rounds[0][stop] = best[stop] = t
@@ -179,47 +276,32 @@ def raptor_core(data, origins, departure, max_rounds=5):
         prev, cur = rounds[k - 1], list(rounds[k - 1])
         rounds.append(cur)
         new_marked = set()
-
-        queue = {}                                   # 1) 훑을 패턴 모으기
-        for stop in marked:
-            for pattern_idx, pos in data.routes_by_stop[stop]:
-                if pattern_idx not in queue or pos < queue[pattern_idx]:
-                    queue[pattern_idx] = pos
-
-        for pattern_idx, start_pos in queue.items():  # 2) 패턴 훑기
-            p = data.patterns[pattern_idx]
-            trip = None
-            for pos in range(start_pos, len(p.stops)):
-                stop = p.stops[pos]
-                if trip is not None:                  # 내려 보기
-                    arrive = p.arrivals[trip][pos]
-                    if arrive < best[stop]:
-                        best[stop] = cur[stop] = arrive
-                        new_marked.add(stop)
-                ready = prev[stop]                    # 더 이른 차로 갈아타기
-                if ready < INF:
-                    cand = p.earliest_trip(pos, int(ready))
-                    if cand is not None and (
-                        trip is None
-                        or p.departures[cand][pos] < p.departures[trip][pos]
-                    ):
-                        trip = cand
-
-        for stop in list(new_marked):                 # 3) 도보 환승
-            for other, seconds in data.transfers[stop]:
-                arrive = cur[stop] + seconds
-                if arrive < best[other]:
-                    best[other] = cur[other] = arrive
-                    new_marked.add(other)
-
-        if not new_marked:                            # 4) 더 나아지지 않으면 끝
+        for pattern_idx, start_pos in collect_patterns(data, marked).items():
+            scan_pattern(data.patterns[pattern_idx], start_pos, prev, cur, best, new_marked)
+        walk_transfers(data, cur, best, new_marked)
+        if not new_marked:                           # 4) 더 나아지지 않으면 끝
             break
         marked = new_marked
 
     return best, rounds
 ```
 
-돌려 봅니다.
+작은 시간표로 먼저 확인합니다. 그림의 시간표가 `toy_feed()` 에 GTFS 표 네 개로 들어 있습니다.
+
+```{code-cell} python
+from smartmob.teaching.raptor import toy_feed
+
+toy = TransitData.from_gtfs(toy_feed(), max_transfer_m=300)
+a = toy.index_of["A"]
+best, rounds = raptor_core(toy, [(a, 0)], 8 * 3600)
+
+for k, row in enumerate(rounds):
+    reached = {toy.stop_ids[i]: f"{int(t) // 3600:02d}:{int(t) % 3600 // 60:02d}"
+               for i, t in enumerate(row) if t < INF}
+    print(f"라운드 {k}: {reached}")
+```
+
+표와 같습니다. 라운드 1에 B, C, D 가 나오고 라운드 2에 E 가 나옵니다. 이제 하남 GTFS 로 돌립니다.
 
 ```{code-cell} python
 import time
@@ -235,7 +317,7 @@ reached = sum(1 for t in best if t < INF)
 print(f"{elapsed:.0f} ms 에 {reached:,}/{data.n_stops:,} 정류장 도달")
 ```
 
-이 실행에서는 4,203개 정류장 중 4,156개의 도착시각을 한 번에 계산합니다. 실행시간은 컴퓨터와 실행 시점에 따라 달라지므로 셀의 출력값을 사용합니다.
+**80밀리초에 4,156개 정류장까지의 도착시각을 전부 구했습니다.** 3장의 다익스트라는 한 쌍에 7ms 였습니다. 그 속도로 4,156번 물었다면 30초가 넘습니다.
 
 한 번의 RAPTOR 질의는 출발지에서 도달 가능한 모든 정류장의 도착시각을 반환합니다. 이 일대다(one-to-all) 결과로 시간 한도별 도달 정류장을 구할 수 있습니다.
 
@@ -243,7 +325,9 @@ print(f"{elapsed:.0f} ms 에 {reached:,}/{data.n_stops:,} 정류장 도달")
 
 도착시각만으로는 부족합니다. 어떤 버스를 타고 어디서 갈아탔는지 알아야 합니다.
 
-라운드마다 "이 정류장에 어떻게 왔는가"를 기록해 두면 거꾸로 따라갈 수 있습니다. 정리된 구현이 그렇게 되어 있습니다.
+라운드마다 "이 정류장에 어떻게 왔는가"를 기록해 두면 거꾸로 따라갈 수 있습니다. 정리된 구현 `raptor` 는 `raptor_core` 와 같은 일을 하면서, 정류장이 나아질 때마다 기록을 하나 남깁니다. 차를 타고 왔으면 (어느 패턴, 몇 번째 운행, 어디서 탔는지), 걸어왔으면 (어느 정류장에서, 몇 초)입니다. 목적지에서 이 기록을 거꾸로 따라가는 것이 `journey` 입니다.
+
+반환값도 다릅니다. `raptor_core` 는 튜플 둘을 돌려줬지만 `raptor` 는 객체 하나를 돌려주고, 도착시각 목록은 `result.best` 로 꺼냅니다.
 
 ```{code-cell} python
 from smartmob.teaching.raptor import raptor, journey, summarize
@@ -277,29 +361,16 @@ summarize(data, legs, 8 * 3600)
 
 ## 6.7 맞는지 어떻게 아는가
 
-실제 GTFS 로는 답을 손으로 확인할 수 없습니다. 그래서 답을 아는 작은 시간표를 만듭니다.
+실제 GTFS 로는 답을 손으로 확인할 수 없습니다. 그래서 6.5절의 작은 시간표를 `tests/test_raptor.py` 가 그대로 씁니다. C 08:20 환승 0회, E 08:25 환승 1회, 8시 5분 출발이면 C 08:50 세 가지입니다.
 
-```
-A --(1호선)--> B --(1호선)--> C     1호선  08:00 A → 08:10 B → 08:20 C
-               |                            08:30 A → 08:40 B → 08:50 C
-           도보 100m
-               |
-               D --(2호선)--> E     2호선  08:15 D → 08:25 E
+```bash
+pytest tests/test_raptor.py -v -k toy
 ```
 
-8시에 A에서 출발하면 C에는 8시 20분에 직통으로 도착합니다. E에는 B에서 내려 D까지 걸어가 2호선을 타야 하므로 8시 25분, 환승 1회입니다.
-
-8시 5분에 출발하면 8시 차를 놓치므로 다음 차를 타고 8시 50분에 도착합니다.
-
-이 세 가지를 `tests/test_raptor.py` 가 확인합니다.
-
-```{code-cell} python
-:tags: [skip-execution]
-
-# pytest tests/test_raptor.py -v
-# test_toy_direct_ride                        08:20 도착, 환승 0
-# test_toy_one_transfer                       08:25 도착, 환승 1
-# test_toy_later_departure_takes_second_trip  08:50 도착
+```
+tests/test_raptor.py::test_toy_direct_ride PASSED
+tests/test_raptor.py::test_toy_one_transfer PASSED
+tests/test_raptor.py::test_toy_later_departure_takes_second_trip PASSED
 ```
 
 실제 피드에서는 답 대신 불변식을 확인합니다.
@@ -317,12 +388,13 @@ print(f"늦게 출발했는데 더 일찍 도착한 정류장: {violations}개")
 늦게 출발했는데 더 일찍 도착하는 일은 있을 수 없습니다. 하나라도 나오면 구현이 틀린 것입니다.
 
 ```{code-cell} python
-before_service = raptor(data, origins, 3 * 3600)   # 새벽 3시
+before_service = raptor(data, origins, 3 * 3600)   # 새벽 3시, 첫차 전
+arrive = int(before_service.best[target])
 print(f"새벽 3시 출발 도달 정류장: {sum(1 for t in before_service.best if t < INF):,}개")
-print(f"오전 8시 출발 도달 정류장: {reached:,}개")
+print(f"미사역 도착 {arrive // 3600:02d}:{arrive % 3600 // 60:02d}")
 ```
 
-새벽 3시에 출발해도 이후 운행을 기다릴 수 있으므로 4,195개 정류장에 도달합니다. 이 값은 새벽 3시에 운행 중인 노선의 범위를 뜻하지 않습니다.
+첫차 전에 출발해도 도달 정류장 수는 줄지 않습니다. 정류장에서 첫차를 기다렸다가 타기 때문입니다. 대신 미사역 도착이 5시 14분입니다. 8시 출발이 22분 걸린 구간에 두 시간 넘게 걸립니다. 첫차 전에 출발한 도착시각이 첫차 출발보다 이르면 구현이 틀린 것입니다.
 
 ## 이 장의 실습
 
@@ -343,13 +415,13 @@ python labs/check.py ch06
 
 ## 정리
 
-- 대중교통은 정류장 도착시각에 따라 대기시간이 달라지므로 고정 비용 다익스트라를 그대로 적용할 수 없습니다
-- RAPTOR 는 환승 횟수를 라운드로 삼습니다. 우선순위 큐도 정렬도 없습니다
-- 정류장 순서가 같은 운행끼리 패턴으로 묶습니다. 하남 자료의 운행 8,923개는 패턴 349개로 묶입니다
+- 대중교통은 같은 구간의 비용이 도착 시각에 따라 달라집니다. 그래서 그래프 최단경로를 쓸 수 없습니다
+- RAPTOR 는 환승 횟수를 라운드로 삼습니다. 탐색 중에는 우선순위 큐가 없고, 정렬은 준비 단계에서 한 번만 합니다
+- GTFS 노선을 그대로 쓰면 안 됩니다. 정류장 순서가 같은 운행끼리 다시 묶어 패턴을 만듭니다. 하남은 운행 8,923개가 패턴 349개로 묶입니다
 - 정류장→패턴 역색인과 도보 환승 목록을 미리 만들어 둡니다
 - 오전 8시 질의에서는 4,203개 정류장 중 4,156개의 도착시각을 계산합니다
 - 하남시청→미사역 오전 8시는 23분입니다. 차내 6.6분, 도보 11.2분, 대기 5.1분입니다
-- 검증은 손으로 답을 아는 작은 시간표로 합니다. 실제 피드에서는 불변식만 확인합니다
+- 검증은 손으로 답을 아는 정류장 다섯 개짜리 시간표로 합니다. 실제 피드에서는 불변식만 확인합니다
 - 7장에서 환승 규칙을 다듬고 요금을 계산합니다
 
 ## 연습문제

@@ -158,39 +158,10 @@ def check_dijkstra(shortest, city: str = "hanam", n_pairs: int = 30, seed: int =
 
 
 def toy_feed() -> dict:
-    """답을 손으로 아는 작은 시간표.
+    """답을 손으로 아는 작은 시간표. `smartmob.teaching.raptor.toy_feed` 와 같은 것입니다."""
+    from smartmob.teaching.raptor import toy_feed as _toy_feed
 
-        A --(1호선)--> B --(1호선)--> C     08:00 A → 08:10 B → 08:20 C
-                       |                     08:30 A → 08:40 B → 08:50 C
-                   도보 약 100m
-                       |
-                       D --(2호선)--> E     08:15 D → 08:25 E
-
-    A 에서 08:00 출발이면 C 는 08:20(환승 0), E 는 08:25(환승 1)입니다.
-    08:05 에 출발하면 첫 차를 놓쳐 C 는 08:50 입니다.
-    """
-    import pandas as pd
-
-    stops = pd.DataFrame(
-        [("A", "A역", 37.5000, 127.0000), ("B", "B역", 37.5100, 127.0000),
-         ("C", "C역", 37.5200, 127.0000), ("D", "D역", 37.5100, 127.0011),
-         ("E", "E역", 37.5300, 127.0011)],
-        columns=["stop_id", "stop_name", "stop_lat", "stop_lon"],
-    )
-    routes = pd.DataFrame([("L1", "1호선", 1), ("L2", "2호선", 1)],
-                          columns=["route_id", "route_short_name", "route_type"])
-    trips = pd.DataFrame([("L1", "S", "L1-1"), ("L1", "S", "L1-2"), ("L2", "S", "L2-1")],
-                         columns=["route_id", "service_id", "trip_id"])
-    rows = [
-        ("L1-1", "08:00:00", "08:00:00", "A", 1), ("L1-1", "08:10:00", "08:10:00", "B", 2),
-        ("L1-1", "08:20:00", "08:20:00", "C", 3),
-        ("L1-2", "08:30:00", "08:30:00", "A", 1), ("L1-2", "08:40:00", "08:40:00", "B", 2),
-        ("L1-2", "08:50:00", "08:50:00", "C", 3),
-        ("L2-1", "08:15:00", "08:15:00", "D", 1), ("L2-1", "08:25:00", "08:25:00", "E", 2),
-    ]
-    stop_times = pd.DataFrame(
-        rows, columns=["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"])
-    return {"stops": stops, "routes": routes, "trips": trips, "stop_times": stop_times}
+    return _toy_feed()
 
 
 def check_raptor(build, search, city: str = "hanam") -> Report:

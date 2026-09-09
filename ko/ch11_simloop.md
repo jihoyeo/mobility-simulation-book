@@ -14,13 +14,15 @@ kernelspec:
 
 # 11장 이산시간 시뮬레이션 루프
 
-앞 장까지 만든 도로망, 최단경로, 수요, 소요시간 모형, 배차 방법을 1분 단위 루프에 연결합니다. 0장에서 함수 한 번으로 실행했던 시뮬레이션의 축약형을 직접 구현합니다.
+필요한 재료가 다 모였습니다. 도로망(2장), 최단경로(3~4장), 수요(8장), 소요시간 예측(9장), 배차(10장).
+
+이 장에서 이들을 시간 축 위에서 결합합니다. 만드는 것은 0장에서 `dt.run_simulation()` 한 줄로 불렀던 시뮬레이션 루프이고, 직접 구현하는 세 가지 중 마지막입니다. 빈칸 다섯 자리를 채우면 150줄쯤 됩니다.
 
 ## 학습 목표
 
 - 이산시간 시뮬레이션의 한 스텝이 무엇을 하는지 순서대로 씁니다
-- 상태를 클래스가 아니라 값 몇 개로 표현하는 방법을 봅니다
-- 직접 짠 루프와 DTUMOS 녹화본의 입력 조건과 결과를 비교합니다
+- 차량 상태를 상태 변수 대신 다음 가용 시각 하나로 표현하는 방법을 봅니다
+- 직접 짠 루프를 실제 엔진과 대조하고 어디서 갈라지는지 찾습니다
 - 대기시간이 두 부분으로 나뉜다는 것을 확인합니다
 
 ## 11.1 분 단위 처리 순서
@@ -38,7 +40,9 @@ kernelspec:
 
 3번이 10장에서 만든 것입니다. 나머지가 이 장의 일입니다.
 
-1분은 이 교육용 모형에서 정한 시간 간격입니다. 간격을 줄이면 같은 구간의 반복 횟수가 늘어나고, 간격을 늘리면 호출 접수와 배차 시각의 이산화 오차가 커질 수 있습니다.
+시각을 1분 단위 눈금으로 끊고, 눈금마다 그 사이에 일어난 일을 한꺼번에 처리하는 방식을 이산시간(discrete-time) 시뮬레이션이라고 합니다. 호출이 들어오거나 차가 도착하는 사건이 생길 때마다 처리하는 이벤트 기반 방식도 있지만, 이 책은 앞의 방식을 씁니다. 코드가 짧고 사건의 순서를 따질 일이 없기 때문입니다.
+
+1분이라는 단위는 정한 것입니다. 더 짧게 하면 정밀해지지만 느려지고, 길게 하면 반대입니다. 택시 배차에서 1분은 사람이 체감하는 단위와 비슷해 적당합니다.
 
 ## 11.2 차량과 요청 상태
 
@@ -61,7 +65,7 @@ class Vehicle:
         return self.work_start <= minute < self.work_end and self.free_at <= minute
 ```
 
-`free_at`이 현재 시각보다 크면 운행 중이고, 그렇지 않으면 근무시간 안에서 대기 중입니다. 별도 상태 변수와 가용 시각을 중복해 저장하지 않습니다.
+`free_at` 하나로 "운행 중"과 "대기 중"이 표현됩니다. 상태 변수를 따로 두면 상태와 시각이 어긋나는 버그가 생기는데, 상태 변수 자체가 없으므로 어긋날 자리가 없습니다.
 
 승객도 비슷합니다.
 
@@ -82,56 +86,52 @@ class Request:
 
 ## 11.3 루프
 
+11.1절의 다섯 단계를 함수 셋으로 나눠 씁니다. 1번과 2번이 첫 함수입니다. 이번 분에 들어온 호출을 대기 목록에 넣고, 너무 오래 기다린 호출은 포기 처리해서 뺍니다.
+
 ```{code-cell} python
-:tags: [remove-output]
-
 # smartmob/teaching/simloop.py 의 simulate() 를 간추린 것입니다.
-from smartmob.teaching.dispatch import optimal_match
-
-BOARD_MIN = ALIGHT_MIN = 1.0
-
-def run_loop(requests, fleet, time_start, time_end, travel_time, fail_after_min=10):
-    arrivals = {}
-    for req in requests:
-        arrivals.setdefault(req.request_time, []).append(req)
-
-    waiting, rows = [], []
-
-    for minute in range(time_start, time_end):
-        waiting.extend(arrivals.get(minute, []))          # 1) 호출 접수
-
-        keep = []                                          # 2) 포기 처리
-        for req in waiting:
-            if minute - req.request_time >= fail_after_min:
-                req.failed = True
-            else:
-                keep.append(req)
-        waiting = keep
-
-        idle = [v for v in fleet if v.idle(minute)]        # 3) 배차
-        if waiting and idle:
-            costs = build_costs(waiting, idle, minute, travel_time)
-            result = optimal_match(costs)
-            for m in result.matches:
-                assign(waiting[m.passenger], idle[m.vehicle], minute, m.cost, travel_time)
-            done = {m.passenger for m in result.matches}
-            waiting = [r for i, r in enumerate(waiting) if i not in done]
-
-        rows.append({                                      # 5) 기록
-            "time": minute,
-            "waiting_passenger_cnt": len(waiting),
-            "fail_passenger_cnt": sum(1 for r in requests if r.failed),
-            "empty_vehicle_cnt": sum(1 for v in fleet if v.idle(minute)),
-            "driving_vehicle_cnt": sum(1 for v in fleet
-                                       if v.work_start <= minute < v.work_end and v.free_at > minute),
-        })
-    return rows
+def receive_and_expire(waiting, arrivals, minute, fail_after_min):
+    waiting = waiting + arrivals.get(minute, [])           # 1) 호출 접수
+    keep = []                                              # 2) 포기 처리
+    for req in waiting:
+        if minute - req.request_time >= fail_after_min:
+            req.failed = True
+        else:
+            keep.append(req)
+    return keep
 ```
 
-4번(배차된 차의 다음 가용 시각)은 `assign` 안에 있습니다.
+3번이 10장의 배차입니다. 대기 승객 × 빈 차 비용행렬을 만들어 `optimal_match` 에 넘기고, 짝지어진 승객을 대기 목록에서 뺍니다. 비용은 소요시간 함수 `travel_time` 이 정합니다.
 
 ```{code-cell} python
-:tags: [remove-output]
+import numpy as np
+from smartmob.teaching.dispatch import optimal_match
+
+
+def build_costs(waiting, idle, minute, travel_time):
+    costs = np.empty((len(waiting), len(idle)))
+    for i, req in enumerate(waiting):
+        for j, veh in enumerate(idle):
+            costs[i, j] = travel_time(veh.location, req.origin, minute)
+    return costs
+
+
+def dispatch(waiting, fleet, minute, travel_time):
+    idle = [v for v in fleet if v.idle(minute)]            # 3) 배차
+    if not (waiting and idle):
+        return waiting
+    result = optimal_match(build_costs(waiting, idle, minute, travel_time))
+    for m in result.matches:
+        assign(waiting[m.passenger], idle[m.vehicle], minute, m.cost, travel_time)
+    done = {m.passenger for m in result.matches}
+    return [r for i, r in enumerate(waiting) if i not in done]
+```
+
+4번(배차된 차의 다음 가용 시각)은 `assign` 안에 있습니다. 차가 승객에게 가는 시간, 승차 1분, 목적지까지 가는 시간, 하차 1분을 더한 시각이 차량의 `free_at` 이 됩니다.
+
+```{code-cell} python
+BOARD_MIN = ALIGHT_MIN = 1.0
+
 
 def assign(req, veh, minute, pickup_min, travel_time):
     ride_min = travel_time(req.origin, req.dest, minute)
@@ -144,11 +144,55 @@ def assign(req, veh, minute, pickup_min, travel_time):
     veh.location = req.dest            # 그 자리에 섭니다
 ```
 
-이 모형에서 차량은 승객을 내려 준 위치에 머물며 다음 배차는 그 위치에서 시작합니다. 수요가 예상되는 위치로 빈 차량을 미리 옮기는 재배치(relocation)는 포함하지 않습니다.
+마지막 두 줄이 중요합니다. 차량은 승객을 내려 준 자리에 머뭅니다. 다음 호출은 거기서 출발합니다. 실제 택시 기사는 손님이 많은 곳으로 빈 차를 옮기는데, 그것을 **재배치(relocation)** 라고 합니다. 본문에서는 다루지 않고 연습 11.3에서 해 봅니다.
 
-기록의 다섯 컬럼 이름은 DTUMOS의 `record.csv`에 맞춥니다. 같은 이름과 시간 단위를 사용하면 지표와 시계열을 나란히 비교할 수 있습니다.
+셋을 1분 루프 안에 넣고 5번 기록을 붙입니다. 기록 컬럼 다섯 개는 DTUMOS 의 `record.csv` 와 똑같이 맞췄습니다. 같은 형식이라야 대조할 수 있습니다.
+
+```{code-cell} python
+def run_loop(requests, fleet, time_start, time_end, travel_time, fail_after_min=10):
+    arrivals = {}
+    for req in requests:
+        arrivals.setdefault(req.request_time, []).append(req)
+
+    waiting, rows = [], []
+    for minute in range(time_start, time_end):
+        waiting = receive_and_expire(waiting, arrivals, minute, fail_after_min)
+        waiting = dispatch(waiting, fleet, minute, travel_time)
+        rows.append({                                      # 5) 기록
+            "time": minute,
+            "waiting_passenger_cnt": len(waiting),
+            "fail_passenger_cnt": sum(1 for r in requests if r.failed),
+            "empty_vehicle_cnt": sum(1 for v in fleet if v.idle(minute)),
+            "driving_vehicle_cnt": sum(1 for v in fleet
+                                       if v.work_start <= minute < v.work_end and v.free_at > minute),
+        })
+    return rows
+```
+
+하남 전체로 가기 전에 승객 세 명, 차 두 대, 10분짜리로 돌려 봅니다. 소요시간은 직선거리를 시속 25km 로 나누는 `straight_line_time` 을 씁니다.
+
+```{code-cell} python
+import pandas as pd
+from smartmob.teaching.simloop import straight_line_time
+
+toy_requests = [
+    Request(0, origin=(37.540, 127.200), dest=(37.550, 127.210), request_time=1080),
+    Request(1, origin=(37.541, 127.201), dest=(37.560, 127.220), request_time=1080),
+    Request(2, origin=(37.545, 127.205), dest=(37.530, 127.190), request_time=1083),
+]
+toy_fleet = [
+    Vehicle(0, location=(37.539, 127.199), work_start=1080, work_end=1440),
+    Vehicle(1, location=(37.560, 127.230), work_start=1080, work_end=1440),
+]
+
+pd.DataFrame(run_loop(toy_requests, toy_fleet, 1080, 1090, straight_line_time))
+```
+
+18:00 에 호출 둘이 들어오고 차 둘이 비어 있어 바로 배차됩니다. 그 뒤로 두 차는 계속 운행 중입니다. 18:03 에 세 번째 호출이 들어오지만 빈 차가 없어 대기 승객이 1명이 됩니다. 첫 차가 승객을 내려 주는 18:05 를 지나 18:06 에 배차됩니다. 대기 3분입니다. 포기 기준 10분 안이라 `fail_passenger_cnt` 는 0으로 남습니다.
 
 ## 11.4 6시간 실행
+
+정리된 `simulate` 는 위의 루프에 두 가지를 더한 것입니다. 하나는 8장의 수요 DataFrame 과 차량 DataFrame 을 `Request` 와 `Vehicle` 객체로 바꾸는 부분입니다. 다른 하나는 끝난 뒤 지표를 내는 `summary()` 입니다.
 
 ```{code-cell} python
 import time
@@ -164,17 +208,21 @@ run = simulate(demand, vehicles, time_start=1080, time_end=1440)
 print(f"실행 {time.perf_counter() - t0:.2f}초")
 ```
 
-실행시간은 위 셀에서 측정합니다. 이 루프는 도로망 라우팅 대신 직선거리와 고정 평균속도로 소요시간을 계산합니다.
+1초가 안 걸립니다. 4장에서 걱정했던 "몇 분"이 아닙니다. 소요시간을 직선거리로 근사했기 때문입니다.
 
 ```{code-cell} python
 run.summary()
 ```
 
+0장의 `sim.summary()` 와 같은 이름의 지표가 나옵니다. 1,000명 전원 배차, 평균 대기 4.28분, 가동률 0.67입니다. 0장의 엔진 결과는 990명, 4.08분, 0.27이었습니다. 승객 수가 다른 것은 엔진이 자정 직전 열 건을 세지 않기 때문입니다. 가동률이 다른 이유는 11.5절에서 봅니다.
+
 ```{code-cell} python
 run.record.head()
 ```
 
-## 11.5 DTUMOS 녹화본과 비교
+0장에서 본 엔진의 `record` 와 같은 다섯 컬럼입니다. 18:00 에 빈 차 80대로 시작해 1분 뒤 5대, 2분 뒤 9대가 호출을 받아 움직입니다.
+
+## 11.5 엔진과 맞춰 보기
 
 같은 도시, 차량 대수, 요청 목표 건수와 시간 구간으로 실행한 DTUMOS 녹화본을 불러옵니다. 녹화본 결과에는 990건이 포함되고 로컬 입력에는 1,000건이 있으므로 완전히 같은 요청 집합의 대조는 아닙니다.
 
@@ -193,7 +241,9 @@ for key in ("total_passengers", "served_passengers", "service_rate", "avg_waitin
     print(f"{key:24s} 내 루프 {fmt(m):>8s}   엔진 {fmt(t):>8s}")
 ```
 
-로컬 루프의 평균 대기시간은 4.28분이고 녹화본은 4.08분입니다. 요청 수와 소요시간 모형이 다르므로 이 차이만으로 두 구현의 일치 여부를 판정하지 않습니다.
+평균 대기시간이 4.28분 대 4.08분입니다. 0.2분 차이입니다. 실습의 채점 기준이 이 차이 1.5분 이내입니다.
+
+가동률은 나란히 놓지 않았습니다. 엔진의 `utilization` 은 승객을 태운 시간만 셉니다(0.27). 우리 `summary()` 는 태우러 가는 시간까지 일한 시간으로 셉니다(0.67). 정의가 다른 지표를 같은 줄에 놓으면 틀린 결론이 나옵니다.
 
 시계열도 봅니다.
 
@@ -256,7 +306,7 @@ print(f"합계              평균 {run.summary()['avg_waiting_time_min']:.2f}�
 배차 확정 뒤에는 `fail_after_min`을 다시 검사하지 않습니다. 따라서 픽업 이동시간이 길면 총 대기시간은 10분을 넘을 수 있습니다.
 
 ```{code-cell} python
-over = [r for r in run.requests if r.wait_min and r.wait_min > 10]
+over = [r for r in run.requests if r.wait_min is not None and r.wait_min > 10]
 print(f"총 대기가 10분을 넘은 승객 {len(over)}명")
 worst = max(over, key=lambda r: r.wait_min)
 print(f"  최악: 배차까지 {worst.assign_wait_min:.0f}분 + 차 오는 데 {worst.pickup_travel_min:.1f}분")
@@ -303,7 +353,7 @@ ax1.grid(alpha=0.25, linewidth=0.6)
 fig.tight_layout();
 ```
 
-차량 대수를 선택하려면 서비스 목표와 차량 운영비 조건이 추가로 필요합니다. 위 표는 각 차량 대수에서 계산된 서비스율, 대기시간, 가동률을 제공합니다.
+어느 지점을 고를지는 이 그림이 정해 주지 않습니다. 승객의 대기시간과 운영자의 차량 비용 중 무엇을 얼마나 중히 볼지는 사람이 정합니다. 시뮬레이터가 하는 일은 선택지마다 무엇을 잃고 얻는지 숫자로 보여 주는 것까지입니다.
 
 ## 11.8 배차 방법별 결과
 
@@ -345,13 +395,13 @@ python labs/check.py ch11
 ## 정리
 
 - 한 스텝은 다섯 가지입니다. 호출 접수 → 포기 처리 → 배차 → 차량 상태 갱신 → 기록
-- 차량의 대기 여부는 `location`, `free_at`, 근무시간으로 계산합니다
-- 실행시간은 직선거리 소요시간 모형을 사용한 조건에서 측정합니다
-- 로컬 루프와 녹화본은 요청 수와 소요시간 모형이 다르다는 한계가 있습니다
-- 값이 거의 일정한 시계열은 상관계수와 함께 0인 비율과 평균을 확인합니다
+- 차량 상태는 `location` 과 `free_at` 두 값이면 충분합니다. 별도 상태 변수를 두면 어긋납니다
+- 하남 6시간 시뮬레이션이 1초 안에 끝납니다. 직선거리 근사 덕분입니다
+- 우리 루프의 평균 대기 4.28분, 엔진 4.08분. 운행 차량 시계열 상관 0.9 이상입니다
+- 대기 승객 시계열은 양쪽 다 거의 0이라 상관계수로 비교하면 안 됩니다. 분포를 봅니다
 - 대기시간은 "배차까지"와 "차가 오는 동안"으로 나뉩니다. 포기 기준은 앞부분에만 걸립니다
-- 이 예제에서는 차량 80대보다 25대에서 두 배차 방법의 차이가 크게 나타납니다
-- 12장에서 이 결과를 지표로 정리하고 그림으로 그립니다
+- 배차 알고리즘의 차이는 수요가 공급을 압박할 때만 드러납니다
+- 12장에서 본 지표와 그림으로 이 결과를 정리합니다. 프로젝트 보고서의 틀이 거기 있습니다
 
 ## 연습문제
 
