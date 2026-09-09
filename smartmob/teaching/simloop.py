@@ -3,7 +3,7 @@
 11장에서 유도한 코드의 정돈본입니다.
 
 1분씩 시간을 밀면서 호출을 받고, 차량 상태를 갱신하고, 배차하고, 기록합니다.
-지금까지 만든 것이 전부 여기로 들어옵니다.
+수요, 배차, 소요시간 모형을 분 단위로 연결합니다.
 
     수요(8장) → 배차(10장) → 소요시간(3장 또는 9장) → 기록 → 지표(12장)
 
@@ -21,7 +21,7 @@ from smartmob.teaching.graph import haversine_km
 
 Point = tuple[float, float]
 
-# 승하차에 걸리는 시간(분). 실제 엔진의 기본값과 맞췄습니다.
+# 이 교육용 루프에서 가정한 승하차 시간(분).
 BOARD_MIN = 1.0
 ALIGHT_MIN = 1.0
 DEFAULT_FAIL_MIN = 10        # 이만큼 기다려도 배차가 안 되면 포기합니다
@@ -108,7 +108,12 @@ class SimResult:
         served = [r for r in self.requests if r.pickup_time is not None]
         failed = [r for r in self.requests if r.failed]
         waits = [r.wait_min for r in served]
-        on_duty_min = sum(v.work_end - v.work_start for v in self.vehicles)
+        time_start = self.config.get("time_start", 0)
+        time_end = self.config.get("time_end", 1440)
+        on_duty_min = sum(
+            max(0, min(v.work_end, time_end) - max(v.work_start, time_start))
+            for v in self.vehicles
+        )
         busy_min = sum(v.busy_min for v in self.vehicles)
         return {
             "total_passengers": len(self.requests),
@@ -193,7 +198,10 @@ def simulate(
             costs = _build_costs(waiting, idle, minute, travel_time)
             result = matcher(costs)
             for m in result.matches:
-                _assign(waiting[m.passenger], idle[m.vehicle], minute, m.cost, travel_time)
+                _assign(
+                    waiting[m.passenger], idle[m.vehicle], minute, m.cost,
+                    travel_time, time_end,
+                )
             assigned = {m.passenger for m in result.matches}
             waiting = [r for i, r in enumerate(waiting) if i not in assigned]
 
@@ -231,7 +239,14 @@ def _build_costs(waiting: list[Request], idle: list[Vehicle], minute: int, trave
     return costs
 
 
-def _assign(req: Request, veh: Vehicle, minute: int, pickup_min: float, travel_time) -> None:
+def _assign(
+    req: Request,
+    veh: Vehicle,
+    minute: int,
+    pickup_min: float,
+    travel_time,
+    time_end: int,
+) -> None:
     """배차를 확정하고 차량의 다음 가용 시각을 계산합니다.
 
     차량은 승객을 태우러 갔다가(공차) 목적지까지 태우고 간 뒤(실차) 그 자리에 섭니다.
@@ -251,4 +266,6 @@ def _assign(req: Request, veh: Vehicle, minute: int, pickup_min: float, travel_t
     veh.free_at = req.dropoff_time
     veh.location = req.dest
     veh.served += 1
-    veh.busy_min += pickup_min + BOARD_MIN + ride_min + ALIGHT_MIN
+    # 지표의 분모와 같은 관측 구간·근무 구간 안의 시간만 더합니다.
+    busy_until = min(req.dropoff_time, veh.work_end, time_end)
+    veh.busy_min += max(0.0, busy_until - minute)

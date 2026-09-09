@@ -117,10 +117,7 @@ def test_total_wait_splits_into_two_parts(run):
 
 
 def test_pickup_travel_can_exceed_fail_threshold(run):
-    """멀리 있는 차가 배차되면 총 대기가 포기 기준을 넘을 수 있습니다.
-
-    실제 엔진도 같습니다. 지표를 읽을 때 이 둘을 구분해야 합니다.
-    """
+    """포기 기준은 배차 전 대기, 총 대기는 픽업 이동시간까지 포함합니다."""
     over = [r for r in run.requests
             if r.wait_min is not None and r.wait_min > run.config["fail_after_min"]]
     assert over, "이 데이터에서는 그런 승객이 있어야 합니다"
@@ -143,6 +140,15 @@ def test_smaller_fleet_increases_wait(demand, vehicles):
     small = simulate(demand, vehicles.head(30), 1080, 1440).summary()
     assert small["avg_waiting_time_min"] > big["avg_waiting_time_min"]
     assert small["service_rate"] < big["service_rate"]
+
+
+def test_utilization_stays_within_observation_window(demand, vehicles):
+    """관측 종료나 근무 종료 뒤의 운행시간은 가동률에서 제외합니다."""
+    for match in ("optimal", "greedy"):
+        summary = simulate(
+            demand, vehicles.head(25), 1080, 1440, match=match
+        ).summary()
+        assert 0 <= summary["utilization"] <= 1
 
 
 def test_travel_time_is_swappable(demand, vehicles):
