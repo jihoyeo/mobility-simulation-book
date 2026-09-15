@@ -31,7 +31,7 @@ kernelspec:
 
 ```{code-cell} python
 import pandas as pd
-from smartmob.data import data_path
+from smartmob.data import data_path, load_road_graph
 from smartmob.teaching.graph import DRIVE_HIGHWAYS
 
 edges = pd.read_parquet(data_path("hanam/road_graph_edges.parquet"))
