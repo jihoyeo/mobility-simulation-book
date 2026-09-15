@@ -38,6 +38,9 @@
 | node / edge | 노드 / 엣지 | 노드(node) / 엣지(edge) | 링크·간선과 혼용 |
 | adjacency list | 인접 리스트 | 인접 리스트(adjacency list) | 애드제이션시 |
 | shortest path | 최단경로 | 최단경로(shortest path) | 최적경로 |
+| tentative travel time | 잠정 시간 | 현재까지 발견한 경로 중 가장 짧은 통행시간 | 확정된 최소 통행시간과 혼용 |
+| admissibility | 허용 가능성 | 허용 가능성(admissibility) | 일관성과 혼용 |
+| consistency | 일관성 | 일관성(consistency) | 허용 가능성과 혼용 |
 | routing | 라우팅 | 경로 탐색(routing) | — |
 | snapping | 스냅 | 가장 가까운 노드에 붙이기(snapping) | 스냅핑 |
 | free-flow speed | 자유류 속도 | 자유류 속도(free-flow speed) | 프리플로우 |

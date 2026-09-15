@@ -1,104 +1,111 @@
-"""3장 실습 — 최단경로
+"""3장 실습 — 최단경로 함수를 작성하는 파일.
 
-노트북 `labs/ch03_dijkstra.ipynb` 를 열어 놓고 이 파일의 빈칸을 채웁니다.
-채운 뒤 자가 채점을 돌립니다.
+`ch03_dijkstra.ipynb`는 데이터를 준비하고 이 파일의 함수를 실행합니다.
+이 파일에서 `trace`, `dijkstra`를 작성하고 저장한 뒤 노트북의 확인 셀을
+다시 실행합니다. `astar`는 추가 실습이며 기본 채점에는 포함되지 않습니다.
 
+저장소 루트에서 자가 채점:
     python labs/check.py ch03
 
-채점 기준은 하나입니다. NetworkX 의 최단거리와 완전히 같은 값이 나오는가.
-코드가 실행되는 것과 결과가 맞는 것은 별개입니다.
+2장에서 만든 그래프의 인터페이스:
+    graph.neighbors(node) -> [(이웃 노드, 통행시간_초, 엣지 인덱스), ...]
+    graph.adj             -> 노드별 이웃 목록. 키로 노드의 존재를 확인합니다.
+    graph.coord[node]     -> (위도, 경도)
+    graph.max_speed_kmh() -> 자유류 속도의 최댓값. 추가 실습에서 사용합니다.
 
---------------------------------------------------------------------------
-그래프 다루기
---------------------------------------------------------------------------
-    from smartmob.data import load_road_graph
-    G = load_road_graph("hanam", modes=("drive",))
-
-    G.adj[node]          -> [(이웃 노드, 소요시간_초, 엣지 번호), ...]
-    G.neighbors(node)    -> 같은 목록
-    G.coord[node]        -> (위도, 경도)
-    G.nearest_node(위도, 경도) -> 가장 가까운 노드
-    G.max_speed_kmh()    -> 이 도로망의 최고 속도 (A* 휴리스틱에 씁니다)
+함수 이름과 인자, 반환 형식은 유지합니다. 빈칸의 NotImplementedError를
+작성한 코드로 바꿉니다. 경로가 없음을 알리는 NoPath는 아래에서 불러옵니다.
 """
 
 from __future__ import annotations
 
 import heapq
 
+from smartmob.teaching.dijkstra import NoPath
 from smartmob.teaching.graph import haversine_km
 
 
-def dijkstra(graph, source, target):
-    """출발 노드에서 도착 노드까지 소요시간이 가장 짧은 경로.
-
-    Returns
-    -------
-    (초, 경로 노드 목록, 확정한 노드 수)
-        경로 목록은 ``[source, ..., target]`` 입니다.
-
-    Raises
-    ------
-    NoPath 또는 ValueError
-        길이 없거나 그래프에 없는 노드일 때. 교재 3.3절처럼 `NoPath` 클래스를
-        직접 정의해 던져도 되고 `ValueError` 를 써도 됩니다. 채점은 예외의 종류를
-        가리지 않습니다. 무한대를 조용히 돌려주는 것만 안 됩니다.
-
-    힌트
-    ----
-    - `dist[노드]` 로 지금까지 알아낸 최단 소요시간을 들고 있습니다
-    - `prev[노드]` 로 직전 노드를 기록해 두면 나중에 경로를 되짚을 수 있습니다
-    - `done` 집합에 확정한 노드를 넣습니다. 같은 노드가 힙에 여러 번 들어갈 수 있습니다
-    - 힙에는 `(거리, 노드)` 튜플을 넣습니다. `heapq.heappop` 은 거리가 가장 작은 것을 꺼냅니다
-    - 힙에서 꺼낸 노드가 이미 `done` 에 있으면 버리고 다음 것을 꺼냅니다
-    - 도착 노드를 힙에서 **꺼냈을 때** 끝냅니다. 넣을 때가 아닙니다
-    - 교재 3.2절의 표가 노드 6개짜리 그래프에서 이 과정을 한 줄씩 적은 것입니다
-    """
-    raise NotImplementedError("dijkstra 를 구현하세요")
-
-
 def trace(prev, source, target):
-    """`prev` 를 거꾸로 따라가 경로 목록을 만듭니다.
+    """직전 노드 기록을 따라 경로 목록을 복원합니다(교재 3.3).
 
-    `prev[target]` 에서 시작해 `source` 에 닿을 때까지 올라간 뒤 뒤집습니다.
+    입력 예:
+        prev = {"n2": "n1", "n4": "n2", "n3": "n4"}
+        source = "n1", target = "n3"
+    반환 예:
+        ["n1", "n2", "n4", "n3"]
+
+    target부터 prev를 따라 source에 닿을 때까지 모은 뒤 순서를 뒤집습니다.
+    source == target이면 노드 하나만 담은 목록을 반환합니다.
+    이 함수는 dijkstra에서 도착 노드를 확정한 뒤 호출합니다.
     """
-    raise NotImplementedError("trace 를 구현하세요")
+    raise NotImplementedError("trace를 구현합니다")
+
+
+def dijkstra(graph, source, target):
+    """출발 노드에서 도착 노드까지 최소 통행시간 경로를 구합니다.
+
+    입력 조건
+    ---------
+    엣지 비용은 유한한 0 이상의 통행시간(초)입니다. 탐색 중 변하지 않습니다.
+
+    반환값
+    ------
+    (통행시간_초, 경로_노드_목록, 확정_노드_수)
+        경로는 [source, ..., target]입니다. source == target이면
+        (0.0, [source], 1)을 반환합니다. 확정 노드 수에는 양 끝도 셉니다.
+
+    예외
+    ----
+    NoPath
+        출발·도착 노드가 그래프에 없거나, 방향을 따라 도달할 수 없을 때.
+        함수 안에서 raise NoPath("경로가 없습니다")처럼 사용합니다.
+
+    구현 순서(교재 3.2~3.3)
+    ----------------------
+    1. 출발·도착 노드가 graph.adj에 있는지 확인합니다.
+    2. dist에 잠정 시간, prev에 직전 노드, done에 확정 노드를 기록합니다.
+       출발점의 잠정 시간은 0이며 나머지는 아직 발견하지 않은 상태입니다.
+    3. 힙에는 (잠정 시간, 노드)를 넣습니다. heapq.heappush와 heappop을 씁니다.
+    4. 가장 작은 후보를 꺼냅니다. 이미 done에 있는 노드면 건너뜁니다.
+    5. 노드를 확정합니다. 도착점이면 trace로 경로를 복원해 반환합니다.
+    6. 이웃까지의 새 시간이 dist의 기존 값보다 작으면 dist와 prev를 갱신하고
+       힙에 새 후보를 넣습니다. 아직 기록이 없으면 기존 값은 무한대로 봅니다.
+    7. 힙이 비었는데 도착점을 확정하지 못했다면 NoPath를 발생시킵니다.
+
+    도착점을 처음 발견해 힙에 넣은 시점에는 끝내지 않습니다.
+    """
+    raise NotImplementedError("dijkstra를 구현합니다")
 
 
 def astar(graph, source, target):
-    """다익스트라에 목적지 방향 힌트를 더한 것.
+    """추가 실습: 남은 시간의 추정치를 더해 탐색합니다(교재 3.5~3.6).
 
-    힌트로 쓰는 값은 **남은 직선거리를 이 도로망의 최고 속도로 달리는 시간**입니다.
-    이 값은 실제 남은 시간보다 항상 작으므로(허용 가능) 최적해가 유지됩니다.
+    반환 형식과 NoPath 처리는 dijkstra와 같습니다. 기본 채점에는 포함되지
+    않으며 노트북에서 다익스트라와 결과를 비교합니다.
 
-    Returns
-    -------
-    dijkstra 와 같은 형식.
+    이번 실습은 기본 자유류 속도로 읽은 그래프를 사용합니다.
+    h(node) = haversine_km(*graph.coord[node], *graph.coord[target]) / vmax * 3600
+    vmax는 graph.max_speed_kmh()입니다. km와 km/h를 나눈 뒤 초로 환산합니다.
 
-    힌트
-    ----
-    - 힙에 넣는 우선순위는 `이미 온 시간 + h(노드)` 입니다
-    - 힙에서 꺼낼 때 쓰는 것은 `이미 온 시간` 입니다. 둘을 같이 넣어 둡니다.
-      즉 힙 원소는 `(우선순위, 이미 온 시간, 노드)` 세 값입니다
-    - `haversine_km(위도1, 경도1, 위도2, 경도2)` 로 직선거리를 구합니다.
-      `graph.coord[노드]` 가 (위도, 경도) 입니다
-    - h 를 뺀 나머지는 dijkstra 와 같습니다. dijkstra 를 복사해 두 줄만 고치면 됩니다
+    - 힙에는 (누적 시간 + h(node), 누적 시간, 노드)를 넣습니다.
+    - 이웃까지의 시간을 갱신할 때는 h가 포함되지 않은 누적 시간을 씁니다.
+    - h(target)는 0입니다. 모든 엣지에서 h(u) <= 통행시간(u,v) + h(v)를
+      만족해야 확정 노드를 다시 처리하지 않는 방식을 쓸 수 있습니다.
+    - 노트북에서 이번 목적지에 대한 이 조건을 확인한 뒤 실행합니다.
     """
-    raise NotImplementedError("astar 를 구현하세요")
+    raise NotImplementedError("추가 실습: astar를 구현합니다")
 
-
-# --------------------------------------------------------------------------- #
-# 직접 돌려 보기
-# --------------------------------------------------------------------------- #
 
 if __name__ == "__main__":
     from smartmob.data import load_road_graph
 
-    G = load_road_graph("hanam", modes=("drive",))
-    start = G.nearest_node(37.5393, 127.2148)   # 하남시청
-    goal = G.nearest_node(37.5606, 127.1930)    # 미사역
+    drive = load_road_graph("hanam", modes=("drive",))
+    start = drive.nearest_node(37.5393, 127.2148)
+    goal = drive.nearest_node(37.5606, 127.1930)
 
-    seconds, path, settled = dijkstra(G, start, goal)
-    print(f"다익스트라  {seconds / 60:.2f}분, 노드 {len(path)}개, 확정 {settled:,}개")
-
-    seconds, path, settled = astar(G, start, goal)
-    print(f"A*          {seconds / 60:.2f}분, 노드 {len(path)}개, 확정 {settled:,}개")
+    for name, search in [("다익스트라", dijkstra), ("A* (추가 실습)", astar)]:
+        try:
+            seconds, path, settled = search(drive, start, goal)
+            print(f"{name}: {seconds / 60:.2f}분, 경로 노드 {len(path)}개, 확정 {settled:,}개")
+        except NotImplementedError as exc:
+            print(f"[ ] {exc}")
