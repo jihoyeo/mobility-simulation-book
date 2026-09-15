@@ -143,6 +143,58 @@ def test_check_dijkstra_catches_wrong_answer():
     assert any("NetworkX" in r.name for r in failed)
 
 
+@pytest.mark.parametrize("error", [NameError, TypeError, KeyError])
+def test_check_dijkstra_rejects_unrelated_errors(error):
+    """코딩 오류를 경로가 없다는 정상 처리로 인정하지 않습니다."""
+    from smartmob.teaching.dijkstra import dijkstra as ref
+
+    def broken(graph, source, target):
+        if source not in graph.adj or target not in graph.adj:
+            raise error("잘못된 오류 처리")
+        path = ref(graph, source, target)
+        return path.duration_s, path.nodes, path.settled
+
+    report = check_dijkstra(broken, n_pairs=5)
+    result = next(r for r in report.results if "연결되지 않은" in r.name)
+    assert not result.passed
+    assert error.__name__ in result.detail
+
+
+def test_check_dijkstra_checks_unreachable_existing_nodes():
+    """없는 노드만 검사해서 실제 연결 단절을 놓치지 않습니다."""
+    from smartmob.teaching.dijkstra import NoPath, dijkstra as ref
+
+    def broken(graph, source, target):
+        try:
+            path = ref(graph, source, target)
+        except NoPath:
+            if source not in graph.adj or target not in graph.adj:
+                raise
+            return float("inf"), [], 0
+        return path.duration_s, path.nodes, path.settled
+
+    report = check_dijkstra(broken, n_pairs=5)
+    result = next(r for r in report.results if "연결되지 않은" in r.name)
+    assert not result.passed
+    assert "n1 → n3" in result.detail
+
+
+@pytest.mark.parametrize("duration", [float("nan"), float("inf")])
+def test_check_dijkstra_rejects_nonfinite_duration(duration):
+    """NaN과 비교한 결과가 거짓이 되는 특성으로 오답이 통과하지 않아야 합니다."""
+    from smartmob.teaching.dijkstra import dijkstra as ref
+
+    def broken(graph, source, target):
+        path = ref(graph, source, target)
+        return duration, path.nodes, path.settled
+
+    report = check_dijkstra(broken, n_pairs=5)
+    assert not report.ok
+    for name in ["NetworkX", "비용의 합"]:
+        result = next(r for r in report.results if name in r.name)
+        assert not result.passed
+
+
 def test_check_simloop_catches_wrong_output_shape():
     """record 컬럼이 다르면 잡아내야 합니다."""
     from smartmob.teaching.simloop import simulate

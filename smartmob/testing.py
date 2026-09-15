@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import math
 import random
 import traceback
 from dataclasses import dataclass, field
@@ -75,10 +76,17 @@ class Report:
 
 
 def check_dijkstra(shortest, city: str = "hanam", n_pairs: int = 30, seed: int = 42) -> Report:
-    """``shortest(graph, source, target) -> (초, 노드목록, 확정노드수)`` 를 검사합니다."""
+    """``shortest(graph, source, target) -> (초, 노드목록, 확정노드수)`` 를 검사합니다.
+
+    경로가 없으면 ``smartmob.teaching.dijkstra.NoPath``를 발생시켜야 합니다.
+    다른 예외는 구현 오류로 보고합니다.
+    """
     import networkx as nx
+    import pandas as pd
 
     from smartmob.data import load_road_graph
+    from smartmob.teaching.dijkstra import NoPath
+    from smartmob.teaching.graph import RoadGraph
 
     report = Report("3장 최단경로 자가 채점")
     G = load_road_graph(city, modes=("drive",))
@@ -109,6 +117,8 @@ def check_dijkstra(shortest, city: str = "hanam", n_pairs: int = 30, seed: int =
             mine = shortest(G, s, t)[0]
             theirs = nx.shortest_path_length(nxG, s, t, weight="weight")
             gap = abs(mine - theirs)
+            if not math.isfinite(gap):
+                return False, f"통행시간은 유한한 값이어야 합니다: {mine}"
             if gap > worst:
                 worst, worst_pair = gap, (s, t)
         if worst > 1e-6:
@@ -131,18 +141,33 @@ def check_dijkstra(shortest, city: str = "hanam", n_pairs: int = 30, seed: int =
         again = 0.0
         for u, v in zip(path, path[1:]):
             again += min(w for nb, w, _ in G.neighbors(u) if nb == v)
-        if abs(again - total) > 1e-6:
+        if not math.isclose(again, total, rel_tol=0.0, abs_tol=1e-6):
             return False, f"엣지 합 {again:.3f} 초 vs 반환값 {total:.3f} 초"
         return True, ""
 
     def raises_when_disconnected():
-        try:
-            shortest(G, "n_없는노드", pairs[0][1])
-        except NotImplementedError:
-            raise
-        except Exception:
-            return True, ""
-        return False, "없는 노드를 주면 예외를 던져야 합니다"
+        toy_nodes = pd.DataFrame([
+            {"node_id": f"n{i}", "lat": 37.5, "lon": 127.2 + i * 0.001}
+            for i in range(1, 5)
+        ])
+        toy_edges = pd.DataFrame([
+            {"edge_id": "e1_f_1_2", "length": 100.0},
+            {"edge_id": "e2_f_3_4", "length": 100.0},
+        ]).assign(highway="residential", free_flow_speed_kmh=36.0)
+        toy = RoadGraph.from_frames(toy_nodes, toy_edges)
+        cases = [
+            (G, "n_없는노드", pairs[0][1]),
+            (G, pairs[0][0], "n_없는노드"),
+            (toy, "n1", "n3"),  # 노드는 있지만 연결되지 않은 두 구간
+            (toy, "n2", "n1"),  # 역방향 이동은 불가능
+        ]
+        for graph, source, target in cases:
+            try:
+                shortest(graph, source, target)
+            except NoPath:
+                continue
+            return False, f"{source} → {target}: NoPath를 발생시켜야 합니다"
+        return True, "없는 노드·연결 단절·역방향 이동을 구분해 확인"
 
     report.check("세 값을 돌려준다", returns_triple)
     report.check("NetworkX 와 결과가 같다", matches_networkx)
