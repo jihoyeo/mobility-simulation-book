@@ -11,7 +11,7 @@
 | `ch04_speeds_engine.ipynb` | 4장 | 시간대별 속도가 경로를 바꾸는 것 | |
 | `ch05_gtfs.ipynb` | 5장 | GTFS 구성 이해와 정류장 3곳의 시간표 작성 | |
 | `ch06_raptor.ipynb` | 6장 | 대중교통 경로 탐색 **직접 구현 2** | `ch06_raptor.py` |
-| `ch07_raptor_fare.ipynb` | 7장 | 환승 제한, 요금, 지표 분포 | |
+| `ch07_raptor_fare.ipynb` | 7장 | 환승·요금, 지표 분포, MNL 수단 선택 | |
 | `ch08_demand.ipynb` | 8장 | 수요 만들기와 그 결과 확인 | |
 | `ch09_eta.ipynb` | 9장 | 통행시간 예측 모델 | |
 | `ch10_dispatch.ipynb` | 10장 | 배차와 완전탐색 검증 | |

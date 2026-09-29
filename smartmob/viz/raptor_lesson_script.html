@@ -5,15 +5,26 @@ const lessonNames=['하남시청','하남문화예술회관·하남문화원','�
 const lessonModes=['2번 승차','2번 하차','5호선 승차','5호선 경유','5호선 하차','도착 정류장','9304번 승차','9304번 하차'];
 const lessonTime=t=>t===null?'∞':clock(t),lessonData=()=>LESSON.runs[lessonRun],lessonEvent=()=>lessonData().steps[lessonStep];
 function pauseLesson(){clearInterval(lessonTimer);lessonTimer=null;$('lesson-play').textContent='▶ 재생';$('lesson-play').setAttribute('aria-pressed','false');}
-function changeMode(lesson){
- pauseLesson();pause();$('lesson').hidden=!lesson;$('explore').hidden=lesson;
- $('mode-lesson').setAttribute('aria-selected',String(lesson));$('mode-explore').setAttribute('aria-selected',String(!lesson));
- history.replaceState(null,'',lesson?'#lesson':'#accessibility');
- if(!lesson){if(!map)setupMap();else requestAnimationFrame(()=>{map.resize();fitMap();});}
+const lessonTabs=['basics','lesson','explore'];
+function changeMode(mode,updateHash=true){
+ pauseLesson();pause();
+ for(const name of lessonTabs){
+  const active=name===mode;$(name).hidden=!active;
+  $('mode-'+name).setAttribute('aria-selected',String(active));$('mode-'+name).tabIndex=active?0:-1;
+ }
+ $('hanam-dataset').hidden=mode==='basics';
+ if(updateHash)history.replaceState(null,'',mode==='explore'?'#accessibility':'#'+mode);
+ if(mode==='explore'){if(!map)setupMap();else requestAnimationFrame(()=>{map.resize();fitMap();});}
 }
-$('mode-lesson').onclick=()=>changeMode(true);$('mode-explore').onclick=()=>changeMode(false);
-$('lesson-to-access').onclick=()=>{runIndex=DATA.runs.findIndex(r=>r.departure===lessonData().departure);roundIndex=lessonEvent().round;mapView='area';$('departure').value=runIndex;render();changeMode(false);};
-for(const id of ['mode-lesson','mode-explore'])$(id).onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();const lesson=id==='mode-explore';changeMode(lesson);$(lesson?'mode-lesson':'mode-explore').focus();}};
+for(const [i,name] of lessonTabs.entries()){
+ $('mode-'+name).onclick=()=>changeMode(name);
+ $('mode-'+name).onkeydown=e=>{
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+  e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?2:(i+(e.key==='ArrowRight'?1:2))%3;
+  changeMode(lessonTabs[next]);$('mode-'+lessonTabs[next]).focus();
+ };
+}
+$('lesson-to-access').onclick=()=>{runIndex=DATA.runs.findIndex(r=>r.departure===lessonData().departure);roundIndex=lessonEvent().round;mapView='area';$('departure').value=runIndex;render();changeMode('explore');};
 function stepLesson(n){lessonStep=Math.max(0,Math.min(n,lessonData().steps.length-1));renderLesson();}
 $('lesson-next').onclick=()=>{pauseLesson();stepLesson(lessonStep+1);};$('lesson-prev').onclick=()=>{pauseLesson();stepLesson(lessonStep-1);};$('lesson-reset').onclick=()=>{pauseLesson();stepLesson(0);};
 $('lesson-departure').onchange=()=>{pauseLesson();lessonRun=+$('lesson-departure').value;stepLesson(0);};
@@ -92,7 +103,8 @@ function renderLesson(){
  renderLessonDiagram(s);renderEvidence(s);
 }
 renderLesson();
-if(['#hanam','#accessibility'].includes(location.hash))changeMode(false);
-window.addEventListener('hashchange',()=>changeMode(!['#hanam','#accessibility'].includes(location.hash)));
+function modeFromHash(){return ['#hanam','#accessibility'].includes(location.hash)?'explore':location.hash==='#lesson'?'lesson':'basics';}
+changeMode(modeFromHash(),false);
+window.addEventListener('hashchange',()=>changeMode(modeFromHash(),false));
 new ResizeObserver(()=>{try{if(window.frameElement)window.frameElement.style.height=(document.querySelector('main').scrollHeight+45)+'px';}catch{}}).observe(document.querySelector('main'));
 </script>

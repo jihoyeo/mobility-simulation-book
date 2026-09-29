@@ -19,7 +19,7 @@ from shapely.geometry import Point, mapping, shape
 from shapely.ops import transform, unary_union
 from smartmob.data import load_gtfs, load_road_graph
 from smartmob.data.paths import data_path
-from smartmob.teaching.raptor import Pattern, TransitData, journey, raptor
+from smartmob.teaching.raptor import Pattern, TransitData, journey, raptor, toy_feed
 from smartmob.viz.transit import _boundary, _builder_roads, _finite
 
 
@@ -49,6 +49,37 @@ def build_isochrones(data, rounds, departure, origin):
             series.append(dict(geometry=mapping(geographic), area=round(area.area / 1e6, 3)))
         result[str(minutes)] = series
     return result
+
+
+def build_intro():
+    """본문·노트북과 같은 A–E 시간표를 종료 라운드까지 기록합니다.
+
+    설명에 필요한 계산만 골라 보여 주되, 시각과 상태는 실제 RAPTOR에서 가져옵니다.
+    """
+    data = TransitData.from_gtfs(toy_feed(), max_transfer_m=300)
+    a, b, c, d = [data.index_of[s] for s in "ABCD"]
+    runs = []
+    for departure in (28800, 29100):
+        result = raptor(data, [(a, 0)], departure, record_steps=True)
+
+        def event(kind, round_number, stop=None):
+            return next(s for s in result.steps
+                        if s['kind'] == kind and s['round'] == round_number
+                        and (stop is None or s.get('stop') == stop))
+
+        scenes = [event('access', 0), event('board', 1, a), event('ride', 1, c),
+                  event('walk', 1, d), event('end', 1), event('round', 2),
+                  event('end', 2)]
+        if result.n_rounds >= 3:
+            scenes.extend([event('round', 3), event('end', 3)])
+        runs.append(dict(departure=departure, rounds=result.rounds, scenes=scenes))
+    return _finite(dict(
+        stops=data.stop_ids,
+        patterns=[dict(name=p.name, stops=p.stops, arrivals=p.arrivals,
+                       departures=p.departures) for p in data.patterns],
+        walk=next(seconds for stop, seconds in data.transfers[b] if stop == d),
+        runs=runs,
+    ))
 
 
 def build_lesson(data, origins, target):
@@ -162,7 +193,7 @@ def build_payload():
     roads = _builder_roads(load_road_graph("hanam"))
     return dict(
         origin=origin, target=target, destinations=destinations,
-        lesson=build_lesson(data, origins, target),
+        intro=build_intro(), lesson=build_lesson(data, origins, target),
         stops=list(zip(data.stop_ids, data.stop_names, data.stop_lons, data.stop_lats)),
         patterns=[dict(name=p.name, type=p.route_type, stops=p.stops)
                   for p in data.patterns],
@@ -176,7 +207,9 @@ def main():
     base = ROOT / "smartmob/viz"
     page = (base / "raptor_rounds.html").read_text(encoding="utf-8")
     page = page.replace("__LESSON__", (base / "raptor_lesson.html").read_text(encoding="utf-8"))
+    page = page.replace("__INTRO__", (base / "raptor_intro.html").read_text(encoding="utf-8"))
     page = page.replace("__LESSON_SCRIPT__", (base / "raptor_lesson_script.html").read_text(encoding="utf-8"))
+    page = page.replace("__INTRO_SCRIPT__", (base / "raptor_intro_script.html").read_text(encoding="utf-8"))
     page = page.replace("__ACCESSIBILITY__", (base / "raptor_accessibility.html").read_text(encoding="utf-8"))
     payload = json.dumps(build_payload(), ensure_ascii=False, allow_nan=False,
                          separators=(",", ":")).replace("<", "\\u003c")
