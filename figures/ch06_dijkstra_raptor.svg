@@ -1,51 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 558" role="img" aria-labelledby="title desc">
-  <title id="title">다익스트라와 RAPTOR의 처리 순서</title>
-  <desc id="desc">다익스트라는 우선순위 큐에서 최소 비용 노드를 꺼내 확정하고 이웃을 완화합니다. RAPTOR는 직전 라운드에서 개선된 정류장의 패턴을 훑고 새 도착시각과 도보 결과를 다음 라운드로 넘깁니다.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" role="img" aria-labelledby="title desc">
+  <title id="title">다익스트라와 RAPTOR가 다음 조사 대상을 고르는 방법</title>
+  <desc id="desc">다익스트라는 현재 비용이 가장 작은 노드 하나를 고르고 그 이웃을 조사합니다. RAPTOR는 직전 라운드에서 더 일찍 도착한 정류장을 고르고 그 정류장을 지나는 운행 패턴의 시간표를 조사합니다.</desc>
+  <style>
+    text{font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:#20344d}
+    .title{font-size:26px;font-weight:700}
+    .head{font-size:23px;font-weight:700}
+    .step{font-size:19px;font-weight:700}
+    .detail{font-size:17px;fill:#425a70}
+    .note{font-size:17px;fill:#425a70}
+    .arrow{fill:none;stroke:#71889d;stroke-width:2.5;marker-end:url(#arrow)}
+  </style>
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0 0L10 5L0 10Z" fill="#607c96"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#71889d"/>
     </marker>
   </defs>
-  <style>
-    text{font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:#20344d;font-size:18px}
-    .title{font-size:26px;font-weight:700}
-    .head{font-size:21px;font-weight:700}
-    .small{font-size:16px;fill:#52677e}
-    .arrow{fill:none;stroke:#607c96;stroke-width:2;marker-end:url(#arrow)}
-  </style>
-  <rect width="1040" height="558" fill="white"/>
-  <text x="28" y="38" class="title">더 좋은 답을 기록하는 공통 원리, 다른 처리 순서</text>
-  <rect x="20" y="63" width="488" height="438" rx="12" fill="#f5f9fe" stroke="#c6d4e0"/>
-  <rect x="532" y="63" width="488" height="438" rx="12" fill="#fffbf3" stroke="#c6d4e0"/>
-  <text x="44" y="101" class="head">3장의 다익스트라 · 노드별 확정</text>
-  <text x="556" y="101" class="head">RAPTOR · 탑승 횟수별 라운드</text>
-
-  <rect x="44" y="124" width="418" height="82" rx="8" fill="#e8f1fc" stroke="#b2cbe2"/>
-  <text x="62" y="155">우선순위 큐에서 최소 비용 노드 선택</text>
-  <text x="62" y="184" class="small">아직 확정되지 않은 노드 u를 꺼냅니다.</text>
-  <path class="arrow" d="M253 206V232"/>
-  <rect x="44" y="234" width="418" height="82" rx="8" fill="white" stroke="#b2cbe2"/>
-  <text x="62" y="265">u 확정 → 이웃 엣지 완화</text>
-  <text x="62" y="294" class="small">현재 소요시간 + 엣지 비용으로 비교합니다.</text>
-  <path class="arrow" d="M253 316V342"/>
-  <rect x="44" y="344" width="418" height="82" rx="8" fill="white" stroke="#b2cbe2"/>
-  <text x="62" y="375">개선한 후보를 우선순위 큐에 추가</text>
-  <text x="62" y="404" class="small">다음 최소 비용 노드를 고릅니다.</text>
-  <path class="arrow" d="M462 386H484V165H464"/>
-  <text x="44" y="465" class="small">한 번 확정한 노드의 답은 다시 바꾸지 않습니다.</text>
-
-  <rect x="556" y="124" width="418" height="82" rx="8" fill="#fff0d9" stroke="#ddc79f"/>
-  <text x="574" y="155">이전 라운드의 답으로 시작</text>
-  <text x="574" y="184" class="small">개선된 정류장을 지나는 패턴을 모읍니다.</text>
-  <path class="arrow" d="M765 206V232"/>
-  <rect x="556" y="234" width="418" height="82" rx="8" fill="white" stroke="#ddc79f"/>
-  <text x="574" y="265">선택한 패턴의 시간표를 차례로 읽기</text>
-  <text x="574" y="294" class="small">탈 수 있는 차와 뒤 정류장의 도착을 찾습니다.</text>
-  <path class="arrow" d="M765 316V342"/>
-  <rect x="556" y="344" width="418" height="82" rx="8" fill="white" stroke="#ddc79f"/>
-  <text x="574" y="375">새 도착시각 기록 → 하차 뒤 도보</text>
-  <text x="574" y="404" class="small">다음 라운드에서는 탑승을 한 번 더 허용합니다.</text>
-  <path class="arrow" d="M974 386H996V165H976"/>
-  <text x="556" y="465" class="small">같은 정류장도 다음 라운드에서 개선될 수 있습니다.</text>
-  <text x="520" y="535" text-anchor="middle" class="small">시간표를 반영한 그래프를 만들면 다익스트라로도 대중교통 경로를 찾을 수 있습니다.</text>
+  <rect width="1000" height="430" fill="white"/>
+  <text x="28" y="40" class="title">다음에 무엇을 조사할까?</text>
+  <rect x="25" y="66" width="460" height="312" rx="12" fill="#f3f8fe" stroke="#b7cee2"/>
+  <rect x="515" y="66" width="460" height="312" rx="12" fill="#fff8ee" stroke="#e3c9a3"/>
+  <text x="48" y="104" class="head">다익스트라: 노드 하나</text>
+  <text x="538" y="104" class="head">RAPTOR: 개선된 정류장</text>
+  <rect x="48" y="124" width="414" height="86" rx="8" fill="white" stroke="#b7cee2"/>
+  <text x="68" y="158" class="step">① 현재 비용이 가장 작은 노드 선택</text>
+  <text x="68" y="187" class="detail">예: B까지 10분이면 B를 꺼냄</text>
+  <rect x="538" y="124" width="414" height="86" rx="8" fill="white" stroke="#e3c9a3"/>
+  <text x="558" y="158" class="step">① 더 일찍 도착한 정류장 선택</text>
+  <text x="558" y="187" class="detail">예: 라운드 1에서 B가 08:10으로 개선</text>
+  <path class="arrow" d="M255 211V239"/>
+  <path class="arrow" d="M745 211V239"/>
+  <rect x="48" y="242" width="414" height="100" rx="8" fill="white" stroke="#b7cee2"/>
+  <text x="68" y="278" class="step">② B와 연결된 이웃 조사</text>
+  <text x="68" y="310" class="detail">이동 비용을 더해 도착값 비교</text>
+  <rect x="538" y="242" width="414" height="100" rx="8" fill="white" stroke="#e3c9a3"/>
+  <text x="558" y="278" class="step">② B를 지나는 패턴 조사</text>
+  <text x="558" y="310" class="detail">탈 차를 고르고 도착시각 비교</text>
+  <text x="500" y="411" text-anchor="middle" class="note">둘 다 더 좋은 도착값을 기록하지만, 조사할 대상을 고르는 방식이 다릅니다.</text>
 </svg>
