@@ -1,9 +1,9 @@
-"""실습 스켈레톤과 자가 채점기 (`labs/`).
+"""채점용 스켈레톤과 6장 참고 구현 (`labs/`).
 
 두 방향을 다 확인합니다.
 
-- 빈칸판의 미구현 함수는 실패해야 합니다. 제공된 준비 함수는 실행할 수 있습니다
-- 정답 구현은 **전부 통과**해야 합니다. 채점 기준이 실제로 달성 가능해야 합니다
+- 3·11장의 빈칸판은 미구현 상태로 남아 있어야 합니다
+- 6장의 제공 함수는 작은 시간표와 실제 GTFS에서 올바르게 실행되어야 합니다
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ def _load(name: str):
 
 @pytest.mark.parametrize("name", ["ch03_dijkstra", "ch06_raptor", "ch11_simloop"])
 def test_skeleton_imports(name):
-    """빈칸판도 불러와지기는 해야 합니다. 문법 오류가 있으면 학생이 시작을 못 합니다."""
+    """실습 파일은 모두 불러올 수 있어야 합니다."""
     assert _load(name) is not None
 
 
@@ -51,31 +51,18 @@ def test_ch03_skeleton_fails_everything():
     assert all("아직 구현하지 않았습니다" in r.detail for r in report.results)
 
 
-def test_ch06_skeleton_fails_search():
-    sol = _load("ch06_raptor")
-    report = check_raptor(sol.TransitData.from_gtfs, sol.raptor)
-    assert not report.ok
-    searches = [r for r in report.results if "아직 구현하지 않았습니다" in r.detail]
-    assert searches
-
-
-def test_ch06_prepared_data_keeps_student_boarding_function():
-    """제공한 변환 함수가 학생의 첫 빈칸을 우회하지 않아야 합니다."""
+def test_ch06_prepared_data_uses_completed_boarding_function():
+    """GTFS 변환 결과에서 제공된 운행 선택 함수를 사용할 수 있어야 합니다."""
     sol = _load("ch06_raptor")
     data = sol.TransitData.from_gtfs(toy_feed(), max_transfer_m=300)
     assert len(data.patterns) == 2
     assert all(isinstance(p, sol.Pattern) for p in data.patterns)
-    with pytest.raises(NotImplementedError):
-        data.patterns[0].earliest_trip(0, 8 * 3600)
+    assert data.patterns[0].earliest_trip(0, 8 * 3600) == 0
 
 
-def test_ch06_two_completed_functions_pass_with_provided_builder(monkeypatch):
-    """기본 과제의 두 함수만 완성해도 기존 채점을 모두 통과할 수 있습니다."""
+def test_ch06_reference_functions_match_expected_results():
+    """제공된 RAPTOR의 결과가 작은 시간표와 GTFS 기준값에 맞아야 합니다."""
     sol = _load("ch06_raptor")
-    from smartmob.teaching.raptor import Pattern, raptor
-
-    monkeypatch.setattr(sol.Pattern, "earliest_trip", Pattern.earliest_trip)
-    monkeypatch.setattr(sol, "raptor", lambda *a, **kw: raptor(*a, **kw).best)
     report = check_raptor(sol.TransitData.from_gtfs, sol.raptor)
     assert report.ok, [r.render() for r in report.results if not r.passed]
 

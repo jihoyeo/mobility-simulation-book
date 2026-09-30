@@ -43,10 +43,18 @@ MAX_ROUNDS = 5
 
 
 def haversine_m(lat1, lon1, lat2, lon2):
-    """두 좌표 사이의 거리(m). 이건 만들어 두었습니다."""
+    """두 위도·경도 좌표 사이의 구면거리(m)를 계산합니다.
+
+    도보 연결 후보의 거리를 근사할 때 씁니다. 도로망의 실제 보행거리는
+    아니므로 `DETOUR_FACTOR`를 별도로 곱합니다.
+    """
+    # 삼각함수에는 도 단위가 아니라 라디안 단위의 각도를 넣습니다.
     p1, p2 = math.radians(lat1), math.radians(lat2)
+    # 두 점의 위도 차이와 경도 차이를 구합니다.
     dp, dl = p2 - p1, math.radians(lon2 - lon1)
+    # 하버사인 식으로 지구 중심각의 절반에 대한 값을 계산합니다.
     a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    # 지구 반지름을 곱해 중심각을 미터 단위 거리로 바꿉니다.
     return 2 * 6_371_008.8 * math.asin(min(1.0, math.sqrt(a)))
 
 
@@ -161,13 +169,17 @@ class TransitData:
         """
         from smartmob.teaching.raptor import TransitData as PreparedData
 
+        # GTFS 표를 패턴·역색인·도보 연결로 바꾸는 공통 준비 함수를 호출합니다.
         prepared = PreparedData.from_gtfs(feed, max_transfer_m=max_transfer_m)
+        # 패턴을 이 실습 파일의 클래스로 다시 만들어 같은 인터페이스를 씁니다.
         patterns = [
             Pattern(p.name, p.route_type, p.stops, p.arrivals, p.departures)
             for p in prepared.patterns
         ]
+        # 각 패턴에서 정류장 위치별 출발시각 목록을 준비합니다.
         for pattern in patterns:
             pattern.build_index()
+        # 정류장 목록과 패턴·도보 연결을 하나의 자료 객체로 묶습니다.
         return cls(
             stop_ids=prepared.stop_ids, stop_names=prepared.stop_names,
             stop_lats=prepared.stop_lats, stop_lons=prepared.stop_lons,
@@ -179,23 +191,36 @@ class TransitData:
 
     @property
     def n_stops(self):
+        """GTFS에서 읽은 정류장 수를 반환합니다."""
         return len(self.stop_ids)
 
     def _kdtree(self):
+        """가까운 정류장을 빠르게 찾는 공간 색인을 한 번만 만듭니다."""
         from scipy.spatial import cKDTree
 
+        # 같은 자료로 여러 번 질의할 때 색인을 다시 만들지 않습니다.
         if not hasattr(self, "_tree_cache"):
             self._tree_cache = cKDTree(list(zip(self.stop_lats, self.stop_lons)))
         return self._tree_cache
 
     def access_stops(self, lat, lon, max_walk_m=MAX_ACCESS_M, limit=30):
-        """좌표에서 걸어갈 수 있는 정류장과 도보 소요시간(초)."""
+        """출발 좌표에서 걸어갈 수 있는 정류장과 도보시간을 찾습니다.
+
+        반환값은 `(정류장 번호, 걷는 초)` 목록입니다. 직선거리에 우회계수를
+        곱한 값이 `max_walk_m` 이하인 정류장만 남기고, 가까운 순서로
+        최대 `limit`개를 돌려줍니다.
+        """
+        # 공간 색인의 검색 반경을 대략적인 위경도 단위로 바꿉니다.
         deg = max_walk_m / 111_000 * DETOUR_FACTOR
         found = []
+        # 공간 색인으로 가까운 후보만 가져옵니다.
         for j in self._kdtree().query_ball_point([lat, lon], deg):
+            # 실제 필터는 하버사인 거리와 우회계수로 다시 계산합니다.
             metres = haversine_m(lat, lon, self.stop_lats[j], self.stop_lons[j]) * DETOUR_FACTOR
             if metres <= max_walk_m:
+                # 거리 / 보행속도를 초로 바꾸고 올림해 저장합니다.
                 found.append((int(j), int(math.ceil(metres / WALK_SPEED_MPS))))
+        # 접근 시간이 짧은 정류장부터 사용합니다.
         found.sort(key=lambda x: x[1])
         return found[:limit]
 

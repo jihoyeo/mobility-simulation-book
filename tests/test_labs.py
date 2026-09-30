@@ -18,7 +18,7 @@ KO = ROOT / "ko"
 LABS = ROOT / "labs"
 
 CHAPTERS = sorted(p for p in KO.glob("ch*.md"))
-GRADED = {"ch03_dijkstra": "ch03", "ch06_raptor": "ch06", "ch11_simloop": "ch11"}
+GRADED = {"ch03_dijkstra": "ch03", "ch11_simloop": "ch11"}
 
 
 def _notebooks_in(text: str) -> list[str]:
@@ -122,7 +122,7 @@ def test_labs_readme_lists_every_notebook():
         assert f"`{path.name}`" in readme, f"labs/README.md 표에 {path.name} 이 없습니다"
 
 
-def test_check_module_covers_the_graded_three():
+def test_check_module_covers_the_graded_chapters():
     import sys
 
     sys.path.insert(0, str(LABS))

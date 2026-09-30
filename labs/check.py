@@ -2,7 +2,6 @@
 """실습 자가 채점.
 
     python labs/check.py ch03      # 3장 최단경로
-    python labs/check.py ch06      # 6장 RAPTOR
     python labs/check.py ch11      # 11장 시뮬레이션 루프
     python labs/check.py all       # 전부
 
@@ -34,13 +33,6 @@ def _check_ch03():
     return check_dijkstra(sol.dijkstra)
 
 
-def _check_ch06():
-    import ch06_raptor as sol
-    from smartmob.testing import check_raptor
-
-    return check_raptor(sol.TransitData.from_gtfs, sol.raptor)
-
-
 def _check_ch11():
     import ch11_simloop as sol
     from smartmob.testing import check_simloop
@@ -48,10 +40,10 @@ def _check_ch11():
     return check_simloop(sol.simulate)
 
 
-CHECKS = {"ch03": _check_ch03, "ch06": _check_ch06, "ch11": _check_ch11}
+CHECKS = {"ch03": _check_ch03, "ch11": _check_ch11}
 
 # 예전 이름으로도 부를 수 있게 남겨 둡니다.
-ALIASES = {"w03": "ch03", "w06": "ch06", "w11": "ch11"}
+ALIASES = {"w03": "ch03", "w11": "ch11"}
 
 
 def check(name: str):
