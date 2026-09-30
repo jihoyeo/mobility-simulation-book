@@ -37,15 +37,15 @@ function lessonDescription(s){
  const old=s.stop===undefined?null:s.before[s.stop],value=s.stop===undefined?null:s.times[s.stop];
  switch(s.kind){
  case'access':return{line:0,title:'출발지에서 걸어갈 수 있는 곳부터 적습니다.',copy:`${shortClock(lessonData().departure)}에 하남시청에서 출발합니다. 2번과 9304번을 탈 정류장까지의 도보시간을 더합니다. 아직 차량에는 타지 않았으므로 라운드 0입니다.`,equation:LESSON.access.map(([i,t])=>`${esc(name(i))}: ${clock(lessonData().departure)} + ${t}초 = <b>${clock(lessonData().departure+t)}</b>`).join('<br>')};
- case'copy':return{line:1,title:`라운드 ${s.round}: 이전 답을 복사합니다.`,copy:`지금부터 최대 ${s.round}번 탑승한 답을 구합니다. 이전 값 prev는 이 라운드 동안 고정하고, 이번 값 cur만 바꿉니다. 복사했으므로 이전에 찾은 더 빠른 경로도 그대로 남습니다.`,equation:`prev ← 라운드 ${s.round-1}의 결과<br><b>cur ← prev의 복사본</b>`};
- case'queue':return{line:2,title:'바뀐 정류장을 지나는 노선만 모읍니다.',copy:`직전 라운드에서 도착시각이 개선된 정류장부터 확인합니다. 그 정류장을 지나는 ${s.queue.length}개 노선 패턴이 이번에 훑을 대상입니다.`,equation:`이번에 훑을 노선 Q<br><b>${s.queue.map(i=>esc(LESSON.patterns[i].name)).join(' · ')||'없음'}</b>`};
- case'pattern':return{line:2,title:`${p.name}의 시간표를 훑습니다.`,copy:`${name(s.stop)}부터 정류장 방문 순서대로 살펴봅니다. 탈 차량은 이전 값 prev에 적힌 도착시각을 기준으로 고르고, 같은 차량으로 갈 수 있는 다음 정류장들을 갱신합니다.`,equation:`확인할 노선: <b>${esc(p.name)}</b><br>승차 판단은 <b>prev</b>에서 읽습니다.`};
- case'board':return{line:3,title:`${shortClock(s.departure)} 출발 차량을 고릅니다.`,copy:`${name(s.stop)}의 이전 값은 ${clock(s.ready)}입니다. 그 시각 이후 출발하는 첫 차량을 찾으면 ${clock(s.departure)}입니다. ${minutes(s.departure-s.ready)}분 기다려 탈 수 있습니다.`,equation:`prev[${esc(name(s.stop))}] = <b>${clock(s.ready)}</b><br>${clock(s.ready)} ≤ <b>${clock(s.departure)}</b> → 탑승 가능`};
- case'ride':return{line:4,title:`${name(s.stop)}에 더 빠른 시각을 씁니다.`,copy:`선택한 ${p.name} 차량의 이 정류장 도착시각은 ${clock(s.arrival)}입니다. cur에 적힌 ${old===null?'미도달(∞)':clock(old)}보다 이르므로 바꿉니다.${s.pattern===1?' 중간 7곳을 지나도 같은 차량이므로 탑승은 한 번입니다.':' 같은 차량의 다음 정류장도 같은 라운드에서 확인합니다.'}`,equation:`cur[${esc(name(s.stop))}]<br>min(${lessonTime(old)}, ${clock(s.arrival)}) = <b>${clock(value)}</b>`};
- case'walk':return{line:5,title:`도보 ${s.seconds}초를 같은 라운드에 더합니다.`,copy:`${name(s.origin)}에서 ${name(s.stop)}까지 걷습니다. 도보는 차량 탑승을 늘리지 않으므로 라운드 ${s.round}의 cur에 기록합니다.${s.stop===2?' 이 값으로 5호선에 타는 판단은 다음 라운드에서 합니다.':''}`,equation:`${clock(s.times[s.origin])} + ${s.seconds}초 = ${clock(s.arrival)}<br>cur[${esc(name(s.stop))}] ← <b>min(${lessonTime(old)}, ${clock(s.arrival)}) = ${clock(value)}</b>`};
- case'gate':return{line:3,title:'5호선에 지금 바로 타면 안 될까요?',copy:`이번 계산으로 하남시청역에 ${clock(s.times[2])} 도착했습니다. 하지만 승차 판단에 읽는 이전 값 prev는 아직 ∞입니다. 이번에 쓴 cur를 읽어 또 승차하면, 라운드 1에서 버스와 지하철을 두 번 타게 됩니다.`,equation:`읽어야 할 prev[하남시청역] = <b>∞</b><br>방금 쓴 cur[하남시청역] = ${clock(s.times[2])}`,warning:'다음 라운드가 필요합니다. 라운드 2에서 cur가 prev로 넘어간 뒤, 이 도착시각으로 5호선 차량을 고릅니다.'};
+ case'copy':return{line:1,title:`라운드 ${s.round}: 기존 도착시각을 가져옵니다.`,copy:`이제 차를 최대 ${s.round}번 탈 수 있습니다. 먼저 지난 라운드의 시각을 오른쪽 칸에 그대로 옮깁니다. 그다음 새 경로가 더 빠른 정류장만 바꿉니다.`,equation:`지난 라운드: 최대 ${s.round-1}번 탑승<br><b>이번 라운드: 최대 ${s.round}번 탑승</b>`};
+ case'queue':return{line:2,title:'새로 도착한 곳을 지나는 노선을 봅니다.',copy:`지난 라운드에서 도착시각이 좋아진 정류장을 살펴봅니다. 그곳을 지나는 노선 ${s.queue.length}개에서 다음 차량을 탈 수 있는지 확인합니다.`,equation:`이번에 살펴볼 노선<br><b>${s.queue.map(i=>esc(LESSON.patterns[i].name)).join(' · ')||'없음'}</b>`};
+ case'pattern':return{line:2,title:`${p.name}의 시간표를 살펴봅니다.`,copy:`${name(s.stop)}부터 정류장 순서대로 봅니다. 지난 라운드까지 도착한 시각으로 탈 차를 고르고, 같은 차로 갈 수 있는 정류장의 도착시각을 채웁니다.`,equation:`확인할 노선: <b>${esc(p.name)}</b><br>승차 판단: <b>왼쪽의 이전 라운드 시각</b>`};
+ case'board':return{line:3,title:`${shortClock(s.departure)} 출발 차량을 고릅니다.`,copy:`지난 라운드에서 ${name(s.stop)}에 ${clock(s.ready)} 도착할 수 있었습니다. 그 이후 출발하는 첫 차량이 ${clock(s.departure)}입니다. ${minutes(s.departure-s.ready)}분 기다려 탈 수 있습니다.`,equation:`정류장 도착 <b>${clock(s.ready)}</b> ≤ 차량 출발 <b>${clock(s.departure)}</b><br>탑승 가능`};
+ case'ride':return{line:4,title:`${name(s.stop)} 도착시각을 갱신합니다.`,copy:`${p.name} 차량이 ${clock(s.arrival)}에 도착합니다. 현재 적힌 ${old===null?'미도달':clock(old)}보다 빠르므로 오른쪽 칸을 바꿉니다.${s.pattern===1?' 중간 7곳을 지나도 같은 차량이므로 탑승은 한 번입니다.':' 같은 차량의 다음 정류장도 같은 라운드에서 확인합니다.'}`,equation:`기존 ${lessonTime(old)} → <b>새 도착 ${clock(value)}</b><br>더 빠르므로 갱신`};
+ case'walk':return{line:5,title:`걸어서 ${name(s.stop)}에 도착합니다.`,copy:`${name(s.origin)}에서 ${s.seconds}초 걷습니다. 차를 새로 타지 않았으므로 이번 라운드의 도착시각을 바꿉니다.${s.stop===2?' 여기서 5호선을 타는 경로는 다음 라운드에서 계산합니다.':''}`,equation:`${clock(s.times[s.origin])} + 도보 ${s.seconds}초 = <b>${clock(s.arrival)}</b><br>기존 ${lessonTime(old)} → ${clock(value)}`};
+ case'gate':return{line:3,title:'여기서 바로 5호선을 탈 수 있을까요?',copy:`이번 라운드에 하남시청역 ${clock(s.times[2])} 도착을 새로 찾았습니다. 그러나 왼쪽의 이전 라운드에는 아직 하남시청역에 도착한 기록이 없습니다. 지금 5호선까지 타면 차량을 두 번 타게 됩니다.`,equation:`이전 라운드 하남시청역 = <b>미도달</b><br>이번 라운드 하남시청역 = <b>${clock(s.times[2])}</b>`,warning:'5호선 탑승은 라운드 2에서 계산합니다. 그때 이번에 찾은 도착시각이 왼쪽으로 넘어갑니다.'};
  case'miss':return{line:3,title:'이 시각 이후 탈 수 있는 차량이 없습니다.',copy:`${name(s.stop)}의 이전 도착시각 ${clock(s.ready)} 이후에 출발하는 운행이 이 시간표에는 없습니다. 값을 바꾸지 않고 다음 정류장이나 노선을 확인합니다.`,equation:`출발시각 ≥ ${clock(s.ready)}인 차량: <b>없음</b>`};
- case'end':return s.marked.length?{line:6,title:`라운드 ${s.round}의 답을 저장합니다.`,copy:`이번 라운드에서는 ${s.marked.length}개 정류장의 도착시각이 개선됐습니다. 다음 라운드에서는 이 정류장들을 지나는 노선을 다시 확인해 탑승을 한 번 더 허용합니다.`,equation:`미사역 부근의 최선 도착: <b>${lessonTime(s.times[LESSON.target])}</b><br>rounds[${s.round}] ← cur`}:{line:6,title:'새로 개선된 값이 없어서 종료합니다.',copy:'노선을 더 훑어도 어느 정류장의 도착시각도 빨라지지 않았습니다. 다음 라운드에서 새로 확인할 노선이 없으므로 탐색을 끝냅니다.',equation:`개선된 정류장: <b>0개</b><br>최선 도착: <b>${lessonTime(s.times[LESSON.target])}</b>`};
+ case'end':return s.marked.length?{line:6,title:`라운드 ${s.round}의 답을 확정합니다.`,copy:`이번 라운드에서 ${s.marked.length}개 정류장의 도착시각이 더 빨라졌습니다. 다음 라운드에서는 이 정류장에서 새 차를 탈 수 있는지 살펴봅니다.`,equation:`미사역 부근의 가장 이른 도착: <b>${lessonTime(s.times[LESSON.target])}</b><br>더 빨라진 정류장: <b>${s.marked.length}개</b>`}:{line:6,title:`라운드 ${s.round}에서 변화가 없어 끝납니다.`,copy:'차를 한 번 더 탈 수 있게 검토했지만 어느 정류장도 더 빨라지지 않았습니다. 이번 라운드의 답은 지난 라운드와 같고, 다음 라운드는 필요하지 않습니다.',equation:`더 빨라진 정류장: <b>0개</b><br>미사역 부근: <b>${lessonTime(s.times[LESSON.target])}</b> 유지`};
  }
 }
 function renderLessonDiagram(s){
@@ -81,21 +81,33 @@ function renderEvidence(s){
  $('lesson-evidence-title').textContent=s.kind==='queue'?'이번에 훑을 노선 목록 Q':s.kind==='gate'?'같은 이름의 두 정류장에 주의':'이번 계산에서 기억할 점';
  if(s.kind==='queue')$('lesson-evidence').innerHTML=`<p>노선 전체를 매번 훑지 않고 직전 개선 정류장과 연결된 패턴을 모읍니다.</p>${s.queue.map(i=>`<span class="lesson-inline-tag">${esc(LESSON.patterns[i].name)}</span>`).join('')}`;
  else if(s.kind==='gate')$('lesson-evidence').innerHTML='<p>하남시청 <b>버스 정류장</b>과 하남시청 <b>지하철역</b>은 서로 다른 장소입니다. 2번 버스로 문화예술회관까지 간 뒤 220초 걸어서 지하철역에 접근합니다.</p>';
- else if(s.kind==='walk')$('lesson-evidence').innerHTML=`<p>이 도보 연결은 ${s.seconds}초입니다. 도보 출발 시각은 <b>이번 값 cur</b>에서 읽습니다. 차량 승차 판단에만 이전 값 prev를 사용합니다.</p>`;
+ else if(s.kind==='walk')$('lesson-evidence').innerHTML=`<p>이 도보 연결은 ${s.seconds}초입니다. 도보는 새 차량 탑승이 아니므로 이번 라운드에서 찾은 도착시각에 이어서 계산합니다.</p>`;
  else if(s.kind==='end'&&!s.marked.length){const r=lessonData(),a=r.rounds[1][LESSON.target],b=r.rounds[2][LESSON.target];$('lesson-evidence').innerHTML=`<p>라운드 1: ${lessonTime(a)}<br>라운드 2: ${lessonTime(b)}<br>${b<a?'환승을 한 번 허용해 더 빨리 도착했습니다.':'환승을 허용해도 목적지의 도착시각은 빨라지지 않아 기존 경로를 유지합니다.'}</p>`;}
- else $('lesson-evidence').innerHTML='<p><b>prev</b>는 이전 라운드까지의 최선 도착시각입니다.<br><b>cur</b>는 지금 계산 중인 최선 도착시각입니다.<br>∞는 아직 경로를 찾지 못했다는 뜻입니다.</p>';
+ else $('lesson-evidence').innerHTML='<p>왼쪽 칸은 지난 라운드까지 찾은 시각입니다. 오른쪽 칸은 이번 라운드에서 찾은 가장 빠른 시각입니다. ∞는 아직 경로를 찾지 못했다는 뜻입니다.</p>';
 }
 function renderLesson(){
  const r=lessonData(),s=lessonEvent(),d=lessonDescription(s),prev=s.round?r.rounds[s.round-1]:LESSON.stops.map(()=>null);
- $('lesson-step-kicker').textContent=`라운드 ${s.round} · ${s.round?`최대 ${s.round}번 탑승`:'차량 탑승 전'} / 계산 ${lessonStep+1}`;
+ $('lesson-step-kicker').textContent=`라운드 ${s.round} · ${s.round?`최대 ${s.round}번 탑승`:'차량 탑승 전'} / 장면 ${lessonStep+1}`;
  $('lesson-step-title').textContent=d.title;$('lesson-step-copy').textContent=d.copy;$('lesson-equation').innerHTML=d.equation;
  $('lesson-warning').hidden=!d.warning;$('lesson-warning').textContent=d.warning||'';
- [...$('lesson-code').children].forEach((el,i)=>el.classList.toggle('active',i===d.line));
  const starts=r.steps.flatMap((e,i)=>(e.kind==='access'||e.kind==='copy')?[{i,k:e.round}]:[]);
- $('lesson-rounds').innerHTML=starts.map(({i,k})=>`<button data-lesson-step="${i}" aria-current="${s.round===k?'step':'false'}">${k===0?'0 · 접근 도보':k===1?'1 · 첫 탑승':k===2?'2 · 환승 허용':`${k} · 종료 확인`}</button>`).join('');
+ const completedRound=['end','gate'].includes(s.kind)||s.round===0?s.round:s.round-1;
+ const roundNames=['0 · 출발 준비','1 · 최대 1번 탑승','2 · 최대 2번 탑승','3 · 추가 경로 확인'];
+ $('lesson-rounds').innerHTML=starts.map(({i,k})=>{
+  const current=k===s.round,done=k<=completedRound,arrival=r.rounds[k][LESSON.target];
+  const result=!done?current?'계산 중':'아직 계산 전':k===0?'승차 정류장 도착':k>0&&arrival===r.rounds[k-1][LESSON.target]?'더 빠른 시각 없음':`목적지 ${lessonTime(arrival)}`;
+  return `<button data-lesson-step="${i}" aria-current="${current?'step':'false'}">${roundNames[k]||`${k} · 추가 확인`}<small>${result}</small></button>`;
+ }).join('');
+ const targetTime=s.times[LESSON.target],bestRound=targetTime===null?-1:r.rounds.findIndex((row,k)=>k<=s.round&&row[LESSON.target]===targetTime);
+ const final=s.kind==='end'&&!s.marked.length;
+ const statusTitle=final?`라운드 0~${s.round} 진행 · 라운드 ${s.round}에서 종료`:`현재 라운드 ${s.round} · ${s.round?'차량 최대 '+s.round+'번 탑승':'차량 탑승 전'}`;
+ const statusDetail=final?`마지막 라운드에서는 더 빨라진 정류장이 없습니다. 목적지 최선 도착은 ${lessonTime(targetTime)}이며, 그 답은 ${bestRound}번 탑승한 경로에서 처음 나왔습니다.`:s.round===0?'걸어서 갈 수 있는 승차 정류장의 도착시각을 채웁니다.':`이전 라운드의 답을 유지하면서 더 빠른 도착시각을 찾습니다.${targetTime===null?' 목적지에는 아직 도달하지 못했습니다.':` 현재 목적지 도착은 ${lessonTime(targetTime)}입니다.`}`;
+ $('lesson-round-status').innerHTML=`<b>${statusTitle}</b>${statusDetail}`;
  $('lesson-prev').disabled=lessonStep===0;$('lesson-next').disabled=lessonStep===r.steps.length-1;
- $('lesson-step').max=r.steps.length-1;$('lesson-step').value=lessonStep;$('lesson-step-count').textContent=`${lessonStep+1} / ${r.steps.length} 계산`;
- $('lesson-memory-label').textContent=s.round?`prev: 라운드 ${s.round-1} → cur: 라운드 ${s.round}`:'라운드 0 초기화';
+ $('lesson-step').max=r.steps.length-1;$('lesson-step').value=lessonStep;$('lesson-step-count').textContent=`${lessonStep+1} / ${r.steps.length} 장면`;
+ $('lesson-memory-label').textContent=s.round?`최대 ${s.round-1}번 → 최대 ${s.round}번 탑승`:'차량 탑승 전';
+ const tableNotes={access:()=> '아직 차량 탑승 전입니다. 걸어서 닿는 승차 정류장의 시각을 이번 라운드에 적습니다.',copy:()=> '새 라운드는 지난 라운드의 시각을 모두 가져옵니다. 새 경로로 더 빨리 도착한 정류장만 오른쪽에서 바뀝니다.',queue:()=> '지난 라운드에서 시각이 좋아진 정류장을 지나는 노선부터 확인합니다.',pattern:()=> '왼쪽 도착시각을 기준으로 탈 수 있는 차를 찾습니다.',board:()=> `왼쪽 ${lessonNames[s.stop]} ${lessonTime(prev[s.stop])}에 도착하면 ${clock(s.departure)} 차를 탈 수 있습니다. 아직 도착시각은 바뀌지 않았습니다.`,ride:()=> `${lessonNames[s.stop]}: 기존 ${lessonTime(s.before[s.stop])} → ${lessonTime(s.times[s.stop])}. 같은 차량으로 이동했으므로 이번 라운드에 적습니다.`,walk:()=> `${lessonNames[s.stop]}: 기존 ${lessonTime(s.before[s.stop])} → ${lessonTime(s.times[s.stop])}. 걷기는 탑승 횟수를 늘리지 않습니다.`,gate:()=> '하남시청역은 오른쪽에 처음 나타났습니다. 여기서 5호선을 타는 경로는 다음 라운드에서 계산합니다.',miss:()=> '탈 수 있는 차가 없어 오른쪽 시각을 유지합니다.',end:()=>s.marked.length?`이번 라운드에서 ${s.marked.length}곳의 시각이 더 빨라졌습니다. 다음 라운드에서 새 차를 탈 수 있습니다.`:'더 빨라진 곳이 없어 계산을 마칩니다.'};
+ $('lesson-table-explain').textContent=tableNotes[s.kind]?.()||'';
  $('lesson-state').innerHTML=LESSON.visible.map(i=>{
   const read=['board','gate','miss'].includes(s.kind)&&s.stop===i,write=['ride','walk'].includes(s.kind)&&s.stop===i,changed=isImproved(s.times,prev,i),walkRead=s.kind==='walk'&&s.origin===i;
   return`<tr class="${s.stop===i?'selected-stop':''}"><th scope="row">${esc(lessonNames[i])}<small>${lessonModes[i]}</small></th><td class="${read?'read-cell':''}">${lessonTime(prev[i])}${read?' ←':''}</td><td class="${write?'write-cell':walkRead?'read-cell':changed?'changed-cell':''}">${write?`<span style="font-size:9px;font-weight:400">${lessonTime(s.before[i])} → </span>`:''}${lessonTime(s.times[i])}</td></tr>`;

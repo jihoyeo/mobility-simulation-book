@@ -1,14 +1,17 @@
-"""6장 실습 — RAPTOR
+"""6장 실습에서 사용하는 RAPTOR의 기본 자료구조와 탐색 함수.
 
-노트북 `labs/ch06_raptor.ipynb`를 보며
-`Pattern.earliest_trip`과 `raptor`의 빈칸을 채웁니다.
-`TransitData.from_gtfs`는 제공하며, 직접 작성은 심화 과제입니다.
-두 빈칸을 채운 뒤 자가 채점을 돌립니다.
+이 파일은 완성된 참고 구현입니다. 수정하거나 채점기에 제출할 필요가 없습니다.
+`labs/ch06_raptor.ipynb`에서 작은 시간표를 이용해 운행 선택과 라운드 갱신을
+직접 작성한 뒤, 이 파일의 결과와 비교합니다.
 
-    python labs/check.py ch06
+흐름은 다음과 같습니다.
 
-채점은 두 단계입니다. 먼저 답을 손으로 아는 작은 시간표로 정확성을 봅니다.
-그다음 실제 하남 GTFS 로 불변식을 확인합니다.
+1. `TransitData.from_gtfs`가 GTFS를 정류장·운행 패턴·도보 연결로 바꿉니다.
+2. `Pattern.earliest_trip`이 한 정류장에서 탈 수 있는 첫 운행을 찾습니다.
+3. `raptor`가 탑승 횟수를 하나씩 늘리며 정류장별 최선 도착시각을 구합니다.
+
+이 파일의 `raptor`는 정류장별 도착시각 배열을 반환합니다. 경로의 승하차 구간을
+복원하려면 `smartmob.teaching.raptor`의 `journey`와 결과 객체를 사용합니다.
 
 --------------------------------------------------------------------------
 GTFS 다루기
@@ -49,7 +52,13 @@ def haversine_m(lat1, lon1, lat2, lon2):
 
 @dataclass
 class Pattern:
-    """정류장 순서가 완전히 같은 운행들의 묶음."""
+    """같은 정류장 순서로 움직이는 여러 차량의 시간표입니다.
+
+    `stops`는 패턴 안의 정류장 순서입니다. `arrivals`와 `departures`는
+    `[운행 번호][정류장 위치]`로 시각을 읽는 이차원 배열이며 단위는
+    자정부터의 초입니다. 한 운행의 행을 따라가면 같은 차량의 뒤 정류장
+    도착시각을 확인할 수 있습니다.
+    """
 
     name: str
     route_type: int
@@ -60,34 +69,54 @@ class Pattern:
     _sorted: bool = True
 
     def build_index(self):
-        """위치별 출발시각 열을 만들어 둡니다. `earliest_trip` 의 이분 탐색에 씁니다."""
+        """정류장 위치마다 운행들의 출발시각을 모아 둡니다.
+
+        운행을 첫 정류장 출발시각으로 정렬했더라도 뒤 정류장의 순서까지
+        같다는 보장은 없으므로, 모든 위치의 정렬 상태를 함께 확인합니다.
+        """
+        # 각 위치 i에서 운행별 출발시각을 한 열로 모읍니다.
         self._dep_by_pos = [
             [trip[i] for trip in self.departures] for i in range(len(self.stops))
         ]
+        # 모든 열이 정렬되어 있을 때만 이분 탐색을 사용할 수 있습니다.
         self._sorted = all(
             all(a <= b for a, b in zip(col, col[1:]))
             for col in self._dep_by_pos
         )
 
     def earliest_trip(self, position, not_before):
-        """position 에서 not_before 이후 가장 이르게 출발하는 운행 번호. 없으면 None.
+        """해당 위치에서 준비 시각 이후 첫 출발 운행의 번호를 반환합니다.
 
-        `build_index()` 가 만들어 둔 `self._dep_by_pos[position]` 이 이 위치의
-        출발 시각을 운행 순서대로 늘어놓은 리스트입니다. 첫 정류장에서 정렬해도
-        뒤 정류장의 순서까지 보장되지는 않습니다. `_sorted`로 확인합니다.
-
-        `bisect_left(리스트, not_before)` 가 "not_before 이상인 첫 원소의 번호"를
-        돌려줍니다. 그 번호가 리스트 길이와 같으면 탈 차가 없으니 None 입니다.
-        `_sorted`가 False이면 목록을 훑어 not_before 이상인 최솟값의 번호를 찾습니다.
-        이 처리는 출발편을 찾는 과정이며 추월하는 모든 경로의 최적성을 보장하지는 않습니다.
-        교재 6.3절과 노트북 2절에서 두 경우를 확인합니다.
+        `position`은 패턴 안의 정류장 위치, `not_before`는 승객이
+        탑승할 준비가 된 시각입니다. 출발시각이 준비 시각과 같아도 탈 수
+        있습니다. 탈 운행이 없으면 `None`을 반환합니다.
         """
-        raise NotImplementedError("earliest_trip 을 구현하세요")
+        # 이 정류장에서 운행들이 출발하는 시각을 읽습니다.
+        departures = self._dep_by_pos[position]
+        if self._sorted:
+            # 정렬된 열에서는 준비 시각 이상인 첫 칸을 이분 탐색합니다.
+            trip = bisect_left(departures, not_before)
+            # 배열 끝까지 갔다면 이후에 출발하는 차량이 없습니다.
+            return trip if trip < len(departures) else None
+
+        # 운행의 순서가 뒤집힌 열은 직접 훑어 가장 이른 출발을 고릅니다.
+        chosen, earliest = None, INF
+        for trip, departure in enumerate(departures):
+            # 이미 떠난 차와 현재 후보보다 늦은 차는 제외합니다.
+            if not_before <= departure < earliest:
+                chosen, earliest = trip, departure
+        return chosen
 
 
 @dataclass
 class TransitData:
-    """RAPTOR 가 쓰는 자료구조 네 개."""
+    """GTFS를 RAPTOR가 읽기 쉬운 배열로 바꾼 결과입니다.
+
+    `stop_ids[i]`는 정류장 i의 원래 ID입니다. `patterns`는 차량별 시간표를
+    정류장 순서로 묶은 목록입니다. `routes_by_stop[i]`는 정류장 i를 지나는
+    패턴과 그 안의 위치를 알려 주고, `transfers[i]`는 걸어서 갈 수 있는
+    정류장과 소요시간을 알려 줍니다. `index_of`는 ID를 배열 번호로 바꿉니다.
+    """
 
     stop_ids: list
     stop_names: list
@@ -172,7 +201,16 @@ class TransitData:
 
 
 def raptor(data, origins, departure_secs, max_rounds=MAX_ROUNDS):
-    """모든 정류장까지의 가장 이른 도착시각.
+    """출발 가능한 정류장들에서 모든 정류장까지의 최선 도착시각을 구합니다.
+
+    `origins`의 각 항목은 `(정류장 번호, 출발지에서 걷는 초)`입니다.
+    `departure_secs`는 출발 시각을 자정부터의 초로 나타냅니다.
+    반환 배열의 `best[i]`는 정류장 i에 도착할 수 있는 가장 이른 시각이며,
+    도달할 수 없으면 `INF`입니다.
+
+    라운드 k는 차량에 최대 k번 탑승한 경로를 다룹니다. 새 라운드는 이전
+    결과를 복사해 시작하므로 탑승 횟수가 적은 좋은 경로도 계속 남습니다.
+    새 차량에 탈 수 있는지는 이전 라운드의 시각으로만 판단합니다.
 
     Parameters
     ----------
@@ -184,35 +222,75 @@ def raptor(data, origins, departure_secs, max_rounds=MAX_ROUNDS):
     list[float]
         ``best[i]`` 는 정류장 i 의 가장 이른 도착시각(초). 못 가면 ``INF``.
 
-    알고리즘
-    --------
-    라운드 0
-        출발 정류장마다 `departure_secs + 도보시간` 을 적고 표시합니다.
-
-    라운드 k
-        1. 표시된 정류장을 지나는 패턴을 모읍니다.
-           같은 패턴이 여러 정류장에서 걸리면 **가장 앞 위치**에서 시작합니다.
-        2. 각 패턴을 그 위치부터 끝까지 훑습니다.
-           - 손에 든 차가 있으면 이 정류장의 도착시각으로 내려 봅니다
-           - 직전 라운드에 이 정류장에 도달했다면, 여기서 더 이른 차를 탈 수 있는지 봅니다
-        3. 이번 라운드에 도달한 정류장에서 걸어갈 수 있는 곳을 채웁니다
-        4. 개선된 정류장이 없으면 끝냅니다
-
-    주의
-    ----
-    - 2번에서 "타기"와 "내리기"의 순서가 중요합니다. 먼저 내려 보고, 그다음 갈아탑니다
-    - 타는 판단에는 **직전 라운드**의 도착시각을 씁니다. 이번 라운드 값을 쓰면
-      한 라운드에 여러 번 탑승하게 되어 라운드별 탑승 제한이 무너집니다
-    - `max_rounds=0` 이면 라운드 0 만 하고 돌아옵니다. 노트북이 라운드별로
-      새로 도달한 정류장을 찍어 볼 때 이 성질을 씁니다
-    - 교재 6.4절 순서대로 패턴 수집, 승하차, 도보 연결, 종료를 작성합니다
-    - 라운드 k는 k번 이하로 탑승한 답입니다. 이전 답을 복사해 시작합니다
     """
-    raise NotImplementedError("raptor 를 구현하세요")
+    # 정류장마다 현재까지 찾은 가장 이른 시각을 보관합니다.
+    best = [INF] * data.n_stops
+    # 라운드 0은 차량에 타기 전입니다. 출발지에서 걸어갈 시간을 더합니다.
+    prev = [INF] * data.n_stops
+    marked = set()
+    for stop, walk_seconds in origins:
+        arrival = departure_secs + walk_seconds
+        if arrival < prev[stop]:
+            prev[stop] = best[stop] = arrival
+            marked.add(stop)
+
+    for _round in range(1, max_rounds + 1):
+        # 이전 라운드의 좋은 경로도 이번 답에 포함합니다.
+        cur = list(prev)
+        new_marked = set()
+
+        # 도착시각이 개선된 정류장을 지나는 패턴만 고릅니다.
+        # 한 패턴에서 여러 정류장이 표시되면 가장 앞 위치부터 훑습니다.
+        queue = {}
+        for stop in marked:
+            for pattern_idx, position in data.routes_by_stop[stop]:
+                queue[pattern_idx] = min(position, queue.get(pattern_idx, position))
+
+        for pattern_idx, start_position in queue.items():
+            pattern = data.patterns[pattern_idx]
+            trip = None  # 현재 비교 중인 운행 번호. 아직 선택 전이면 None입니다.
+            for position in range(start_position, len(pattern.stops)):
+                stop = pattern.stops[position]
+
+                # 앞 정류장에서 선택한 차를 타고 여기서 내리는 후보를 봅니다.
+                if trip is not None:
+                    arrival = pattern.arrivals[trip][position]
+                    if arrival < best[stop]:
+                        best[stop] = cur[stop] = arrival
+                        new_marked.add(stop)
+
+                # 새 승차는 이전 라운드에 이 정류장에 도착한 경로에서만 허용합니다.
+                ready = prev[stop]
+                if ready < INF:
+                    candidate = pattern.earliest_trip(position, int(ready))
+                    # 더 이른 운행을 탈 수 있으면 비교할 경로 후보를 바꿉니다.
+                    if candidate is not None and (
+                        trip is None
+                        or pattern.departures[candidate][position]
+                        < pattern.departures[trip][position]
+                    ):
+                        trip = candidate
+
+        # 새로 개선된 정류장에서 한 번 걸어갈 수 있는 곳도 같은 라운드에 둡니다.
+        # 목록을 복사해 순회하므로 이번 도보의 도착지에서 다시 걷지는 않습니다.
+        for stop in list(new_marked):
+            for other, walk_seconds in data.transfers[stop]:
+                arrival = cur[stop] + walk_seconds
+                if arrival < best[other]:
+                    best[other] = cur[other] = arrival
+                    new_marked.add(other)
+
+        # 도착시각이 하나도 개선되지 않았다면 다음 라운드의 후보가 없습니다.
+        if not new_marked:
+            break
+        # 이번 결과가 다음 라운드의 승차 판단 기준이 됩니다.
+        prev, marked = cur, new_marked
+
+    return best
 
 
 # --------------------------------------------------------------------------- #
-# 직접 돌려 보기
+# 하남 자료로 실행해 보기
 # --------------------------------------------------------------------------- #
 
 if __name__ == "__main__":
