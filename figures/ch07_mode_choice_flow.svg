@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 470" role="img" aria-labelledby="title desc">
-  <title id="title">경로 계산에서 수단별 수요까지</title>
-  <desc id="desc">같은 출발지와 목적지의 택시, 버스, 버스와 지하철 경로를 구합니다. 시간과 요금에 선호 계수를 곱해 효용을 계산하고, 지수값을 정규화해 선택확률을 구한 뒤 사람별 대안을 추출합니다.</desc>
+  <title id="title">경로별 시간·요금과 선택확률</title>
+  <desc id="desc">같은 출발지와 목적지의 세 경로를 비교합니다. 경로별 시간·요금·환승 횟수에 계수를 적용해 효용을 계산하고, 효용을 양수 가중치로 바꾼 뒤 합계로 나누어 선택확률을 구합니다. 시뮬레이션에서는 이 확률에 따라 이용할 경로를 정합니다.</desc>
   <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#66798c"/></marker></defs>
   <style>
     text{font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;fill:#20344d;font-size:18px}
@@ -8,12 +8,12 @@
     .arrow{fill:none;stroke:#66798c;stroke-width:2;marker-end:url(#arrow)}
   </style>
   <rect width="1060" height="470" rx="12" fill="#f8fafc"/>
-  <text x="30" y="40" class="heading">한 통행의 대안을 만들고, 사람의 선택을 확률로 계산합니다.</text>
+  <text x="30" y="40" class="heading">각 경로의 시간·요금·환승 횟수로 선택확률을 계산합니다.</text>
   <rect x="30" y="85" width="270" height="235" rx="10" fill="#eff6ff" stroke="#a9bfdc"/>
   <text x="48" y="116" class="heading">① 경로 속성</text>
   <text x="48" y="150">같은 출발지·목적지·시각</text>
-  <text x="48" y="187">택시 → 도로 경로 + 요금</text>
-  <text x="48" y="222">대중교통 → RAPTOR + 요금</text>
+  <text x="48" y="187">택시 · 버스 직통 · 버스+지하철</text>
+  <text x="48" y="222">경로별 시간·요금·환승 횟수</text>
   <text x="48" y="266" class="small">차내·대기·도보: 분</text>
   <text x="48" y="293" class="small">요금: 천 원 / 환승: 회</text>
   <path class="arrow" d="M302 207H342"/>
@@ -23,7 +23,7 @@
   <text x="365" y="199">택시                   −3.050</text>
   <text x="365" y="234">버스 직통            −2.850</text>
   <text x="365" y="269">버스+지하철        −3.165</text>
-  <text x="365" y="300" class="small">값이 클수록 선호하는 대안</text>
+  <text x="365" y="300" class="small">효용이 높을수록 선택확률 증가</text>
   <path class="arrow" d="M647 207H687"/>
   <rect x="690" y="85" width="340" height="235" rx="10" fill="#edf9f5" stroke="#96c6b7"/>
   <text x="710" y="116" class="heading">③ 선택확률 P</text>
@@ -33,13 +33,13 @@
   <text x="710" y="269">버스+지하철            28.6%</text>
   <text x="710" y="300" class="small">반올림 전 확률의 합 = 100%</text>
   <rect x="345" y="354" width="300" height="78" rx="10" fill="#fff7e8" stroke="#d9c18f"/>
-  <text x="365" y="383">선호에 대한 가정 또는 추정</text>
+  <text x="365" y="383">시간·요금·환승에 대한 민감도</text>
   <text x="365" y="411" class="small">계수 β · 대안별 상수 ASC</text>
   <path class="arrow" d="M495 354V322"/>
   <path class="arrow" d="M860 322V352"/>
   <rect x="690" y="354" width="340" height="78" rx="10" fill="white" stroke="#bdc9d5"/>
-  <text x="710" y="383">확률에 따라 대안 하나 추출</text>
-  <text x="710" y="411" class="small">사람별로 반복 → 수단별 통행 목록</text>
+  <text x="710" y="383">확률에 따라 이용할 경로 선택</text>
+  <text x="710" y="411" class="small">통행마다 반복 → 수단별 이용 건수</text>
   <text x="30" y="377" class="small">숫자는 본문의 설명용 예제입니다.</text>
   <text x="30" y="406" class="small">계수 추정은 별도의 관측 자료가 필요합니다.</text>
 </svg>

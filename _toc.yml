@@ -25,6 +25,7 @@ parts:
       - file: ko/ch05_gtfs
       - file: ko/ch06_raptor
       - file: ko/ch07_raptor_fare
+      - file: assignment/assignment_2
 
   - caption: 시뮬레이션
     numbered: false

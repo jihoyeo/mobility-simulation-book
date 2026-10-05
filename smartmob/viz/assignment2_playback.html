@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>과제 2 · 송파구 통행 비교</title>
+<style>
+body{margin:24px;font:16px system-ui,sans-serif;color:#213448;background:#f4f6f8}h1{font-size:24px}button,input,select{font:inherit}button{padding:8px 12px;margin:4px;border:1px solid #bbc7d1;border-radius:6px;background:white;cursor:pointer}input[type=range]{width:45%}canvas{width:100%;background:white;border:1px solid #ccd3da;border-radius:8px}p{line-height:1.6}.legend{font-size:14px}.status{min-height:1.5em}a{color:#185cac}
+</style>
+<h1>송파구 30명의 이동 · 택시와 대중교통</h1>
+<p>같은 사람을 두 지도에서 같은 번호로 표시합니다. 지도는 제공된 도로망을 그린 것으로, 인터넷 연결 없이 재생됩니다.</p>
+<div><button id="play">재생</button><button id="reset">처음으로</button>
+<button data-time="32400">09:00</button><button data-time="33000">09:10</button><button data-time="33600">09:20</button>
+<button id="save">화면 PNG 저장</button></div>
+<p><input id="slider" type="range" min="32400" step="1" value="32400"> <strong id="clock"></strong>
+<label>선택한 사람 <select id="person"><option value="">전체</option></select></label></p>
+<div class="legend">파랑: 탑승·정차　주황: 도보　보라: 대기　초록: 도착　회색: 경로 없음 · 도로 출처: © OpenStreetMap contributors (ODbL)</div>
+<p id="status" class="status"></p><canvas id="map" width="1500" height="800"></canvas>
+<p>택시는 도로 형상을 따라 움직입니다. 대중교통은 시간표에 맞춰 정류장 사이를 직선으로 이동하며, 대기·정차 중에는 멈춥니다. 도보는 보정 거리로 시간을 계산하고 지도에서는 두 지점을 직선으로 연결합니다.</p>
+<script>
+const D=__PAYLOAD__;
+const canvas=document.querySelector('#map'),ctx=canvas.getContext('2d'),slider=document.querySelector('#slider'),clock=document.querySelector('#clock'),person=document.querySelector('#person');
+const start=32400,end=Math.max(33600,...D.results.flatMap(r=>['taxi','transit'].map(m=>r[m].success?r[m].arrival:start)));
+slider.max=Math.ceil(end); for(const row of D.od){const o=document.createElement('option');o.value=o.textContent=row.person_id;person.append(o)}
+let time=start,playing=false,last=null;const pad=45,w=750,h=800;
+const points=D.results.flatMap(r=>['taxi','transit'].flatMap(m=>r[m].segments?.flatMap(s=>s.coords)||[])).concat(D.od.flatMap(o=>[[o.origin_lon,o.origin_lat],[o.destination_lon,o.destination_lat]]));
+const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);let xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+const cos=Math.cos(37.5*Math.PI/180),scale=Math.min((w-2*pad)/((xmax-xmin)*cos),(h-2*pad-50)/(ymax-ymin));
+const project=(p,k)=>[k*w+w/2+(p[0]-(xmin+xmax)/2)*cos*scale,h/2+25-(p[1]-(ymin+ymax)/2)*scale];
+const background=document.createElement('canvas');background.width=canvas.width;background.height=canvas.height;const bg=background.getContext('2d');bg.fillStyle='white';bg.fillRect(0,0,1500,800);
+function line(c,coords,k){c.beginPath();coords.forEach((p,i)=>{const [x,y]=project(p,k);i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke()}
+for(let k=0;k<2;k++){bg.save();bg.beginPath();bg.rect(k*w+15,65,w-30,h-80);bg.clip();bg.strokeStyle='#dce3e9';bg.lineWidth=.7;for(const road of D.roads)line(bg,road,k);bg.restore()}
+bg.strokeStyle='#c4cdd5';bg.beginPath();bg.moveTo(w,0);bg.lineTo(w,h);bg.stroke();
+const colors={'탑승':'#2166b4','정차':'#2166b4','도보':'#d77809','대기':'#8d48bb','도착':'#16855d','경로 없음':'#777'};
+function position(r,t,fallback){if(!r.success)return {xy:fallback,state:'경로 없음'};const ss=r.segments;if(t>=r.arrival)return {xy:ss.at(-1).coords.at(-1),state:'도착'};const s=ss.find(s=>s.end>t)||ss[0];const f=Math.max(0,Math.min(1,(t-s.start)/(s.end-s.start||1)));const p=s.coords;const lengths=p.slice(1).map((b,i)=>Math.hypot((b[0]-p[i][0])*cos,b[1]-p[i][1]));let left=f*lengths.reduce((a,b)=>a+b,0);for(let i=0;i<lengths.length;i++){if(left<=lengths[i]||i===lengths.length-1){const q=lengths[i]?left/lengths[i]:0;return {xy:[p[i][0]+q*(p[i+1][0]-p[i][0]),p[i][1]+q*(p[i+1][1]-p[i][1])],state:s.state}}left-=lengths[i]}return {xy:p[0],state:s.state}}
+function timeText(t){return [Math.floor(t/3600),Math.floor(t/60)%60,Math.floor(t)%60].map(v=>String(v).padStart(2,'0')).join(':')}
+function draw(){ctx.drawImage(background,0,0);clock.textContent=timeText(time);slider.value=time;const status=[];['taxi','transit'].forEach((m,k)=>{const arrived=D.results.filter(r=>r[m].success&&r[m].arrival<=time).length;ctx.fillStyle='#213448';ctx.font='bold 23px sans-serif';ctx.fillText(`${k?'대중교통':'택시'} · ${arrived}/${D.results.length}명 도착`,k*w+28,40);D.results.forEach(r=>{const o=D.od.find(o=>o.person_id===r.person_id),p=position(r[m],time,[o.origin_lon,o.origin_lat]),[x,y]=project(p.xy,k),chosen=r.person_id===person.value;if(chosen){ctx.strokeStyle='#ec4760';ctx.lineWidth=2;for(const s of r[m].segments||[])line(ctx,s.coords,k);status.push(`${k?'대중교통':'택시'}: ${p.state}`)}ctx.globalAlpha=person.value && !chosen ? 0.35 : 1;ctx.fillStyle=colors[p.state];ctx.beginPath();ctx.arc(x,y,chosen?7:4,0,Math.PI*2);ctx.fill();ctx.font='12px sans-serif';ctx.fillStyle='#243749';ctx.fillText(r.person_id.slice(1),x+5,y-5);ctx.globalAlpha=1})});document.querySelector('#status').textContent=person.value?person.value+' · '+status.join(' / '):'번호를 선택하면 해당 사람의 경로와 현재 상태를 표시합니다.'}
+slider.oninput=()=>{time=+slider.value;draw()};person.onchange=draw;document.querySelector('#play').onclick=()=>{playing=!playing;last=null;document.querySelector('#play').textContent=playing?'일시정지':'재생'};document.querySelector('#reset').onclick=()=>{time=start;draw()};document.querySelectorAll('[data-time]').forEach(b=>b.onclick=()=>{time=+b.dataset.time;draw()});document.querySelector('#save').onclick=()=>{const a=document.createElement('a');a.download='assignment2_'+timeText(time).replaceAll(':','')+'.png';a.href=canvas.toDataURL();a.click()};function tick(ts){if(playing){if(last!==null)time=Math.min(end,time+(ts-last)/1000*60);if(time>=end){playing=false;document.querySelector('#play').textContent='재생'}draw()}last=ts;requestAnimationFrame(tick)}draw();requestAnimationFrame(tick);
+</script></html>

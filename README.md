@@ -7,7 +7,7 @@
 
 | 경로 | 내용 |
 |---|---|
-| `ko/` | 본문. MyST Markdown 이며 `{code-cell}` 블록이 빌드할 때 실행됩니다 |
+| `ko/` | 강의 본문. 일반 Markdown으로 개념·그림·결과표를 설명하며, 실행 코드는 `labs/`로 분리합니다(기존 장은 순차 정비) |
 | `smartmob/` | 실습 헬퍼 패키지. 엔진 클라이언트, 데이터 로더, 교육용 구현체, 시각화 |
 | `data/hanam/` | 하남시 실습 데이터(도로망 parquet, GTFS parquet, 수요·차량 CSV) |
 | `data/fixtures/` | DTUMOS 실행 결과 녹화본. 서버 없이 책을 빌드할 때 씁니다 |
