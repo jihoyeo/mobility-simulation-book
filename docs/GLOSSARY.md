@@ -33,6 +33,11 @@
 | GTFS trip | 운행 | 운행(trip, 시간표의 출발편 하나) | 승객 통행과 혼용 |
 | service day | 운행일 | 운행일(service day) | 자정 이후의 달력 날짜와 혼용 |
 | smartcard data | 스마트카드 데이터 | 스마트카드 데이터(교통카드 이용 이력) | 교통카드 데이터와 혼용 |
+| observation unit | 관측 단위 | 관측 단위(observation unit, 한 행이 나타내는 대상) | 행 수와 통행량을 혼용 |
+| trip chain | 통행사슬 | 통행사슬(trip chain) | 승차 구간 수와 혼용 |
+| expanded trip count | 전수화 통행량 | 전수화 통행량(표본을 전체 규모로 환산한 추정치) | 실제 관측 인원과 혼용 |
+| GPS trajectory | GPS 궤적 | GPS(Global Positioning System) 궤적 | GPS 점 수를 통행 건수로 사용 |
+| uniform sampling | 균등 표집 | 균등 표집(uniform sampling) | 실제 수요 분포와 혼용 |
 | boundary | 경계 | 경계(boundary) | 바운더리 |
 | parquet / GeoPackage | parquet, GeoPackage | — | 파케이 |
 
@@ -78,6 +83,11 @@
 | assignment problem | 할당 문제 | 할당 문제(assignment problem) | 어사인먼트 |
 | mode choice | 수단 선택 | 수단 선택(mode choice) | 모드 초이스 |
 | Pareto front | 파레토 프론트 | 파레토 프론트(Pareto front) | — |
+| sampling with replacement | 복원추출 | 복원추출(sampling with replacement) | 중복 없이 뽑는 표집과 혼용 |
+| bootstrap | 부트스트랩 | 부트스트랩(bootstrap) | 모든 난수 시뮬레이션을 부트스트랩으로 부르기 |
+| multinomial distribution | 다항분포 | 다항분포(multinomial distribution) | 독립 포아송 발생과 혼용 |
+| Poisson distribution | 포아송 분포 | 포아송 분포(Poisson distribution) | 포아송 과정과 구분 없이 사용 |
+| arrival rate | 발생률 | 발생률(arrival rate, 단위 시간당 기대 발생 건수) | 구간의 기대 건수와 혼용 |
 
 ## 쓰지 않는 말
 

@@ -206,3 +206,79 @@ def hourly_profile_from_od(od, count_col: str = "CNT", hour_col: str = "ST_TIME_
     full = [float(totals.get(h, 0.0)) for h in range(24)]
     s = sum(full)
     return tuple(x / s for x in full) if s else tuple(full)
+
+
+def bootstrap_demand(demand, seed: int | None = 42):
+    """기준 요청 수만큼 행 전체를 복원추출하고 요청 ID를 새로 붙입니다.
+
+    한 행 안의 호출 시각·출발지·목적지 관계를 함께 보존합니다.
+    행 사이의 시간적 의존성이나 날짜별 변동을 재현하지는 않습니다.
+    """
+    import numpy as np
+    from smartmob.data.demand import validate_demand
+
+    validate_demand(demand)
+    rng = np.random.default_rng(seed)
+    out = demand.iloc[rng.integers(0, len(demand), size=len(demand))].copy()
+    out = out.sort_values("request_time", kind="stable").reset_index(drop=True)
+    out["id"] = range(len(out))
+    return out
+
+
+def sample_poisson_times(
+    expected_n: float,
+    rng,
+    hourly: Sequence[float] | None = HANAM_HOURLY,
+    time_range: tuple[int, int] = (1080, 1440),
+) -> list[int]:
+    """시간대 안의 발생률이 일정한 포아송 과정으로 호출 시각을 만듭니다.
+
+    expected_n은 선택한 시간 범위 전체의 기대 건수입니다.
+    겹치는 시간 길이를 반영해 비중을 정규화합니다. rng는 NumPy 생성기입니다.
+    0건도 유효한 실현이며, 분 단위로 내림하므로 같은 분에 호출이 겹칠 수 있습니다.
+    """
+    import numpy as np
+
+    start, end = time_range
+    if not (isinstance(start, int) and isinstance(end, int)
+            and 0 <= start < end <= 1440):
+        raise ValueError("time_range는 0~1440 안의 증가하는 정수 분이어야 합니다")
+    if not np.isfinite(expected_n) or expected_n < 0:
+        raise ValueError("expected_n은 0 이상의 유한한 값이어야 합니다")
+    weights = np.ones(24) if hourly is None else np.asarray(hourly, dtype=float)
+    if weights.shape != (24,) or not np.isfinite(weights).all() or (weights < 0).any():
+        raise ValueError("hourly는 0 이상의 유한한 값 24개여야 합니다")
+    lo = np.maximum(np.arange(24) * 60, start)
+    hi = np.minimum(np.arange(24) * 60 + 60, end)
+    weights = weights * np.maximum(hi - lo, 0) / 60
+    if weights.sum() <= 0:
+        raise ValueError("선택한 시간 범위의 수요 비중이 0입니다")
+    counts = rng.poisson(expected_n * weights / weights.sum())
+    times = [int(t) for h, count in enumerate(counts) if count
+             for t in rng.uniform(lo[h], hi[h], size=int(count))]
+    return sorted(times)
+
+
+def generate_poisson_demand(
+    boundary=None,
+    graph=None,
+    expected_n: float = 1000,
+    time_range: tuple[int, int] = (1080, 1440),
+    seed: int | None = 42,
+    hourly: Sequence[float] | None = HANAM_HOURLY,
+    min_km: float = 0.5,
+):
+    """포아송 호출 시각에 경계 또는 도로에서 표집한 위치를 붙입니다.
+
+    총건수는 실행마다 달라집니다. 0건이면 빈 요청 표를 반환합니다.
+    위치를 정하는 가정은 generate_demand와 같고 실제 O-D 관계는 넣지 않습니다.
+    """
+    import numpy as np
+
+    rng = np.random.default_rng(seed)
+    times = sample_poisson_times(expected_n, rng, hourly, time_range)
+    spatial_seed = int(rng.integers(0, 2**32))
+    out = generate_demand(boundary, graph, n=len(times), time_range=time_range,
+                          seed=spatial_seed, hourly=None, min_km=min_km)
+    out["request_time"] = times
+    return out
