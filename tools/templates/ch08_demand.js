@@ -1,206 +1,28 @@
 "use strict";
-const DATA = JSON.parse(document.getElementById("demand-data").textContent);
-const $ = id => document.getElementById(id);
-const fmt = (x, digits=0) => x.toLocaleString("ko-KR", {maximumFractionDigits:digits, minimumFractionDigits:digits});
-const NAMES = {fixed:"총건수 고정", bootstrap:"행 재표집", poisson:"포아송 발생"};
-const COLORS = {fixed:"#426aaa", bootstrap:"#aa6728", poisson:"#117e75"};
-const REFERENCE = DATA.requests;
-const POOLS = Array.from({length:6}, (_, i) => REFERENCE.filter(r => Math.floor(r[1]/60) === 18+i));
-let current = null;
-
-function random(seed) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6D2B79F5) >>> 0;
-    let t = Math.imul(state ^ state >>> 15, 1 | state);
-    t ^= t + Math.imul(t ^ t >>> 7, 61 | t);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-}
-function weights(source) {
-  const raw = source === "uniform" ? Array(6).fill(1)
-    : (source === "od" ? DATA.odHourly : DATA.referenceHourly).slice(18);
-  const total = raw.reduce((a,b) => a+b,0);
-  return raw.map(x => x/total);
-}
-function category(p, rng) {
-  const u = rng(); let cumulative = 0;
-  for (let i=0;i<p.length;i++) {cumulative += p[i]; if (u<cumulative) return i;}
-  return p.length-1;
-}
-function poisson(mu, rng) {
-  // 작은 평균으로 나누어 곱셈이 0으로 내려가는 것을 피합니다.
-  let count = 0;
-  while (mu>0) {
-    const part = Math.min(mu,20), limit = Math.exp(-part);
-    let product=1, k=0;
-    do {k++; product *= rng();} while (product>limit);
-    count += k-1; mu -= part;
-  }
-  return count;
-}
-function countsFor(method,n,p,rng) {
-  if (method === "poisson") return p.map(w => poisson(n*w,rng));
-  const counts=Array(6).fill(0);
-  for (let i=0;i<n;i++) counts[category(p,rng)]++;
-  return counts;
-}
-function generate(config) {
-  const {method,seed}=config, rng=random(seed);
-  const n=method === "bootstrap" ? REFERENCE.length : config.n;
-  const p=weights(method === "bootstrap" ? "reference" : config.profile);
-  const rows=[];
-  const make = (source,time) => ({time,olat:source[2],olon:source[3],dlat:source[4],dlon:source[5],source:source[0]});
-  if (method === "bootstrap") {
-    for (let i=0;i<n;i++) {const row=REFERENCE[Math.floor(rng()*REFERENCE.length)];rows.push(make(row,row[1]));}
-  } else {
-    const counts=countsFor(method,n,p,rng);
-    for (let h=0;h<6;h++) for (let i=0;i<counts[h];i++) {
-      const pool=POOLS[h], source=pool[Math.floor(rng()*pool.length)];
-      rows.push(make(source,(18+h)*60+Math.floor(rng()*60)));
-    }
-  }
-  rows.sort((a,b)=>a.time-b.time);
-  rows.forEach((r,i)=>r.id=i);
-  return {rows,p,n,config};
-}
-function summary(values) {
-  const mean=values.reduce((a,b)=>a+b,0)/values.length;
-  return {mean,sd:Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/(values.length-1))};
-}
-function repetitions(config) {
-  const out={};
-  Object.keys(NAMES).forEach((method,index)=>{
-    const n=method === "bootstrap" ? REFERENCE.length : config.n;
-    const p=weights(method === "bootstrap" ? "reference" : config.profile);
-    const rng=random((config.seed ^ (0x9e3779b9+index)) >>> 0), totals=[], peaks=[];
-    for (let b=0;b<500;b++) {
-      const counts=countsFor(method,n,p,rng);
-      totals.push(counts.reduce((a,x)=>a+x,0));peaks.push(counts[0]);
-    }
-    out[method]={totals,total:summary(totals),peak:summary(peaks),n};
-  });
-  return out;
-}
-const textSvg = (x,y,text,extra="") => `<text x="${x}" y="${y}" ${extra}>${text}</text>`;
-function bars(id,values,expected,labels,{width=540,height=270,percent=false,colors=null}={}) {
-  const left=48,right=15,top=22,bottom=34,w=width-left-right,h=height-top-bottom;
-  const max=Math.max(1,...values,...(expected||[]))*1.12;
-  let s="";
-  for(let i=0;i<=4;i++) {
-    const y=top+h-h*i/4;
-    s+=`<line x1="${left}" y1="${y}" x2="${width-right}" y2="${y}" stroke="#e0e8e4"/>`;
-    s+=textSvg(left-7,y+4,fmt(max*i/4,percent?1:0),'text-anchor="end"');
-  }
-  s+=textSvg(left,13,percent?"비중 (%)":"호출 수 (건)");
-  values.forEach((v,i)=>{
-    const step=w/values.length,x=left+i*step,bw=step*(expected ? .55 : .7);
-    if(expected) s+=`<rect x="${x+step*.1}" y="${top+h-h*expected[i]/max}" width="${step*.8}" height="${h*expected[i]/max}" fill="#dbe5df"><title>기댓값 ${fmt(expected[i],1)}건</title></rect>`;
-    s+=`<rect x="${x+(step-bw)/2}" y="${top+h-h*v/max}" width="${bw}" height="${h*v/max}" fill="${colors?colors[i]:"#117e75"}"><title>${labels[i]}: ${fmt(v,percent?2:0)}${percent?"%":"건"}</title></rect>`;
-    if(labels[i]) s+=textSvg(x+step/2,height-11,labels[i],'text-anchor="middle"');
-  });
-  $(id).innerHTML=s;
-}
-function histogram(id,values,color,domainValues=values) {
-  const W=540,H=230,left=48,top=24,h=162,w=477;
-  const vmin=Math.min(...domainValues),vmax=Math.max(...domainValues);
-  const binWidth=Math.max(1,Math.ceil((vmax-vmin+1)/20));
-  const min=vmin-.5,bins=Array(Math.floor((vmax-vmin)/binWidth)+1).fill(0);
-  values.forEach(v=>bins[Math.floor((v-vmin)/binWidth)]++);
-  const max=Math.max(...bins),domain=bins.length*binWidth;
-  let s=textSvg(left,14,"반복 횟수");
-  for(let i=0;i<=4;i++) {
-    const y=top+h-h*i/4;
-    s+=`<line x1="${left}" y1="${y}" x2="525" y2="${y}" stroke="#e0e8e4"/>`+textSvg(left-8,y+4,fmt(max*i/4),'text-anchor="end"');
-  }
-  bins.forEach((v,i)=>{
-    s+=`<rect x="${left+w*i/bins.length+1}" y="${top+h-h*v/max}" width="${Math.max(1,w/bins.length-2)}" height="${h*v/max}" fill="${color}"><title>${vmin+i*binWidth}~${vmin+(i+1)*binWidth-1}건: ${v}회</title></rect>`;
-  });
-  const labels=bins.length===1?[{x:left+w/2,t:fmt(vmin)}]:[0,.25,.5,.75,1].map(t=>({x:left+w*t,t:fmt(min+domain*t)}));
-  labels.forEach(a=>s+=textSvg(a.x,207,a.t,'text-anchor="middle"'));
-  s+=textSvg(left+w/2,226,"18~24시 총 호출 건수",'text-anchor="middle"');
-  $(id).innerHTML=s;
-}
-function map() {
-  if(!current)return;
-  const canvas=$("map"), ratio=window.devicePixelRatio||1, W=canvas.clientWidth,H=canvas.clientHeight;
-  canvas.width=W*ratio;canvas.height=H*ratio;
-  const ctx=canvas.getContext("2d");ctx.scale(ratio,ratio);
-  const points=DATA.boundary.concat(REFERENCE.flatMap(r=>[[r[3],r[2]],[r[5],r[4]]]));
-  const xs=points.map(p=>p[0]*Math.cos(37.54*Math.PI/180)),ys=points.map(p=>p[1]);
-  const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
-  const scale=Math.min((W-36)/(xmax-xmin),(H-40)/(ymax-ymin));
-  const project=(lon,lat)=>[W/2+(lon*Math.cos(37.54*Math.PI/180)-(xmin+xmax)/2)*scale,H/2-(lat-(ymin+ymax)/2)*scale];
-  ctx.beginPath();DATA.boundary.forEach((p,i)=>{const q=project(...p);i?ctx.lineTo(...q):ctx.moveTo(...q);});
-  ctx.closePath();ctx.fillStyle="#edf3ef";ctx.fill();ctx.strokeStyle="#8ca99b";ctx.lineWidth=1;ctx.stroke();
-  ctx.beginPath();DATA.edges.forEach(([a,b])=>{ctx.moveTo(...project(...DATA.nodes[a]));ctx.lineTo(...project(...DATA.nodes[b]));});
-  ctx.strokeStyle="#c7d3cc";ctx.lineWidth=.55;ctx.stroke();
-  const hour=$("hour").value,filtered=current.rows.filter(r=>hour==="all"||Math.floor(r.time/60)===Number(hour));
-  const shown=filtered.length<=400?filtered:Array.from({length:400},(_,i)=>filtered[Math.floor(i*filtered.length/400)]);
-  if($("connections").checked){ctx.beginPath();shown.forEach(r=>{ctx.moveTo(...project(r.olon,r.olat));ctx.lineTo(...project(r.dlon,r.dlat));});ctx.strokeStyle="#749e9330";ctx.lineWidth=.7;ctx.stroke();}
-  shown.forEach(r=>{const [x,y]=project(r.dlon,r.dlat);ctx.beginPath();ctx.arc(x,y,2.7,0,2*Math.PI);ctx.strokeStyle="#aa6728aa";ctx.lineWidth=1;ctx.stroke();});
-  shown.forEach(r=>{const [x,y]=project(r.olon,r.olat);ctx.beginPath();ctx.arc(x,y,2.3,0,2*Math.PI);ctx.fillStyle="#087a70b0";ctx.fill();});
-  $("map-count").textContent=`${fmt(filtered.length)}건 중 ${fmt(shown.length)}건 표시`;
-  $("map-note").textContent=filtered.length?"겹친 점은 같은 위치의 요청입니다. 지도는 시간순 목록에서 최대 400건을 고른 표시이며, 그래프·표·CSV에는 전체 요청을 사용합니다.":"선택한 시간대에 생성된 요청이 없습니다.";
-}
-function render(config) {
-  current=generate(config);
-  const {rows,p,n}=current, counts=Array(6).fill(0),quarters=Array(24).fill(0);
-  rows.forEach(r=>{counts[Math.floor(r.time/60)-18]++;quarters[Math.floor((r.time-1080)/15)]++;});
-  $("actual-count").textContent=fmt(rows.length);$("expected-count").textContent=fmt(n);
-  $("peak-hour").textContent=rows.length?`${18+counts.indexOf(Math.max(...counts))}시대`:"없음";
-  $("unique-count").textContent=fmt(new Set(rows.map(r=>r.source)).size);
-  const notes={
-    fixed:["Σ Nₕ = N",`총건수 ${fmt(n)}건을 먼저 정합니다. 시간대별 건수는 달라져도 합계는 항상 같습니다. 시간대별 기댓값은 N × pₕ입니다.`],
-    bootstrap:["(시각, 출발지, 목적지) 행 전체를 복원추출", "기준 1,000행에서 같은 크기의 목록을 다시 만듭니다. 동일한 행이 여러 번 뽑히며, 빠지는 행도 있습니다. 원래 행의 분 단위 시각을 유지합니다."],
-    poisson:["Nₕ ∼ Poisson(μ × pₕ)",`여섯 시간의 기대 총건수는 ${fmt(n)}건입니다. 시간대별 호출 수를 독립적으로 뽑으므로 합계도 달라집니다. 총건수 표준편차의 이론값은 √μ = ${fmt(Math.sqrt(n),1)}건입니다.`]
-  };
-  $("formula").textContent=notes[config.method][0];$("method-note").textContent=notes[config.method][1];
-  bars("hour-chart",counts,p.map(w=>w*n),Array.from({length:6},(_,i)=>`${i+18}시`));
-  bars("minute-chart",quarters,null,Array.from({length:24},(_,i)=>i%4===0?`${18+i/4}시`:""),{height:170});
-  $("hour-note").textContent=config.method==="bootstrap"?"기댓값은 기준 요청의 시간대 비중 × 1,000입니다. 재표집으로 시간대별 건수는 달라져도 총건수는 1,000건입니다.":`비중 pₕ는 ‘${$("profile").selectedOptions[0].textContent}’입니다. 시간대 안에서는 호출 시각을 균등하게 뽑습니다.`;
-  const reps=repetitions(config);current.reps=reps;
-  histogram("repeat-chart",reps[config.method].totals,COLORS[config.method],Object.values(reps).flatMap(r=>r.totals));
-  $("repeat-note").textContent=`${NAMES[config.method]} · 500회 총건수 평균 ${fmt(reps[config.method].total.mean,1)}건, 표준편차 ${fmt(reps[config.method].total.sd,1)}건입니다. 이 분포는 지정한 모형에서의 변동입니다.`;
-  $("comparison").querySelector("tbody").innerHTML=Object.entries(reps).map(([k,r])=>`<tr class="${k===config.method?"selected-row":""}"><td>${NAMES[k]}</td><td>${fmt(r.total.mean,1)}</td><td>${fmt(r.total.sd,1)}</td><td>${fmt(r.peak.sd,1)}</td></tr>`).join("");
-  $("comparison-note").textContent="고정·포아송은 선택한 건수와 시간대 비중을 사용합니다. 행 재표집은 항상 기준 요청의 1,000건·시간대 비중을 사용합니다. 같은 기댓값으로 비교하려면 1,000건과 ‘예제 요청’ 비중을 선택합니다.";
-  $("request-table").querySelector("tbody").innerHTML=rows.length?rows.slice(0,8).map(r=>`<tr><td>${r.id}</td><td>${Math.floor(r.time/60)}:${String(r.time%60).padStart(2,"0")}</td><td>${r.olat.toFixed(5)}, ${r.olon.toFixed(5)}</td><td>${r.dlat.toFixed(5)}, ${r.dlon.toFixed(5)}</td><td>${r.source}</td></tr>`).join(""):'<tr><td colspan="5" class="empty">생성된 요청이 없습니다. 0건도 포아송 모형에서 가능한 결과입니다.</td></tr>';
-  $("hour-table").querySelector("tbody").innerHTML=Array.from({length:6},(_,i)=>`<tr><td>${18+i}시대</td><td>${fmt(DATA.odHourly[18+i],1)}명</td><td>${DATA.referenceHourly[18+i]}건</td><td>${fmt(n*p[i],1)}건</td><td>${counts[i]}건</td></tr>`).join("");
-  $("status").className="";$("status").textContent=`${NAMES[config.method]} · 씨앗 ${config.seed} · ${fmt(rows.length)}건을 생성했습니다. 조건을 바꾸면 결과가 갱신됩니다.`;
-  map();
-}
-function readConfig() {
-  const method=document.querySelector('input[name="method"]:checked').value;
-  const n=method==="bootstrap"?REFERENCE.length:Number($("count").value),seed=Number($("seed").value);
-  if(!$("settings").checkValidity()||!Number.isInteger(n)||!Number.isInteger(seed)) {
-    $("status").className="error";$("status").textContent="건수는 0~5,000, 씨앗은 0~4,294,967,295의 정수로 입력합니다. 아래에는 마지막으로 생성한 결과가 표시됩니다.";
-    return null;
-  }
-  return {method,n,seed,profile:$("profile").value};
-}
-function update() {const c=readConfig();if(c)render(c);}
-function setMethod() {
-  const method=document.querySelector('input[name="method"]:checked').value, boot=method==="bootstrap";
-  $("count").disabled=boot;$("profile").disabled=boot;
-  $("count-label").textContent=boot?"재표집 건수 · 기준과 동일":method==="poisson"?"기대 총건수 μ":"총 호출 건수 N";
-  if(boot){$("count").value=1000;$("profile").value="reference";}
-  update();
-}
-function csv() {
-  const head="id,request_time,origin_lat,origin_lon,dest_lat,dest_lon,mode,source_id";
-  return head+"\n"+current.rows.map(r=>[r.id,r.time,r.olat,r.olon,r.dlat,r.dlon,"taxi",r.source].join(",")).join("\n")+"\n";
-}
-$("settings").addEventListener("submit",e=>{e.preventDefault();update();});
-document.querySelectorAll('input[name="method"]').forEach(el=>el.addEventListener("change",setMethod));
-["count","profile","seed"].forEach(id=>$(id).addEventListener("change",update));
-$("next").addEventListener("click",()=>{const c=readConfig();if(c){$("seed").value=(c.seed+1)>>>0;update();}});
-$("reset").addEventListener("click",()=>{HTMLFormElement.prototype.reset.call($("settings"));$("hour").value="all";$("connections").checked=false;setMethod();});
-$("hour").addEventListener("change",map);$("connections").addEventListener("change",map);
-$("download").addEventListener("click",()=>{const blob=new Blob([csv()],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=`hanam_${current.config.method}_seed${current.config.seed}.csv`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
-window.addEventListener("resize",map);
-const totalOd=DATA.odHourly.reduce((a,b)=>a+b,0);
-bars("od-chart",DATA.odHourly.map(x=>100*x/totalOd),null,Array.from({length:24},(_,h)=>`${h}시`),{width:1100,height:220,percent:true,colors:Array.from({length:24},(_,h)=>h<18?"#7fada0":"#aa6728")});
-$("od-note").textContent=`집계값 합계 ${fmt(totalOd,1)}명 · 8시대 비중 ${fmt(DATA.odHourly[8]/totalOd*100,2)}%. 파일에 날짜 열이 없어 날짜별 변동은 이 자료로 계산하지 않습니다.`;
-$("sources").innerHTML=Object.entries(DATA.sources).map(([name,hash])=>`<p>data/hanam/${name}<br>${hash}</p>`).join("");
-window.DemandLab={generate,repetitions,poisson,random,weights,csv,get current(){return current;}};
-update();
+const DATA=JSON.parse(document.getElementById('demand-data').textContent);
+const $=id=>document.getElementById(id);
+const fmt=(n,d=0)=>n.toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const BLUE='#426aaa',GREEN='#087f73';
+function random(seed){let state=seed>>>0;return()=>{state=(state+0x6D2B79F5)>>>0;let t=Math.imul(state^state>>>15,1|state);t^=t+Math.imul(t^t>>>7,61|t);return((t^t>>>14)>>>0)/4294967296;};}
+function poisson(mu,rng){let count=0;while(mu>0){const part=Math.min(mu,20),limit=Math.exp(-part);let product=1,k=0;do{k++;product*=rng();}while(product>limit);count+=k-1;mu-=part;}return count;}
+function weights(){const raw=DATA.odHourly.slice(18,24),sum=raw.reduce((a,b)=>a+b,0);return raw.map(x=>x/sum);}
+function counts(n,p,rng){const out=Array(p.length).fill(0);for(let j=0;j<n;j++){const u=rng();let c=0;for(let i=0;i<p.length;i++){c+=p[i];if(u<c||i===p.length-1){out[i]++;break;}}}return out;}
+function timeExperiment(n,seed){return{uniform:counts(n,Array(6).fill(1/6),random(seed)),od:counts(n,weights(),random(seed))};}
+function countExperiment(n,seed){const rng=random(seed);return{fixed:Array(500).fill(n),poisson:Array.from({length:500},()=>poisson(n,rng))};}
+function summary(a){const mean=a.reduce((x,y)=>x+y,0)/a.length;return{mean,sd:Math.sqrt(a.reduce((s,v)=>s+(v-mean)**2,0)/(a.length-1)),min:Math.min(...a),max:Math.max(...a)};}
+const ROWS=[{id:'A',time:'18:02',od:'주거지 → 역'},{id:'B',time:'18:10',od:'역 → 주거지'},{id:'C',time:'18:35',od:'상가 → 주거지'},{id:'D',time:'19:05',od:'주거지 → 상가'}];
+function resample(seed){const rng=random(seed);return Array.from({length:4},()=>({...ROWS[Math.floor(rng()*4)]}));}
+const text=(x,y,t,extra='')=>`<text x="${x}" y="${y}" ${extra}>${t}</text>`;
+function axes(max,label){let s=text(58,18,label);for(let i=0;i<=4;i++){const y=278-i*60;s+=`<line x1="58" y1="${y}" x2="878" y2="${y}" stroke="#dce5e2"/>`+text(48,y+5,fmt(max*i/4),'text-anchor="end"');}return s;}
+function timeChart(a){const max=Math.ceil(Math.max(...a.uniform,...a.od)/50)*50||1;let s=axes(max,'호출 수 (건)');for(let i=0;i<6;i++){const x=58+i*820/6;[a.uniform[i],a.od[i]].forEach((v,j)=>{const h=v/max*240;s+=`<rect x="${x+20+j*48}" y="${278-h}" width="40" height="${h}" fill="${j?GREEN:BLUE}"><title>${18+i}시 ${j?'O-D':'균등'}: ${v}건</title></rect>`+text(x+40+j*48,270-h,v,'text-anchor="middle"');});s+=text(x+68,306,`${18+i}시대`,'text-anchor="middle"');}$('time-chart').innerHTML=s;}
+function countChart(a,n){const low=Math.min(n,...a),high=Math.max(n,...a);const bw=Math.max(1,Math.ceil((high-low+1)/24));const bins=Array(Math.floor((high-low)/bw)+1).fill(0);a.forEach(v=>bins[Math.floor((v-low)/bw)]++);const max=Math.max(...bins);let s=axes(max,'포아송 빈도 (회)');const domain=bins.length*bw;bins.forEach((v,i)=>{const h=v/max*240;s+=`<rect x="${58+i*820/bins.length+1}" y="${278-h}" width="${Math.max(1,820/bins.length-2)}" height="${h}" fill="${GREEN}"><title>${low+i*bw}~${low+(i+1)*bw-1}건: ${v}회</title></rect>`;});const x=58+(n-low+.5)/domain*820;s+=`<line x1="${x}" y1="30" x2="${x}" y2="278" stroke="${BLUE}" stroke-width="3" stroke-dasharray="7 4"/>`;s+=text(x>620?x-8:x+8,32,`고정: ${fmt(n)}건에 500회`,x>620?'text-anchor="end"':'');const ticks=[...new Set(Array.from({length:5},(_,i)=>Math.round(low+(high-low)*i/4)))];for(const v of ticks){s+=text(58+(v-low+.5)/domain*820,301,fmt(v),'text-anchor="middle"');}s+=text(468,325,'18~24시 총 호출 건수 (건)','text-anchor="middle"');$('count-chart').innerHTML=s;}
+function read(prefix,min){const form=$(prefix+'-form'),input=$(prefix==='time'?'time-count':'count-n'),seed=$(prefix+'-seed');if(!form.checkValidity()||!Number.isInteger(+input.value)||!Number.isInteger(+seed.value)||+input.value<min){$(prefix+'-error').textContent='건수와 시드를 허용 범위의 정수로 입력합니다. 그래프는 마지막 유효 설정의 결과입니다.';return null;}$(prefix+'-error').textContent='';return{n:+input.value,seed:+seed.value};}
+function renderTime(){const c=read('time',1);if(!c)return;const a=timeExperiment(c.n,c.seed),p=weights();timeChart(a);$('title1').textContent=`같은 ${fmt(c.n)}건이라도 언제 몰리는가?`;$('time-answer').textContent=`두 조건 모두 합계는 ${fmt(c.n)}건입니다. 이번 O-D 조건에서는 ${18+a.od.indexOf(Math.max(...a.od))}시대가 ${fmt(Math.max(...a.od))}건으로 가장 많습니다. 두 색의 막대 차이가 큰 시간대를 찾아봅시다.`;$('time-table').querySelector('tbody').innerHTML=p.map((v,i)=>`<tr><td>${18+i}시대</td><td>${fmt(100/6,2)}%</td><td>${fmt(v*100,2)}%</td><td>${a.uniform[i]}</td><td>${a.od[i]}</td></tr>`).join('');}
+function renderCount(){const c=read('count',0);if(!c)return;const a=countExperiment(c.n,c.seed);countChart(a.poisson,c.n);$('title2').textContent=`매일 정확히 ${fmt(c.n)}건이라고 가정해도 되는가?`;$('count-table').querySelector('tbody').innerHTML=Object.entries(a).map(([k,v])=>{const s=summary(v);return`<tr><td>${k==='fixed'?'총건수 고정':'포아송'}</td><td>${fmt(s.mean,1)}</td><td>${fmt(s.sd,1)}</td><td>${s.min}~${s.max}</td></tr>`;}).join('');$('count-answer').textContent=`파란 점선은 고정 방식의 500회가 모두 ${fmt(c.n)}건에 겹치는 위치입니다. 초록 막대는 포아송 총건수의 빈도입니다. 포아송 표준편차의 이론값은 √${fmt(c.n)} = ${fmt(Math.sqrt(c.n),1)}건입니다.`;}
+function renderBoot(rows){const frequency=Object.fromEntries(ROWS.map(r=>[r.id,rows.filter(x=>x.id===r.id).length]));const cls=id=>frequency[id]>1?'duplicate':frequency[id]===0?'omitted':'';$('source-table').querySelector('tbody').innerHTML=ROWS.map(r=>`<tr class="${cls(r.id)}"><td>${r.id}${frequency[r.id]===0?' · 누락':frequency[r.id]>1?` · ${frequency[r.id]}회`:''}</td><td>${r.time}</td><td>${r.od}</td></tr>`).join('');$('draws').innerHTML=rows.map(r=>`<span class="chip ${cls(r.id)}">${r.id}</span>`).join('');$('boot-table').querySelector('tbody').innerHTML=rows.map((r,i)=>`<tr class="${cls(r.id)}"><td>${i+1}</td><td>${r.id}</td><td>${r.time}</td><td>${r.od}</td></tr>`).join('');const duplicates=ROWS.filter(r=>frequency[r.id]>1).map(r=>`${r.id} ${frequency[r.id]}회`).join(', '),missing=ROWS.filter(r=>!frequency[r.id]).map(r=>r.id).join(', ');$('boot-answer').textContent=`총 네 건입니다. ${duplicates?'중복: '+duplicates:'중복 없음'}. ${missing?'누락: '+missing:'누락 없음'}. 같은 행을 뽑을 때마다 시각과 O-D도 그대로 복사됩니다.`;}
+for(const prefix of ['time','count']){const render=prefix==='time'?renderTime:renderCount;$(prefix+'-form').addEventListener('submit',e=>{e.preventDefault();render();});$(prefix+'-form').addEventListener('input',render);$(prefix+'-next').addEventListener('click',()=>{const c=read(prefix,prefix==='time'?1:0);if(c){$(prefix+'-seed').value=(c.seed+1)>>>0;render();}});}
+document.querySelectorAll('[data-step]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-step]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));document.querySelectorAll('.step').forEach(s=>s.hidden=s.id!=='step'+button.dataset.step);}));
+let bootSeed=42;$('boot-next').addEventListener('click',()=>{renderBoot(resample(bootSeed));$('boot-seed').textContent=`난수 시드 ${bootSeed}`;bootSeed=(bootSeed+1)>>>0;});$('boot-example').addEventListener('click',()=>{renderBoot([ROWS[1],ROWS[1],ROWS[3],ROWS[0]]);$('boot-seed').textContent='설명용 예제';});
+$('sources').textContent=`od_2024.parquet · SHA-256 ${DATA.sources['od_2024.parquet']}`;
+window.DemandLab={random,poisson,weights,timeExperiment,countExperiment,resample,summary};
+renderTime();renderCount();renderBoot([ROWS[1],ROWS[1],ROWS[3],ROWS[0]]);
