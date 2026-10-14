@@ -6,6 +6,7 @@
 <title>수요 생성의 원리와 실습 · 8장</title>
 <style>
 :root{color-scheme:light;--ink:#203d41;--muted:#587075;--line:#d5e1de;--green:#087f73;--blue:#426aaa;--amber:#985b19}*{box-sizing:border-box}body{margin:0;background:#f3f6f5;color:var(--ink);font:16px/1.7 system-ui,"Malgun Gothic",sans-serif}main{max-width:1080px;margin:auto;padding:32px 24px}h1{font-size:32px;letter-spacing:-.04em;margin:8px 0}h2{font-size:25px;letter-spacing:-.035em;margin:0 0 8px}h3{font-size:17px;margin:0 0 10px}p{margin:8px 0}a{color:var(--green)}.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--green);font-weight:700}.muted,footer,.help{color:var(--muted);font-size:14px}nav{display:flex;gap:10px;margin:25px 0 18px}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:10px 17px;color:var(--ink);background:white}nav button{flex:1;text-align:left}nav button[aria-pressed=true],button.primary{color:white;background:var(--green);border-color:var(--green)}button:hover{filter:brightness(.95)}:focus-visible{outline:3px solid #ba6c15;outline-offset:3px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:28px}.controls{display:flex;gap:15px;align-items:end;flex-wrap:wrap;margin:20px 0}label{display:block;font-size:13px;color:var(--muted)}input{display:block;width:150px;padding:8px 10px;border:1px solid #adbfba;border-radius:6px;color:var(--ink);background:white}.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:14px;margin:16px 0}.key:before{content:"";display:inline-block;width:13px;height:13px;margin-right:7px;background:var(--blue)}.key.green:before{background:var(--green)}.chart{display:block;width:100%;min-width:640px;height:auto}.chart text{font-family:inherit;font-size:13px;fill:var(--muted)}.answer{background:#edf5f2;border-left:3px solid var(--green);padding:13px 17px;margin:15px 0}.split{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}caption{text-align:left;font-weight:600;margin-bottom:8px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}th{font-weight:500;color:var(--muted)}.duplicate{background:#fff1d9}.omitted{background:#f0f2f3;color:#657378}.chips{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.chip{padding:8px 18px;border:1px solid var(--line);border-radius:7px;font-weight:700}.chip.duplicate{border-color:#c18a44}.error{color:#ae3722;min-height:1.6em;font-size:14px}.step[hidden]{display:none}details{margin-top:22px}summary{cursor:pointer;color:var(--muted)}footer{padding:22px 0}footer p{margin:4px 0}.theory{margin:18px 0;padding:18px;background:#f4f7f6;border-radius:8px}.formula{font-size:19px;color:var(--green)}.lab{margin:22px 0;padding-top:18px;border-top:1px solid var(--line)}code{font-size:.9em;background:#edf2f0;padding:2px 4px;border-radius:3px;overflow-wrap:anywhere}.source{overflow-wrap:anywhere;font-size:12px}.spatial{margin-top:20px;padding:15px 0;border-top:1px solid var(--line)}@media(max-width:650px){main{padding:18px 12px}h1{font-size:26px}h2{font-size:21px}.panel{padding:18px}.split{grid-template-columns:1fr}nav{gap:5px}nav button{padding:10px 8px;font-size:14px}input{width:130px}}
+.process-heading{margin-top:28px}.process-slider{flex:1;min-width:200px}.process-slider input{width:100%;padding:0}.od-flow{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:16px 0;padding:16px 0;border-block:1px solid var(--line);flex-wrap:wrap}.od-flow strong{display:block;font-size:22px}.od-flow .od-arrow{font-size:28px;color:var(--green)}.process-repeat{border-top:1px solid var(--line);padding-top:20px}.current-request{background:#edf5f2}
 </style>
 </head>
 <body><main>
@@ -16,7 +17,7 @@
 <p>한 번의 결과에는 수요 조건의 영향과 우연히 뽑힌 요청 목록의 영향이 함께 들어 있습니다. 같은 조건으로 목록을 다시 만들고 실행해야, 두 시간 분포의 성능 차이가 반복해도 나타나는지 확인할 수 있습니다.</p>
 <p>아래에서는 먼저 총건수를 유지한 채 시간대별 구성이 달라지는 모습을 봅니다. 이어 총건수까지 달라지는 경우로 넓히고, 기존 요청 기록으로 목록을 만드는 방법을 살펴봅니다. 서비스 성능의 반복 비교는 <a href="#service-comparison">아래 실험 연결 안내</a>와 노트북 6절로 이어집니다.</p>
 </section>
-<nav aria-label="수요 비교 실험"><button aria-pressed="true" aria-controls="step1" data-step="1">① 총건수 고정과 시간 분포</button><button aria-pressed="false" aria-controls="step2" data-step="2">② 전체 요청 수의 변동</button><button aria-pressed="false" aria-controls="step3" data-step="3">③ 기존 요청 기록의 활용</button></nav>
+<nav aria-label="수요 비교 실험"><button aria-pressed="true" aria-controls="step1" data-step="1">① 총건수 고정과 시간 분포</button><button aria-pressed="false" aria-controls="step2" data-step="2">② 포아송 과정과 O-D 생성</button><button aria-pressed="false" aria-controls="step3" data-step="3">③ 기존 요청 기록의 활용</button></nav>
 <section class="panel step" id="step1" aria-labelledby="title1">
 <div class="eyebrow">01 / 시간 분포</div><h2 id="title1">시간대별 비중에 따른 호출 시각 생성</h2>
 <p class="help">본문 8.4.3절 · 8.5.1절 → 실습 노트북 4.2~4.3절</p>
@@ -43,19 +44,33 @@
 <p id="time-error" class="error" role="status"></p>
 </section>
 <section class="panel step" id="step2" aria-labelledby="title2" hidden>
-<div class="eyebrow">02 / 총량 변동</div><h2 id="title2">포아송 분포와 호출 발생</h2><p class="help">본문 8.5.2절·8.5.4절 → 실습 노트북 5.3~5.4절</p>
-<div class="theory">
-<h3>고정했던 총건수에도 변동을 허용하는 실험</h3>
-<p>①에서는 전체 합계가 항상 같았습니다. 여기서는 같은 평균 수요를 가정해도 저녁마다 총건수가 달라질 수 있다는 조건을 추가합니다. 총건수 고정 실험은 요청이 1,000건이라는 조건에서 요청 구성의 영향을 확인합니다. 포아송 생성은 평균적으로 1,000건이 발생하는 조건에서 총건수까지 달라질 때의 성능을 확인하기 위한 설정입니다.</p>
-<p>총건수를 매번 1,000건으로 정하면, 호출이 많은 저녁과 적은 저녁의 차이는 실험에 들어가지 않습니다. 포아송 모형에서는 기대 총건수를 정하고 실제 건수를 무작위로 뽑습니다.</p>
-<details><summary>포아송 분포의 평균·분산과 시간대별 발생률</summary><p>포아송 분포는 정한 구간에서 발생하는 사건의 건수를 나타내는 분포입니다. 평균과 분산이 모두 μ라는 점이 이 분포의 특징입니다.</p>
-<p class="formula">N ∼ Poisson(μ) &nbsp; · &nbsp; E[N] = Var(N) = μ &nbsp; · &nbsp; 표준편차 = √μ</p>
-<h3>시간대별로 다른 발생률</h3>
-<p>하남 예제처럼 시간대별 비중이 다르면, 여섯 시간의 기대 총건수 μ를 시간대별로 나눕니다.</p>
-<p class="formula">μ<sub>h</sub> = μp<sub>h</sub> &nbsp; · &nbsp; N<sub>h</sub> ∼ Poisson(μ<sub>h</sub>)</p>
-<p>각 시간대의 N<sub>h</sub>를 독립적으로 뽑습니다. 독립인 시간대별 포아송 건수의 합도 포아송 분포를 따릅니다. 따라서 기대 총건수가 1,000건이면 총건수의 표준편차는 √1,000 ≈ 31.6건입니다.</p>
-</details><p>아래에서는 건수만 500번 뽑아 두 가정의 차이를 확인합니다. 고정 방식의 점선과 포아송 막대의 폭을 비교해 봅시다.</p>
-</div>
+<div class="eyebrow">02 / 호출 발생 → O-D → 요청 목록</div>
+<h2 id="title2">포아송 과정에 따른 개별 요청 생성</h2>
+<p class="help">본문 8.5.2절 · 실습 노트북 5.3절의 호출 시각 생성과 연결</p>
+<p>포아송 분포는 구간 안의 건수를 나타냅니다. 포아송 과정은 시간이 흐르면서 요청이 언제 발생하는지를 나타냅니다. 아래에서는 한 저녁의 호출 시각을 만들고, 각 호출에 출발지 O와 목적지 D를 붙여 요청 목록을 완성합니다.</p>
+<form id="process-form" class="controls"><div><label for="process-n">저녁 전체 기대 요청 수 (건)</label><input id="process-n" type="number" min="0" max="5000" step="1" value="60" required></div><div><label for="process-seed">난수 시드</label><input id="process-seed" type="number" min="0" max="4294967295" step="1" value="42" required></div><button class="primary">한 저녁 생성</button><button type="button" id="process-new">다른 저녁 생성</button></form>
+<p class="help">처음에는 발생 간격을 보기 쉽도록 기대 총건수를 60건으로 둡니다. 실제 건수는 생성할 때마다 달라질 수 있습니다. 입력 후 ‘한 저녁 생성’을 누르면 아래 세 단계가 같은 요청 목록으로 갱신됩니다.</p>
+<p id="process-error" class="error" role="status"></p>
+<h3>1. 통행 비중을 시간대별 발생률로 변환</h3>
+<p>입력한 기대 총건수 μ에 시간대 비중 p<sub>h</sub>를 곱하면 그 시간의 기대 건수 μ<sub>h</sub>가 됩니다. 한 시간 안의 발생률은 λ<sub>h</sub> = μ<sub>h</sub> ÷ 60 (건/분)으로 일정하게 둡니다. 시간대가 바뀌면 발생률도 바뀌는 비균질 포아송 과정입니다.</p>
+<div class="scroll"><table id="process-rates"><caption>입력에서 계산한 발생률과 이번에 생성한 건수</caption><thead><tr><th>시간대</th><th>비중 p<sub>h</sub></th><th>기대 μ<sub>h</sub> (건)</th><th>λ<sub>h</sub> (건/분)</th><th>이번 N<sub>h</sub> (건)</th></tr></thead><tbody></tbody></table></div>
+<h3 class="process-heading">2. 발생 시각을 만들고 시간순으로 확인</h3>
+<p>시간대마다 N<sub>h</sub>를 Poisson(μ<sub>h</sub>)에서 독립적으로 뽑습니다. 이어 그 시간 안에서 N<sub>h</sub>개의 시각을 균등하게 뽑아 정렬합니다. 이것은 시간대 안에서 발생률이 일정한 포아송 과정의 한 경로를 만드는 방법입니다. 시각을 같은 간격으로 배치하는 것은 아닙니다.</p>
+<div class="controls"><button type="button" id="process-start">18:00부터</button><button type="button" id="process-next" class="primary">다음 요청 →</button><button type="button" id="process-end">저녁 전체 보기</button><div class="process-slider"><label for="process-clock">생성된 저녁의 관찰 시각</label><input id="process-clock" type="range" min="1080" max="1440" step="any" value="1080"></div></div>
+<p id="process-status" class="answer" aria-live="polite"></p>
+<div class="scroll"><svg id="process-timeline" class="chart" viewBox="0 0 900 280" role="img" aria-label="한 저녁의 개별 호출 시각과 그 시각까지의 누적 요청 수"></svg></div>
+<p class="help">위쪽 세로선 하나가 호출 한 건이고, 아래 계단은 누적 요청 수입니다. 회색은 아직 관찰 시각이 도달하지 않은 요청입니다. ‘다음 요청’을 누르면 미리 생성한 같은 저녁을 한 건씩 따라갑니다. 버튼을 누를 때마다 수요를 다시 뽑지는 않습니다.</p>
+<h3 class="process-heading">3. 각 호출에 해당 시간대의 O-D 쌍 부여</h3>
+<p>포아송 과정이 정하는 것은 호출 시각입니다. 출발지·목적지는 별도의 확률로 정합니다. 여기서는 발생한 시간대의 집계 O-D 행에서 통행량에 비례해 쌍 하나를 뽑습니다. 출발지와 목적지를 함께 선택하므로 집계표의 O-D 관계를 반영합니다.</p>
+<p class="formula">q<sub>od|h</sub> = 해당 시간대 O-D 쌍의 통행량 ÷ 해당 시간대 전체 통행량</p>
+<div id="process-od" class="od-flow" aria-live="polite"></div>
+<p id="process-choice" class="help"></p>
+<div class="scroll"><table id="process-requests"><caption>관찰 시각까지 생성된 요청 · 최근 8건</caption><thead><tr><th>요청</th><th>호출 시각</th><th>직전 호출과 간격 (분)</th><th>출발 행정동 코드</th><th>도착 행정동 코드</th></tr></thead><tbody></tbody></table></div>
+<details><summary>이번 저녁의 전체 요청 목록</summary><div class="scroll"><table id="process-all"><caption>시간순 요청 목록 · 아직 관찰하지 않은 요청도 포함합니다</caption><thead><tr><th>요청</th><th>호출 시각</th><th>출발 행정동 코드</th><th>도착 행정동 코드</th></tr></thead><tbody></tbody></table></div></details>
+<p class="help">이 화면의 O·D는 행정동 코드입니다. 차량 운행에 넣을 도로 위 좌표를 얻으려면 각 구역 안의 위치를 정하는 단계가 더 필요합니다. 노트북 5.3절은 도로에서 좌표를 뽑는 방식을 사용하므로, 이 화면의 집계 O-D 쌍 선택과 공간 가정이 다릅니다.</p>
+<details><summary>모형의 가정과 데이터의 범위</summary><p>시간대 안에서는 발생률과 O-D 선택 확률이 일정하고, 각 요청의 O-D 선택은 독립적이라고 가정합니다. 화면의 시각은 연속값으로 생성하고 초 단위로 표시합니다. 노트북의 분 단위 시각으로 바꾸면 같은 분에 요청이 겹칠 수 있습니다.</p><p>하남 관련 O-D 파일의 18~23시 양방향 통행을 사용합니다. 집계 기간이 확인되지 않은 교육용 자료이며 택시만의 분포는 아닙니다. 통행량은 상대 비중에만 사용하고 절대 발생률은 입력한 기대 총건수로 정합니다. 관측된 실제 호출 기록을 재생하는 화면이 아닙니다.</p><p>계산 원리: <a href="https://www.columbia.edu/~ww2040/4615S15/Kim_Whitt_NRL_2014.pdf">Kim·Whitt의 구간별 일정 발생률과 조건부 균등 성질 설명</a>.</p></details>
+<details class="process-repeat"><summary>보조 실험 · 총건수만 500번 뽑으면 나타나는 분포</summary>
+<p>위 화면은 호출 한 건씩으로 구성된 한 저녁입니다. 아래 히스토그램의 관측값 하나는 저녁 전체의 총건수입니다. 이 보조 실험은 별도의 기대 건수와 시드를 사용합니다.</p>
 <form id="count-form" class="controls"><div><label for="count-n">총건수 / 기대 총건수</label><input id="count-n" type="number" min="0" max="5000" step="1" value="1000" required></div><div><label for="count-seed">난수 시드</label><input id="count-seed" type="number" min="0" max="4294967295" step="1" value="42" required></div><button class="primary">500번 다시 뽑기</button><button type="button" id="count-next">다음 시드</button></form>
 <p class="help">18:00~24:00 전체의 총건수만 뽑습니다. 개별 요청의 시각·위치 생성과 배차는 수행하지 않습니다.</p>
 <div class="legend"><span class="key">총건수 고정: 500회 모두 N건</span><span class="key green">포아송: 총건수 구간별 빈도</span></div>
@@ -63,7 +78,7 @@
 <div id="count-answer" class="answer" aria-live="polite"></div>
 <div class="scroll"><table id="count-table"><caption>500회 총건수 비교 · 표준편차는 표본 표준편차입니다</caption><thead><tr><th>설정</th><th>평균 (건)</th><th>표준편차 (건)</th><th>최솟값~최댓값 (건)</th></tr></thead><tbody></tbody></table></div>
 <div class="lab"><h3>실습 코드와 연결 · 노트북 5.3~5.4절</h3><p>5.3절의 <code>sample_times</code>는 정해진 수의 호출 시각을 만들고, <code>sample_poisson_times</code>는 시간대별 포아송 건수를 뽑은 뒤 그 수만큼 시각을 만듭니다. 5.4절은 시드를 바꾸며 각 결과의 <code>len(times)</code>를 기록합니다.</p><p>이 화면은 같은 이론적 총건수 분포를 직접 500번 뽑습니다. 노트북에서는 호출 시각도 생성하므로 18시대 건수의 변동까지 비교할 수 있습니다.</p><p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 5.3~5.4절에서 평균·표준편차 확인 →</a> 기대 건수를 바꾸면 표준편차가 √μ에 따라 어떻게 달라지는지 비교합니다.</p></div>
-<p class="help">그래프의 폭은 포아송 가정으로 생긴 변동입니다. 실제 날짜별 호출 기록의 평균·분산과 비교해야 이 가정이 맞는지 판단할 수 있습니다.</p><p id="count-error" class="error" role="status"></p>
+<p class="help">그래프의 폭은 포아송 가정으로 생긴 변동입니다. 실제 날짜별 호출 기록의 평균·분산과 비교해야 이 가정이 맞는지 판단할 수 있습니다.</p><p id="count-error" class="error" role="status"></p></details>
 </section>
 <section class="panel step" id="step3" aria-labelledby="title3" hidden>
 <div class="eyebrow">03 / 요청 리샘플링</div><h2 id="title3">기존 요청 행의 복원추출</h2><p class="help">본문 8.5.3절 → 실습 노트북 5.1~5.2절</p>
@@ -92,11 +107,11 @@
 <li><strong>반복마다 성능 차이를 읽습니다.</strong> ‘O-D 비중 − 균등’으로 서비스율과 평균 대기시간의 차이를 구합니다. 차이의 방향이 유지되는지, 크기가 얼마나 달라지는지 확인합니다. 우열이 반복마다 바뀐다면 한 번의 결과만으로 결론 내리기 어렵습니다.</li>
 </ol>
 <p>서비스율은 전체 요청 중 서비스를 받은 비율입니다. 평균 대기시간은 서비스를 받은 요청에서 계산하므로, 대기가 짧아도 미서비스 요청이 많을 수 있습니다. 두 지표를 함께 읽습니다.</p>
-<p class="answer">이 HTML에서는 시간대별 건수, 총건수의 변동, 기존 행의 중복·누락을 확인합니다. 서비스율과 대기시간은 차량 운행을 계산하는 노트북에서 확인합니다. ②의 건수 500회 반복과 노트북의 서비스 성능 5회 반복은 계산하는 대상이 다릅니다.</p>
+<p class="answer">이 HTML에서는 시간대별 건수, 포아송 호출 시각과 행정동 O-D 요청 목록, 기존 행의 중복·누락을 확인합니다. 서비스율과 대기시간은 차량 운행을 계산하는 노트북에서 확인합니다. ②의 건수 500회 반복과 노트북의 서비스 성능 5회 반복은 계산하는 대상이 다릅니다.</p>
 <p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 6.1~6.2절에서 실행 결과와 반복별 차이 확인 →</a></p>
 </section>
 <aside class="spatial"><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/figures/ch08_spatial_sampling.svg">위치 생성은 별도 그림에서 비교 →</a><p class="help">8.4.1~8.4.2절: 경계 내부와 도로 구간에서 위치를 뽑으면 어떻게 달라지는가?</p></aside>
-<footer><p>①은 시간대 비중, ②는 총건수 가정, ③은 요청 행의 구성을 비교합니다. 화면별 입력값은 다른 화면에 전달되지 않습니다.</p><details><summary>자료 출처와 재현 정보</summary><p>시간 분포: 교재의 data/hanam/od_2024.parquet. 네 요청 A~D: 본문 8.5.3절의 가상 예제. 같은 화면에서 같은 시드와 설정은 같은 결과를 만듭니다. HTML과 노트북은 난수 생성기와 표집 절차가 달라 개별 건수는 일치하지 않을 수 있습니다. 합계·기댓값·변동의 성질을 비교합니다.</p><p>원리: <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm">NIST · 포아송 분포</a> · <a href="https://stat.cmu.edu/~cshalizi/dst/18/lectures/18/lecture-18.html">CMU · 부트스트랩</a></p><div id="sources" class="source"></div></details></footer>
+<footer><p>①은 시간대 비중, ②는 포아송 호출 시각과 O-D 생성, ③은 요청 행의 구성을 비교합니다. 화면별 입력값은 다른 화면에 전달되지 않습니다.</p><details><summary>자료 출처와 재현 정보</summary><p>시간 분포와 시간대별 O-D 쌍: 교재의 data/hanam/od_2024.parquet. 네 요청 A~D: 본문 8.5.3절의 가상 예제. 같은 화면에서 같은 시드와 설정은 같은 결과를 만듭니다. HTML과 노트북은 난수 생성기와 표집 절차가 달라 개별 건수는 일치하지 않을 수 있습니다. 합계·기댓값·변동의 성질을 비교합니다.</p><p>원리: <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm">NIST · 포아송 분포</a> · <a href="https://stat.cmu.edu/~cshalizi/dst/18/lectures/18/lecture-18.html">CMU · 부트스트랩</a></p><div id="sources" class="source"></div></details></footer>
 </main>
 <script id="demand-data" type="application/json">__DEMAND_DATA__</script>
 <script>__DEMAND_SCRIPT__</script>

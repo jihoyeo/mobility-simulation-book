@@ -92,6 +92,7 @@
 | bootstrap | 부트스트랩 | 부트스트랩(bootstrap) | 모든 난수 시뮬레이션을 부트스트랩으로 부르기 |
 | multinomial distribution | 다항분포 | 다항분포(multinomial distribution) | 독립 포아송 발생과 혼용 |
 | Poisson distribution | 포아송 분포 | 포아송 분포(Poisson distribution) | 포아송 과정과 구분 없이 사용 |
+| Poisson process | 포아송 과정 | 포아송 과정(Poisson process) | 포아송 분포와 혼용 |
 | arrival rate | 발생률 | 발생률(arrival rate, 단위 시간당 기대 발생 건수) | 구간의 기대 건수와 혼용 |
 
 ## 쓰지 않는 말

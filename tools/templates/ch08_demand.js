@@ -12,6 +12,72 @@ function countExperiment(n,seed){const rng=random(seed);return{fixed:Array(500).
 function summary(a){const mean=a.reduce((x,y)=>x+y,0)/a.length;return{mean,sd:Math.sqrt(a.reduce((s,v)=>s+(v-mean)**2,0)/(a.length-1)),min:Math.min(...a),max:Math.max(...a)};}
 const ROWS=[{id:'A',time:'18:02',od:'주거지 → 역'},{id:'B',time:'18:10',od:'역 → 주거지'},{id:'C',time:'18:35',od:'상가 → 주거지'},{id:'D',time:'19:05',od:'주거지 → 상가'}];
 function resample(seed){const rng=random(seed);return Array.from({length:4},()=>({...ROWS[Math.floor(rng()*4)]}));}
+// 화면을 이동해도 같은 저녁을 유지하도록 시각과 O-D 생성 난수열을 분리합니다.
+const OD_POOLS=DATA.odPairs.map(pairs=>{
+ let total=0;
+ const cumulative=pairs.map(pair=>total+=pair[2]);
+ return {pairs,cumulative,total};
+});
+function chooseOD(hour,rng){
+ const pool=OD_POOLS[hour],u=rng(),target=u*pool.total;
+ let lo=0,hi=pool.pairs.length-1;
+ while(lo<hi){const mid=(lo+hi)>>>1;if(target<pool.cumulative[mid])hi=mid;else lo=mid+1;}
+ const [origin,destination,weight]=pool.pairs[lo];
+ return {origin,destination,probability:weight/pool.total,u,
+  lower:(lo?pool.cumulative[lo-1]:0)/pool.total,upper:pool.cumulative[lo]/pool.total};
+}
+function processExperiment(expected,seed){
+ const rng=random(seed),odRng=random((seed^0x9e3779b9)>>>0),rows=[];
+ const hours=weights().map((p,h)=>{
+  const mu=expected*p,n=poisson(mu,rng);
+  for(let i=0;i<n;i++)rows.push({hour:h,time:1080+h*60+rng()*60});
+  return {p,mu,rate:mu/60,n};
+ });
+ rows.sort((a,b)=>a.time-b.time);
+ rows.forEach((row,i)=>Object.assign(row,{id:i+1,gap:i?row.time-rows[i-1].time:null},chooseOD(row.hour,odRng)));
+ return {hours,rows};
+}
+function clockTime(minute){
+ const sec=Math.floor(minute*60+1e-7);
+ return [Math.floor(sec/3600),Math.floor(sec/60)%60,sec%60].map(x=>String(x).padStart(2,'0')).join(':');
+}
+let processState=null;
+function renderProcess(){
+ const n=+$('process-n').value,seed=+$('process-seed').value;
+ if(!$('process-form').checkValidity()||!Number.isInteger(n)||n<0||n>5000||!Number.isInteger(seed)||seed<0||seed>4294967295){
+  $('process-error').textContent='기대 건수와 시드를 허용 범위의 정수로 입력합니다. 마지막 유효 결과를 유지합니다.';return;
+ }
+ $('process-error').textContent='';
+ processState=processExperiment(n,seed);
+ $('process-rates').querySelector('tbody').innerHTML=processState.hours.map((h,i)=>`<tr><td>${18+i}시대</td><td>${fmt(h.p*100,2)}%</td><td>${fmt(h.mu,2)}</td><td>${fmt(h.rate,3)}</td><td>${h.n}</td></tr>`).join('');
+ $('process-all').querySelector('tbody').innerHTML=processState.rows.map(r=>`<tr><td>${r.id}</td><td>${clockTime(r.time)}</td><td>${r.origin}</td><td>${r.destination}</td></tr>`).join('')||'<tr><td colspan="4">이번 저녁에는 요청이 없습니다.</td></tr>';
+ $('process-clock').value=processState.rows[0]?.time??1080;
+ renderProcessCursor();
+}
+function renderProcessCursor(){
+ if(!processState)return;
+ const now=+$('process-clock').value,all=processState.rows,visible=all.filter(r=>r.time<=now),last=visible[visible.length-1];
+ $('process-next').disabled=visible.length===all.length;
+ $('process-status').textContent=`관찰 시각 ${clockTime(now)} · 누적 ${visible.length}건 / 이번 저녁 전체 ${all.length}건. ${last?`최근 요청 #${last.id}: ${last.origin} → ${last.destination}`:'아직 발생한 요청이 없습니다.'}`;
+ const x=t=>58+(t-1080)/360*820, y=n=>238-n/Math.max(1,all.length)*104;
+ let svg=text(58,18,'개별 호출 시각 · 선 하나 = 요청 한 건');
+ for(let h=0;h<=6;h++){
+  const xx=x(1080+h*60);
+  svg+=`<line x1="${xx}" y1="30" x2="${xx}" y2="238" stroke="#e1e8e5"/>`;
+  svg+=text(xx,263,`${18+h}:00`,h===0?'text-anchor="start"':h===6?'text-anchor="end"':'text-anchor="middle"');
+ }
+ for(const r of all){svg+=`<line x1="${x(r.time)}" x2="${x(r.time)}" y1="38" y2="68" stroke="${r.time<=now?GREEN:'#c9d2d0'}" stroke-width="${r===last?3:1.5}"/>`;}
+ svg+=text(58,105,'누적 요청 수 (건)');
+ for(const n of [...new Set([0,Math.round(all.length/2),all.length])])svg+=text(48,y(n)+4,n,'text-anchor="end"');
+ function path(rows,end){let d=`M58,${y(0)}`;rows.forEach((r,i)=>d+=`H${x(r.time)}V${y(i+1)}`);return d+`H${x(end)}`;}
+ svg+=`<path d="${path(all,1440)}" fill="none" stroke="#c9d2d0" stroke-width="2"/><path d="${path(visible,now)}" fill="none" stroke="${GREEN}" stroke-width="2.5"/>`;
+ svg+=`<line x1="${x(now)}" x2="${x(now)}" y1="28" y2="240" stroke="#985b19" stroke-dasharray="4 3"/>`;
+ if(last)svg+=`<circle cx="${x(last.time)}" cy="${y(visible.length)}" r="4" fill="${GREEN}"/>`;
+ $('process-timeline').innerHTML=svg;
+ $('process-od').innerHTML=last?`<div>호출 #${last.id}<strong>${clockTime(last.time)}</strong></div><div>출발 행정동 O<strong>${last.origin}</strong></div><span class="od-arrow" aria-hidden="true">→</span><div>도착 행정동 D<strong>${last.destination}</strong></div>`:'다음 요청으로 이동하면 그 요청의 시각과 O-D 쌍이 나타납니다.';
+ $('process-choice').textContent=last?`${18+last.hour}시대 집계표에서 이 O-D 쌍을 뽑을 확률은 ${fmt(last.probability*100,4)}%입니다. O-D 쌍을 코드순으로 놓고 통행 비중을 누적하면, 난수 u = ${fmt(last.u,6)}가 이 쌍의 구간 [${fmt(last.lower,6)}, ${fmt(last.upper,6)})에 들어갑니다.`:'O-D 선택은 호출 발생 시각을 정한 다음 수행합니다.';
+ $('process-requests').querySelector('tbody').innerHTML=visible.slice(-8).map(r=>`<tr${r===last?' class="current-request"':''}><td>${r.id}</td><td>${clockTime(r.time)}</td><td>${r.gap===null?'첫 요청':fmt(r.gap,3)}</td><td>${r.origin}</td><td>${r.destination}</td></tr>`).join('')||'<tr><td colspan="5">관찰 시각까지 요청이 없습니다.</td></tr>';
+}
 const text=(x,y,t,extra='')=>`<text x="${x}" y="${y}" ${extra}>${t}</text>`;
 function axes(max,label){let s=text(58,18,label);for(let i=0;i<=4;i++){const y=278-i*60;s+=`<line x1="58" y1="${y}" x2="878" y2="${y}" stroke="#dce5e2"/>`+text(48,y+5,fmt(max*i/4),'text-anchor="end"');}return s;}
 function timeChart(a){const max=Math.ceil(Math.max(...a.uniform,...a.od)/50)*50||1;let s=axes(max,'호출 수 (건)');for(let i=0;i<6;i++){const x=58+i*820/6;[a.uniform[i],a.od[i]].forEach((v,j)=>{const h=v/max*240;s+=`<rect x="${x+20+j*48}" y="${278-h}" width="40" height="${h}" fill="${j?GREEN:BLUE}"><title>${18+i}시 ${j?'O-D':'균등'}: ${v}건</title></rect>`+text(x+40+j*48,270-h,v,'text-anchor="middle"');});s+=text(x+68,306,`${18+i}시대`,'text-anchor="middle"');}$('time-chart').innerHTML=s;}
@@ -24,5 +90,17 @@ for(const prefix of ['time','count']){const render=prefix==='time'?renderTime:re
 document.querySelectorAll('[data-step]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-step]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));document.querySelectorAll('.step').forEach(s=>s.hidden=s.id!=='step'+button.dataset.step);}));
 let bootSeed=42;$('boot-next').addEventListener('click',()=>{renderBoot(resample(bootSeed));$('boot-seed').textContent=`난수 시드 ${bootSeed}`;bootSeed=(bootSeed+1)>>>0;});$('boot-example').addEventListener('click',()=>{renderBoot([ROWS[1],ROWS[1],ROWS[3],ROWS[0]]);$('boot-seed').textContent='설명용 예제';});
 $('sources').textContent=`od_2024.parquet · SHA-256 ${DATA.sources['od_2024.parquet']}`;
-window.DemandLab={random,poisson,weights,timeExperiment,countExperiment,resample,summary};
-renderTime();renderCount();renderBoot([ROWS[1],ROWS[1],ROWS[3],ROWS[0]]);
+$('process-form').addEventListener('submit',e=>{e.preventDefault();renderProcess();});
+$('process-new').addEventListener('click',()=>{
+ if(!$('process-form').checkValidity()){renderProcess();return;}
+ $('process-seed').value=(+$('process-seed').value+1)>>>0;renderProcess();
+});
+$('process-clock').addEventListener('input',renderProcessCursor);
+$('process-start').addEventListener('click',()=>{$('process-clock').value=1080;renderProcessCursor();});
+$('process-end').addEventListener('click',()=>{$('process-clock').value=1440;renderProcessCursor();});
+$('process-next').addEventListener('click',()=>{
+ const next=processState.rows.find(r=>r.time>+$('process-clock').value);
+ if(next){$('process-clock').value=next.time;renderProcessCursor();}
+});
+window.DemandLab={random,poisson,weights,timeExperiment,countExperiment,resample,summary,processExperiment,clockTime};
+renderProcess();renderTime();renderCount();renderBoot([ROWS[1],ROWS[1],ROWS[3],ROWS[0]]);

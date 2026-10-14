@@ -10,25 +10,22 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+def build(html_only=False):
+    import pyarrow.parquet as pq
 
-from smartmob.teaching.demand_gen import (
-    hourly_profile_from_od, sample_poisson_times,
-)
-from smartmob.viz import use_korean_font
-
-
-def build():
     data = ROOT / "data/hanam"
-    od = pd.read_parquet(data / "od_2024.parquet")
-    profile = np.asarray(hourly_profile_from_od(od))
-    hourly = od.groupby("ST_TIME_CD").CNT.sum().reindex(range(24), fill_value=0)
+    records = pq.read_table(data / "od_2024.parquet").to_pylist()
+    hourly = [0.0] * 24
+    pairs = [{} for _ in range(6)]
+    for row in records:
+        hour, weight = int(row["ST_TIME_CD"]), float(row["CNT"])
+        hourly[hour] += weight
+        if 18 <= hour < 24 and weight > 0:
+            key = (str(row["O_ADMDONG_CD"]), str(row["D_ADMDONG_CD"]))
+            pairs[hour - 18][key] = pairs[hour - 18].get(key, 0) + weight
     payload = {
-        "odRows": len(od), "odHourly": hourly.tolist(),
+        "odRows": len(records), "odHourly": hourly,
+        "odPairs": [[[o, d, w] for (o, d), w in sorted(group.items())] for group in pairs],
         "sources": {"od_2024.parquet": hashlib.sha256(
             (data / "od_2024.parquet").read_bytes()).hexdigest()},
     }
@@ -39,10 +36,38 @@ def build():
     target = ROOT / "_static/ch08_demand.html"
     target.write_text(html, encoding="utf-8")
 
+    if html_only:
+        print(json.dumps({"html_bytes": target.stat().st_size,
+                          "evening_od_pairs": sum(map(len, pairs))}))
+        return
+
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from smartmob.teaching.demand_gen import sample_poisson_times
+    from smartmob.viz import use_korean_font
+    profile = np.asarray(hourly) / sum(hourly)
+
     use_korean_font()
     plt.rcParams.update({"font.size": 11, "axes.spines.top": False,
                          "axes.spines.right": False, "svg.hashsalt": "ch08-demand"})
     figures = ROOT / "figures"
+    # 한 번의 과정: 발생 시각과 누적 건수를 같은 난수 결과로 그립니다.
+    rng = np.random.default_rng(42)
+    n = rng.poisson(10)
+    arrivals = np.sort(rng.uniform(0, 60, n))
+    fig, axes = plt.subplots(2, 1, figsize=(10, 4.5), sharex=True,
+                             gridspec_kw={"height_ratios": [1, 2]})
+    axes[0].scatter(arrivals, np.zeros(n), color="#137f79", s=35)
+    axes[0].set(yticks=[], ylim=(-1, 1), title=f"한 번의 실행: 발생 시각 {n}개 · 시간당 평균 10건 · 시드 42")
+    axes[1].step(np.r_[0, arrivals, 60], np.r_[0, np.arange(1, n + 1), n], where="post", color="#137f79")
+    axes[1].set(xlim=(0, 60), ylim=(0, n + 1), xlabel="18:00부터 지난 시간 (분)", ylabel="누적 요청 수 (건)")
+    axes[1].set_xticks(range(0, 61, 10))
+    axes[1].grid(alpha=.2)
+    fig.tight_layout()
+    fig.savefig(figures / "ch08_poisson_process.svg", metadata={"Date": None})
+    plt.close(fig)
     totals = [len(sample_poisson_times(1000, np.random.default_rng(s), profile))
               for s in range(42, 542)]
     fig, ax = plt.subplots(figsize=(10, 3.7))
@@ -56,11 +81,11 @@ def build():
     fig.savefig(figure_path, metadata={"Date": None})
     figure_path.write_text("\n".join(line.rstrip() for line in figure_path.read_text(encoding="utf-8-sig").splitlines()) + "\n")
     plt.close(fig)
-    print(json.dumps({"html_bytes": target.stat().st_size, "od_rows": len(od),
-                      "od_total": float(hourly.sum()), "evening_profile": (profile[18:] / profile[18:].sum()).tolist(),
+    print(json.dumps({"html_bytes": target.stat().st_size, "od_rows": len(records),
+                      "od_total": sum(hourly), "evening_profile": (profile[18:] / profile[18:].sum()).tolist(),
                       "poisson_500_mean": float(np.mean(totals)),
                       "poisson_500_sd": float(np.std(totals, ddof=1))}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
-    build()
+    build(html_only="--html-only" in sys.argv)
