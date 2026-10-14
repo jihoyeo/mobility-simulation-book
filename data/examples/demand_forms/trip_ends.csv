@@ -1,0 +1,5 @@
+role,zone_id,trips
+origin,O1,60
+origin,O2,40
+destination,D1,50
+destination,D2,50

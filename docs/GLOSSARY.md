@@ -28,6 +28,9 @@
 | 개념 | 본문 표기 | 최초 1회 | 쓰지 않는 말 |
 |---|---|---|---|
 | O-D | O-D | 출발지-목적지(O-D) | 기종점, OD/O-D 혼용 |
+| trip generation | 통행발생 | 통행발생(trip generation) | O-D 연결이 이미 주어진 것으로 해석 |
+| trip distribution | 통행분포 | 통행분포(trip distribution) | 단순 시간대 비중과 혼용 |
+| gravity model | 중력모형 | 중력모형(gravity model) | 관측 O-D와 혼용 |
 | demand | 수요 | 수요(demand) | 디맨드 |
 | GTFS | GTFS | GTFS(General Transit Feed Specification) | 지티에프에스 |
 | GTFS trip | 운행 | 운행(trip, 시간표의 출발편 하나) | 승객 통행과 혼용 |
@@ -36,6 +39,7 @@
 | observation unit | 관측 단위 | 관측 단위(observation unit, 한 행이 나타내는 대상) | 행 수와 통행량을 혼용 |
 | trip chain | 통행사슬 | 통행사슬(trip chain) | 승차 구간 수와 혼용 |
 | expanded trip count | 전수화 통행량 | 전수화 통행량(표본을 전체 규모로 환산한 추정치) | 실제 관측 인원과 혼용 |
+| trajectory | 궤적 | 궤적(trajectory, 시각이 붙은 위치 점의 순서) | 도로 경로와 혼용 |
 | GPS trajectory | GPS 궤적 | GPS(Global Positioning System) 궤적 | GPS 점 수를 통행 건수로 사용 |
 | uniform sampling | 균등 표집 | 균등 표집(uniform sampling) | 실제 수요 분포와 혼용 |
 | boundary | 경계 | 경계(boundary) | 바운더리 |
@@ -47,6 +51,7 @@
 |---|---|---|---|
 | node / edge | 노드 / 엣지 | 노드(node) / 엣지(edge) | 링크·간선과 혼용 |
 | adjacency list | 인접 리스트 | 인접 리스트(adjacency list) | 애드제이션시 |
+| path | 경로 | 경로(path, 거치는 노드·도로 구간의 순서) | O-D 직선 연결과 혼용 |
 | shortest path | 최단경로 | 최단경로(shortest path) | 최적경로 |
 | tentative travel time | 잠정 시간 | 현재까지 발견한 경로 중 가장 짧은 통행시간 | 확정된 최소 통행시간과 혼용 |
 | relaxation | 완화 | 완화(relaxation) | 확정과 혼용 |
@@ -105,3 +110,5 @@
 `scikit-learn` · `LightGBM` · `pydeck` · `deck.gl` · `folium` · `Mapbox` ·
 `OpenStreetMap`(약어는 OSM) · `SUMO` · `VISSIM` · `AIMSUN` · `MATSim` ·
 `Docker` · `FastAPI` · `Jupyter Book` · `DTUMOS`
+
+리샘플링(resampling)은 기존 자료에서 표본을 다시 뽑는 과정입니다. 복원추출은 한 번 뽑은 대상을 다시 뽑을 수 있게 하는 추출 방법입니다.

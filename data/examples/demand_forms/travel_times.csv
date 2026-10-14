@@ -1,0 +1,5 @@
+origin,destination,time_min
+O1,D1,10
+O1,D2,20
+O2,D1,20
+O2,D2,10

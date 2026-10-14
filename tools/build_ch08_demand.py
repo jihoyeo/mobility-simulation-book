@@ -48,7 +48,7 @@ def build():
     fig, ax = plt.subplots(figsize=(10, 3.7))
     ax.hist(totals, bins=20, color="#137f79", alpha=.85, label="포아송 생성 · 500회")
     ax.axvline(1000, color="#b97732", linewidth=2, linestyle="--",
-               label="총건수 고정·행 재표집: 매회 1,000건")
+               label="총건수 고정·행 리샘플링: 매회 1,000건")
     ax.set(xlabel="18~24시 총 호출 건수", ylabel="반복 횟수")
     ax.legend(frameon=False)
     fig.tight_layout()

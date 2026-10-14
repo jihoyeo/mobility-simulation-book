@@ -41,7 +41,7 @@ for(let seed=0;seed<30;seed++){
 }
 assert.match(elements.get('boot-answer').textContent,/B 2회/);assert.match(elements.get('boot-answer').textContent,/누락: C/);
 buttons[1].handlers.click();assert(elements.get('step1').hidden);assert(!elements.get('step2').hidden);assert(elements.get('step3').hidden);
-elements.get('time-count').value='2000';elements.get('time-form').handlers.input();assert.match(elements.get('title1').textContent,/2,000/);assert.match(elements.get('title2').textContent,/1,000/);
+elements.get('time-count').value='2000';elements.get('time-form').handlers.input();assert.match(elements.get('time-answer').textContent,/2,000/);assert.match(elements.get('count-answer').textContent,/1,000/);
 const saved=elements.get('time-chart').innerHTML;
 elements.get('time-form').valid=false;elements.get('time-form').handlers.input();assert.equal(elements.get('time-chart').innerHTML,saved);assert(elements.get('time-error').textContent);
 elements.get('boot-next').handlers.click();elements.get('boot-example').handlers.click();assert.match(elements.get('boot-answer').textContent,/B 2회/);

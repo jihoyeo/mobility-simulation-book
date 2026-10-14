@@ -45,3 +45,6 @@ Thumbs.db
 # 강의 운영 폴더 (추적하지 않는다)
 final/
 mid-term/
+
+# 비공개 시험지, 정답 및 강의 평가 운영 자료
+/private/
