@@ -56,7 +56,7 @@ function renderProcess(){
 }
 function renderProcessCursor(){
  if(!processState)return;
- const now=+$('process-clock').value,all=processState.rows,visible=all.filter(r=>r.time<=now),last=visible[visible.length-1];
+ const now=+$('process-clock').value,all=processState.rows,visible=all.filter(r=>r.time<=now+1e-8),last=visible[visible.length-1];
  $('process-next').disabled=visible.length===all.length;
  $('process-status').textContent=`관찰 시각 ${clockTime(now)} · 누적 ${visible.length}건 / 이번 저녁 전체 ${all.length}건. ${last?`최근 요청 #${last.id}: ${last.origin} → ${last.destination}`:'아직 발생한 요청이 없습니다.'}`;
  const x=t=>58+(t-1080)/360*820, y=n=>238-n/Math.max(1,all.length)*104;
@@ -66,7 +66,7 @@ function renderProcessCursor(){
   svg+=`<line x1="${xx}" y1="30" x2="${xx}" y2="238" stroke="#e1e8e5"/>`;
   svg+=text(xx,263,`${18+h}:00`,h===0?'text-anchor="start"':h===6?'text-anchor="end"':'text-anchor="middle"');
  }
- for(const r of all){svg+=`<line x1="${x(r.time)}" x2="${x(r.time)}" y1="38" y2="68" stroke="${r.time<=now?GREEN:'#c9d2d0'}" stroke-width="${r===last?3:1.5}"/>`;}
+ for(const r of all){svg+=`<line x1="${x(r.time)}" x2="${x(r.time)}" y1="38" y2="68" stroke="${r.time<=now+1e-8?GREEN:'#c9d2d0'}" stroke-width="${r===last?3:1.5}"/>`;}
  svg+=text(58,105,'누적 요청 수 (건)');
  for(const n of [...new Set([0,Math.round(all.length/2),all.length])])svg+=text(48,y(n)+4,n,'text-anchor="end"');
  function path(rows,end){let d=`M58,${y(0)}`;rows.forEach((r,i)=>d+=`H${x(r.time)}V${y(i+1)}`);return d+`H${x(end)}`;}
@@ -99,7 +99,7 @@ $('process-clock').addEventListener('input',renderProcessCursor);
 $('process-start').addEventListener('click',()=>{$('process-clock').value=1080;renderProcessCursor();});
 $('process-end').addEventListener('click',()=>{$('process-clock').value=1440;renderProcessCursor();});
 $('process-next').addEventListener('click',()=>{
- const next=processState.rows.find(r=>r.time>+$('process-clock').value);
+ const next=processState.rows.find(r=>r.time>+$('process-clock').value+1e-8);
  if(next){$('process-clock').value=next.time;renderProcessCursor();}
 });
 window.DemandLab={random,poisson,weights,timeExperiment,countExperiment,resample,summary,processExperiment,clockTime};

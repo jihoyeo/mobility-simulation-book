@@ -67,7 +67,7 @@
 <p id="process-choice" class="help"></p>
 <div class="scroll"><table id="process-requests"><caption>관찰 시각까지 생성된 요청 · 최근 8건</caption><thead><tr><th>요청</th><th>호출 시각</th><th>직전 호출과 간격 (분)</th><th>출발 행정동 코드</th><th>도착 행정동 코드</th></tr></thead><tbody></tbody></table></div>
 <details><summary>이번 저녁의 전체 요청 목록</summary><div class="scroll"><table id="process-all"><caption>시간순 요청 목록 · 아직 관찰하지 않은 요청도 포함합니다</caption><thead><tr><th>요청</th><th>호출 시각</th><th>출발 행정동 코드</th><th>도착 행정동 코드</th></tr></thead><tbody></tbody></table></div></details>
-<p class="help">이 화면의 O·D는 행정동 코드입니다. 차량 운행에 넣을 도로 위 좌표를 얻으려면 각 구역 안의 위치를 정하는 단계가 더 필요합니다. 노트북 5.3절은 도로에서 좌표를 뽑는 방식을 사용하므로, 이 화면의 집계 O-D 쌍 선택과 공간 가정이 다릅니다.</p>
+<p class="help">이 화면의 O·D는 행정동 코드입니다. 두 코드가 같으면 같은 행정동 안의 통행이며, 출발·도착 좌표가 같다는 뜻은 아닙니다. 차량 운행에 넣을 도로 위 좌표를 얻으려면 각 구역 안의 위치를 정하는 단계가 더 필요합니다. 노트북 5.3절은 도로에서 좌표를 뽑는 방식을 사용하므로, 이 화면의 집계 O-D 쌍 선택과 공간 가정이 다릅니다.</p>
 <details><summary>모형의 가정과 데이터의 범위</summary><p>시간대 안에서는 발생률과 O-D 선택 확률이 일정하고, 각 요청의 O-D 선택은 독립적이라고 가정합니다. 화면의 시각은 연속값으로 생성하고 초 단위로 표시합니다. 노트북의 분 단위 시각으로 바꾸면 같은 분에 요청이 겹칠 수 있습니다.</p><p>하남 관련 O-D 파일의 18~23시 양방향 통행을 사용합니다. 집계 기간이 확인되지 않은 교육용 자료이며 택시만의 분포는 아닙니다. 통행량은 상대 비중에만 사용하고 절대 발생률은 입력한 기대 총건수로 정합니다. 관측된 실제 호출 기록을 재생하는 화면이 아닙니다.</p><p>계산 원리: <a href="https://www.columbia.edu/~ww2040/4615S15/Kim_Whitt_NRL_2014.pdf">Kim·Whitt의 구간별 일정 발생률과 조건부 균등 성질 설명</a>.</p></details>
 <details class="process-repeat"><summary>보조 실험 · 총건수만 500번 뽑으면 나타나는 분포</summary>
 <p>위 화면은 호출 한 건씩으로 구성된 한 저녁입니다. 아래 히스토그램의 관측값 하나는 저녁 전체의 총건수입니다. 이 보조 실험은 별도의 기대 건수와 시드를 사용합니다.</p>
