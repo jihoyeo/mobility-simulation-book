@@ -9,7 +9,7 @@
 </style>
 </head>
 <body><main>
-<header><div class="eyebrow">CHAPTER 08 · DEMAND</div><h1>수요 생성의 원리와 실습</h1><p>시뮬레이션에 넣는 수요는 호출 시각과 출발지·목적지가 적힌 요청 목록입니다. 같은 차량 대수라도 요청이 언제 몰리는지, 총 몇 건인지, 어떤 이동으로 구성되는지에 따라 서비스율과 대기시간이 달라질 수 있습니다.</p><p class="help"><a href="../ko/ch08_demand.md">8장 강의 본문</a> · <a href="../labs/ch08_demand.ipynb">실습 노트북</a> · 외부 연결 없이 실행</p></header>
+<header><div class="eyebrow">CHAPTER 08 · DEMAND</div><h1>수요 생성의 원리와 실습</h1><p>시뮬레이션에 넣는 수요는 호출 시각과 출발지·목적지가 적힌 요청 목록입니다. 같은 차량 대수라도 요청이 언제 몰리는지, 총 몇 건인지, 어떤 이동으로 구성되는지에 따라 서비스율과 대기시간이 달라질 수 있습니다.</p><p class="help"><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/ko/ch08_demand.md">8장 강의 본문</a> · <a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북</a> · 외부 연결 없이 실행</p></header>
 <section class="theory" aria-labelledby="purpose-title">
 <h2 id="purpose-title">수요를 반복해서 생성하는 이유</h2>
 <p>요청 1,000건을 넣어 얻은 서비스율이 다른 요청 1,000건에서도 비슷하게 나올까요? 같은 시간대 비중과 위치 생성 규칙을 사용해도, 가까운 곳에 요청이 이어지는 목록과 먼 곳에서 요청이 동시에 발생하는 목록은 차량이 대응하기 쉬운 정도가 다릅니다.</p>
@@ -38,7 +38,7 @@
 <div class="legend"><span class="key">균등: 매시간 1/6</span><span class="key green">집계 O-D: 18~23시 비중</span></div>
 <div class="scroll"><svg id="time-chart" class="chart" viewBox="0 0 900 330" role="img" aria-label="같은 총건수에서 균등 비중과 집계 O-D 비중으로 뽑은 시간대별 호출 수"></svg></div>
 <div id="time-answer" class="answer" aria-live="polite"></div><p class="help">막대는 한 번 뽑은 건수입니다. 시드만 바꾸면 뽑힌 건수가 바뀌고, 시간대 비중과 기댓값은 유지됩니다. 균등 확률이어도 여섯 막대가 정확히 같지는 않습니다.</p>
-<div class="lab"><h3>관찰 순서와 노트북 연결</h3><p>먼저 같은 총건수에서 균등 비중과 O-D 비중의 막대를 비교합니다. 이어 ‘다음 시드’를 눌러 시간대별 건수가 바뀌어도 전체 합계는 유지되는지 확인합니다. 시드는 난수 추출을 재현하기 위한 번호입니다. 같은 설정과 시드로 다시 뽑으면 같은 결과가 나옵니다.</p><p>비중은 요청을 배정할 확률이고, 막대는 그 확률로 한 번 뽑은 결과입니다. O-D 비중을 썼을 때 호출이 몰리는 시간대를 찾고, 그 시간대에 차량 부족이 생길 가능성을 생각해 봅시다.</p><p><a href="../labs/ch08_demand.ipynb">실습 노트북 4.2~4.3절</a>에서는 도로 위 위치와 분 단위 호출 시각을 갖춘 두 요청 목록을 만듭니다. 이어 6.1절에서 같은 O-D 쌍과 차량 초기 상태로 성능을 비교하고, 6.2절에서 시드를 바꾸어 다섯 번 반복합니다. 이 화면의 막대만으로 서비스 성능의 우열을 판단할 수는 없습니다.</p></div>
+<div class="lab"><h3>관찰 순서와 노트북 연결</h3><p>먼저 같은 총건수에서 균등 비중과 O-D 비중의 막대를 비교합니다. 이어 ‘다음 시드’를 눌러 시간대별 건수가 바뀌어도 전체 합계는 유지되는지 확인합니다. 시드는 난수 추출을 재현하기 위한 번호입니다. 같은 설정과 시드로 다시 뽑으면 같은 결과가 나옵니다.</p><p>비중은 요청을 배정할 확률이고, 막대는 그 확률로 한 번 뽑은 결과입니다. O-D 비중을 썼을 때 호출이 몰리는 시간대를 찾고, 그 시간대에 차량 부족이 생길 가능성을 생각해 봅시다.</p><p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 4.2~4.3절</a>에서는 도로 위 위치와 분 단위 호출 시각을 갖춘 두 요청 목록을 만듭니다. 이어 6.1절에서 같은 O-D 쌍과 차량 초기 상태로 성능을 비교하고, 6.2절에서 시드를 바꾸어 다섯 번 반복합니다. 이 화면의 막대만으로 서비스 성능의 우열을 판단할 수는 없습니다.</p></div>
 <details><summary>시간대별 비중과 이번 건수 확인</summary><div class="scroll"><table id="time-table"><caption>두 조건의 시간대별 확률과 이번 건수</caption><thead><tr><th>시간대</th><th>균등 비중</th><th>O-D 비중</th><th>균등 건수</th><th>O-D 건수</th></tr></thead><tbody></tbody></table></div><p class="help">O-D 파일의 18~23시 집계값 합으로 각 시간대 값을 나누었습니다. 집계 기간이 확인되지 않은 교육용 분포이며, 택시만의 분포는 아닙니다.</p></details>
 <p id="time-error" class="error" role="status"></p>
 </section>
@@ -62,7 +62,7 @@
 <div class="scroll"><svg id="count-chart" class="chart" viewBox="0 0 900 330" role="img" aria-label="동일한 평균에서 고정 방식과 포아송 방식의 500회 총건수 분포 비교"></svg></div>
 <div id="count-answer" class="answer" aria-live="polite"></div>
 <div class="scroll"><table id="count-table"><caption>500회 총건수 비교 · 표준편차는 표본 표준편차입니다</caption><thead><tr><th>설정</th><th>평균 (건)</th><th>표준편차 (건)</th><th>최솟값~최댓값 (건)</th></tr></thead><tbody></tbody></table></div>
-<div class="lab"><h3>실습 코드와 연결 · 노트북 5.3~5.4절</h3><p>5.3절의 <code>sample_times</code>는 정해진 수의 호출 시각을 만들고, <code>sample_poisson_times</code>는 시간대별 포아송 건수를 뽑은 뒤 그 수만큼 시각을 만듭니다. 5.4절은 시드를 바꾸며 각 결과의 <code>len(times)</code>를 기록합니다.</p><p>이 화면은 같은 이론적 총건수 분포를 직접 500번 뽑습니다. 노트북에서는 호출 시각도 생성하므로 18시대 건수의 변동까지 비교할 수 있습니다.</p><p><a href="../labs/ch08_demand.ipynb">실습 노트북 5.3~5.4절에서 평균·표준편차 확인 →</a> 기대 건수를 바꾸면 표준편차가 √μ에 따라 어떻게 달라지는지 비교합니다.</p></div>
+<div class="lab"><h3>실습 코드와 연결 · 노트북 5.3~5.4절</h3><p>5.3절의 <code>sample_times</code>는 정해진 수의 호출 시각을 만들고, <code>sample_poisson_times</code>는 시간대별 포아송 건수를 뽑은 뒤 그 수만큼 시각을 만듭니다. 5.4절은 시드를 바꾸며 각 결과의 <code>len(times)</code>를 기록합니다.</p><p>이 화면은 같은 이론적 총건수 분포를 직접 500번 뽑습니다. 노트북에서는 호출 시각도 생성하므로 18시대 건수의 변동까지 비교할 수 있습니다.</p><p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 5.3~5.4절에서 평균·표준편차 확인 →</a> 기대 건수를 바꾸면 표준편차가 √μ에 따라 어떻게 달라지는지 비교합니다.</p></div>
 <p class="help">그래프의 폭은 포아송 가정으로 생긴 변동입니다. 실제 날짜별 호출 기록의 평균·분산과 비교해야 이 가정이 맞는지 판단할 수 있습니다.</p><p id="count-error" class="error" role="status"></p>
 </section>
 <section class="panel step" id="step3" aria-labelledby="title3" hidden>
@@ -79,7 +79,7 @@
 <div class="split"><div class="scroll"><table id="source-table"><caption>기존 요청 · 설명용 가상 자료</caption><thead><tr><th>행</th><th>호출 시각</th><th>출발지 → 목적지</th></tr></thead><tbody></tbody></table></div><div><h3>뽑은 순서</h3><div class="chips" id="draws"></div><p id="boot-answer" class="answer" aria-live="polite"></p><p class="help">노란색: 중복된 행 · 회색: 빠진 행</p><p>시각과 출발지·목적지를 각각 따로 뽑으면 원래 행의 관계를 잃습니다.</p></div></div>
 <div class="controls"><button type="button" id="boot-example" class="primary">예제 B, B, D, A</button><button type="button" id="boot-next">무작위로 네 번 뽑기</button><span id="boot-seed" class="help">설명용 예제</span></div>
 <div class="scroll"><table id="boot-table"><caption>새 요청 목록 · 호출 시각과 O-D를 함께 복사</caption><thead><tr><th>새 요청</th><th>가져온 행</th><th>호출 시각</th><th>출발지 → 목적지</th></tr></thead><tbody></tbody></table></div>
-<div class="lab"><h3>실습 코드와 연결 · 노트북 5.1~5.2절</h3><p>5.1절에서 원래 행 번호를 <code>source_id</code>로 보관하고, 5.2절에서 <code>bootstrap_demand(base, seed=42)</code>로 기준 목록과 같은 수의 행을 뽑습니다. 화면의 네 행 예제를 노트북에서는 기준 요청 1,000행으로 확장합니다.</p><p><code>len(resampled)</code>는 새 요청 수이고, <code>resampled.source_id.nunique()</code>는 선택된 서로 다른 원래 행의 수입니다. 두 값을 비교하고, 같은 <code>source_id</code>의 시각과 양 끝 좌표가 같은지 확인합니다.</p><p><a href="../labs/ch08_demand.ipynb">실습 노트북 5.2절에서 중복 행 확인 →</a></p></div>
+<div class="lab"><h3>실습 코드와 연결 · 노트북 5.1~5.2절</h3><p>5.1절에서 원래 행 번호를 <code>source_id</code>로 보관하고, 5.2절에서 <code>bootstrap_demand(base, seed=42)</code>로 기준 목록과 같은 수의 행을 뽑습니다. 화면의 네 행 예제를 노트북에서는 기준 요청 1,000행으로 확장합니다.</p><p><code>len(resampled)</code>는 새 요청 수이고, <code>resampled.source_id.nunique()</code>는 선택된 서로 다른 원래 행의 수입니다. 두 값을 비교하고, 같은 <code>source_id</code>의 시각과 양 끝 좌표가 같은지 확인합니다.</p><p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 5.2절에서 중복 행 확인 →</a></p></div>
 <details><summary>시각을 새로 뽑는 방법과 무엇이 다른가요?</summary><p>B를 리샘플링하면 18:10과 ‘역 → 주거지’가 함께 복사됩니다. 같은 O-D를 가져오되 18시대 안에서 분을 새로 뽑는 방법이라면 시각은 18:00~18:59 중 하나가 됩니다.</p><p>수요 생성에는 두 가지 선택이 있습니다. 먼저 전체 요청 수를 고정할지, 무작위로 정할지 선택합니다. 다음으로 각 요청의 시각과 위치를 새로 뽑을지, 기존 요청 행에서 가져올지 선택합니다. 예를 들어 포아송 분포로 전체 건수를 뽑고, 그 수만큼 기존 요청 행을 복원추출할 수 있습니다.</p></details>
 </section>
 <section class="theory" id="service-comparison" aria-labelledby="service-title">
@@ -93,9 +93,9 @@
 </ol>
 <p>서비스율은 전체 요청 중 서비스를 받은 비율입니다. 평균 대기시간은 서비스를 받은 요청에서 계산하므로, 대기가 짧아도 미서비스 요청이 많을 수 있습니다. 두 지표를 함께 읽습니다.</p>
 <p class="answer">이 HTML에서는 시간대별 건수, 총건수의 변동, 기존 행의 중복·누락을 확인합니다. 서비스율과 대기시간은 차량 운행을 계산하는 노트북에서 확인합니다. ②의 건수 500회 반복과 노트북의 서비스 성능 5회 반복은 계산하는 대상이 다릅니다.</p>
-<p><a href="../labs/ch08_demand.ipynb">실습 노트북 6.1~6.2절에서 실행 결과와 반복별 차이 확인 →</a></p>
+<p><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb">실습 노트북 6.1~6.2절에서 실행 결과와 반복별 차이 확인 →</a></p>
 </section>
-<aside class="spatial"><a href="../figures/ch08_spatial_sampling.svg">위치 생성은 별도 그림에서 비교 →</a><p class="help">8.4.1~8.4.2절: 경계 내부와 도로 구간에서 위치를 뽑으면 어떻게 달라지는가?</p></aside>
+<aside class="spatial"><a href="https://github.com/jihoyeo/mobility-simulation-book/blob/main/figures/ch08_spatial_sampling.svg">위치 생성은 별도 그림에서 비교 →</a><p class="help">8.4.1~8.4.2절: 경계 내부와 도로 구간에서 위치를 뽑으면 어떻게 달라지는가?</p></aside>
 <footer><p>①은 시간대 비중, ②는 총건수 가정, ③은 요청 행의 구성을 비교합니다. 화면별 입력값은 다른 화면에 전달되지 않습니다.</p><details><summary>자료 출처와 재현 정보</summary><p>시간 분포: 교재의 data/hanam/od_2024.parquet. 네 요청 A~D: 본문 8.5.3절의 가상 예제. 같은 화면에서 같은 시드와 설정은 같은 결과를 만듭니다. HTML과 노트북은 난수 생성기와 표집 절차가 달라 개별 건수는 일치하지 않을 수 있습니다. 합계·기댓값·변동의 성질을 비교합니다.</p><p>원리: <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366j.htm">NIST · 포아송 분포</a> · <a href="https://stat.cmu.edu/~cshalizi/dst/18/lectures/18/lecture-18.html">CMU · 부트스트랩</a></p><div id="sources" class="source"></div></details></footer>
 </main>
 <script id="demand-data" type="application/json">{"odRows":83135,"odHourly":[2786.25,6913.21,5304.86,5206.2300000000005,9091.73,20056.67,39574.07,63183.44,65687.93,42964.87,37241.25,38320.79,43419.87,46630.35,43903.28,49844.06,54477.31,61572.55,61572.53,42428.12,37166.159999999996,31542.65,18597.079999999998,3061.33],"sources":{"od_2024.parquet":"acbf47b3fe3def113fd9b6dea1c4c1f4f919313dead1386c56ea571b8976f2df"}}</script>

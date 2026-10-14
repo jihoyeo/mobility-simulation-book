@@ -184,7 +184,7 @@ GPS 기록 간격을 더 짧게 바꾸면 점 수는 늘어도 이동한 사람 
 그래서 궤적의 첫 점과 마지막 점이 실제 출발·도착 장소인지 검토합니다.
 수단별 구간을 묶는 기준에 따라 도보 접근과 차량 탑승을 별개 통행으로 셀 수도, 하나로 연결할 수도 있습니다.
 
-[8장 실습 노트북](../labs/ch08_demand.ipynb)의 1절에서 샘플 표와 그림을 함께 살펴봅니다.
+[8장 실습 노트북][ch08-lab]의 1절에서 샘플 표와 그림을 함께 살펴봅니다.
 환승 구간의 시간선, 집계 O-D 행렬, 택시 O-D, GPS 궤적과 가상 경로를 비교합니다.
 같은 이동을 나타내더라도 남아 있는 정보가 다르다는 점을 확인합니다.
 
@@ -613,7 +613,7 @@ B를 뽑을 때마다 호출 시각 18:10과 역 → 주거지라는 O-D 쌍을 
 비교 지표는 서비스율과 평균 대기시간입니다.
 서비스율은 전체 요청 중 서비스를 받은 비율이고, 평균 대기시간은 서비스를 받은 요청에서 계산합니다.
 평균 대기시간이 짧아도 서비스를 받지 못한 요청이 많을 수 있으므로 두 값을 함께 읽습니다.
-[8장 실습 노트북](../labs/ch08_demand.ipynb)의 6절에서는 다음 순서로 비교합니다.
+[8장 실습 노트북][ch08-lab]의 6절에서는 다음 순서로 비교합니다.
 
 1. 요청 목록 한 쌍으로 두 시간 분포의 서비스율과 평균 대기시간을 비교합니다.
 2. 난수 시드를 바꾸어 출발지·목적지와 호출 시각을 다시 만듭니다. 각 반복 안에서는 두 조건의 O-D 쌍을 같게 둡니다.
@@ -627,7 +627,7 @@ B를 뽑을 때마다 호출 시각 18:10과 역 → 주거지라는 O-D 쌍을 
 
 ## 이 장의 실습
 
-[8장 실습 노트북](../labs/ch08_demand.ipynb)은 본문과 같은 순서로 진행합니다.
+[8장 실습 노트북][ch08-lab]은 본문과 같은 순서로 진행합니다.
 1절에서 샘플의 형태를 살펴보고, 2절에서 요청 형식을 확인합니다.
 3절에서 O-D 분포를 계산하거나 추정하고, 4절에서 위치와 호출 시각을 생성합니다.
 5절에서는 수요를 반복해서 만들고, 6절에서 서비스 성능을 비교합니다.
@@ -652,7 +652,7 @@ B를 뽑을 때마다 호출 시각 18:10과 역 → 주거지라는 O-D 쌍을 
 ### 연습 8.2 ★★
 
 하남 파일에서 오전 07~09시대와 저녁 17~19시대의 O-D 쌍을 비교해 봅시다.
-각 시간 범위의 통행량 상위 10쌍은 [실습 노트북](../labs/ch08_demand.ipynb)의 연습 코드로 계산합니다.
+각 시간 범위의 통행량 상위 10쌍은 [실습 노트북][ch08-lab]의 연습 코드로 계산합니다.
 출발지와 목적지가 뒤바뀐 쌍이 있는지 찾고, 통행 목적까지 단정할 수 있는지 설명해 봅시다.
 산출물은 상위 10쌍 표 두 개와 해석 세 문장입니다.
 
@@ -699,7 +699,7 @@ B를 뽑을 때마다 호출 시각 18:10과 역 → 주거지라는 O-D 쌍을 
 - [NIST, Poisson Distribution][ch08-source-2]: 확률식과 평균·표준편차를 확인합니다.
 - [MIT, 도착 시각의 분포][ch08-source-3]: 건수를 뽑은 뒤 도착 시각을 균등하게 정하는 이유를 유도합니다.
 
-[examples]: ../data/examples/demand_forms/README.md
+[examples]: https://github.com/jihoyeo/mobility-simulation-book/blob/main/data/examples/demand_forms/README.md
 [seoul]: https://data.seoul.go.kr/dataVisual/seoul/capitalRegionLivingMigration.do
 [aihub]: https://www.aihub.or.kr/aihubdata/data/view.do?aihubDataSe=data&dataSetSn=71545
 [ch08-source-1]: https://stat.cmu.edu/~cshalizi/dst/18/lectures/18/lecture-18.html
@@ -707,3 +707,5 @@ B를 뽑을 때마다 호출 시각 18:10과 역 → 주거지라는 O-D 쌍을 
 [ch08-source-3]: https://web.mit.edu/urban_or_book/www/book/chapter2/2.12.3.html
 
 [gravity]: https://www.fhwa.dot.gov/ENVIRONMENT/air_quality/conformity/research/emissions_benefits/benefits04.cfm
+
+[ch08-lab]: https://github.com/jihoyeo/mobility-simulation-book/blob/main/labs/ch08_demand.ipynb
