@@ -1,0 +1,2 @@
+"agency_id","agency_name","agency_url","agency_timezone"
+"DEMO","실습용 가상 셔틀","https://www.gachon.ac.kr","Asia/Seoul"

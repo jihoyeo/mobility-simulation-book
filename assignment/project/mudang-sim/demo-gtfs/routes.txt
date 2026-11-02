@@ -1,0 +1,2 @@
+"route_id","agency_id","route_short_name","route_long_name","route_type"
+"DEMO","DEMO","가상 직통","반도체대학–AI공학관 가상 왕복","3"

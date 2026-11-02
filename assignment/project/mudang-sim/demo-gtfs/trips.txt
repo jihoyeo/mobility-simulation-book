@@ -1,0 +1,7 @@
+"route_id","service_id","trip_id"
+"DEMO","CLASS","DEMO_00"
+"DEMO","CLASS","DEMO_01"
+"DEMO","CLASS","DEMO_02"
+"DEMO","CLASS","DEMO_03"
+"DEMO","CLASS","DEMO_04"
+"DEMO","CLASS","DEMO_05"
