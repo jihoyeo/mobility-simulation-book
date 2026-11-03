@@ -1,4 +1,5 @@
 // 두 정류장의 가상 GTFS를 생성합니다. 실제 교내 자료는 아닙니다.
+import { network, stopNodes } from '../src/network.js';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const directory = new URL('../demo-gtfs/', import.meta.url);
 mkdirSync(directory, { recursive: true });
@@ -14,8 +15,8 @@ function clock(seconds) {
 write('agency', ['agency_id', 'agency_name', 'agency_url', 'agency_timezone'],
   [['DEMO', '실습용 가상 셔틀', 'https://www.gachon.ac.kr', 'Asia/Seoul']]);
 write('stops', ['stop_id', 'stop_name', 'stop_lat', 'stop_lon'], [
-  ['S0', '반도체대학', 37.4500, 127.1280],
-  ['S1', 'AI공학관', 37.4530, 127.1310],
+  ['S0', '반도체대학', network.nodes[stopNodes.S0].y, network.nodes[stopNodes.S0].x],
+  ['S1', 'AI공학관', network.nodes[stopNodes.S1].y, network.nodes[stopNodes.S1].x],
 ]);
 write('routes', ['route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_type'],
   [['DEMO', 'DEMO', '가상 직통', '반도체대학–AI공학관 가상 왕복', 3]]);

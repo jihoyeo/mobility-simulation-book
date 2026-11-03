@@ -9,7 +9,8 @@ import { readFeed } from './gtfs.js';
 import { exampleDemand, timetableETA, headwayDepartures } from './models.js';
 import { simulate } from './simulation.js';
 import { network, stopNodes } from './network.js';
-import { connectRoute, positionOnPath } from './routing.js';
+import { createRouteMap } from './map.js';
+import { connectRoute } from './routing.js';
 
 const route = readFeed({ stops, routes, trips, stop_times, calendar, calendar_dates });
 const paths = connectRoute(route, network, stopNodes);
@@ -25,15 +26,11 @@ const clock = seconds => {
 };
 const minutes = seconds => seconds === null ? '—' : (seconds / 60).toFixed(1);
 let baseline, result, demand, config, timer, frame = 0;
-const points = route.visits.map(v => {
-  const node = network.nodes[stopNodes[v.stopId]]; return [node.x, node.y];
-});
-
 $('#app').innerHTML = `
 <header class="topbar"><div class="brand"><span class="bug" aria-hidden="true">●</span> 무당이 실험실 <span class="badge">조교 실습용 MVP</span></div><span class="top-note">가상 직통 노선 · 실제 운행과 무관</span></header>
 <main>
   <section class="intro"><div><p class="eyebrow">GACHON · SHUTTLE SIMULATION</p><h1>같은 수요, 다른 운행.</h1><p>차량 수와 배차간격을 바꾸고, 정류장의 기다림을 비교해 봅니다.</p></div><span class="period">예제 운행일 2026.11.02<br><strong>${clock(0)} — ${clock(duration)}</strong></span></section>
-  <div class="notice"><span class="notice-dot"></span><p><strong>실제 운행 결과가 아닌 학습용 예제입니다.</strong> 반도체대학 ↔ AI공학관 직통 노선, 도로망·시간표·수요 모두 가상입니다.</p></div>
+  <div class="notice"><span class="notice-dot"></span><p><strong>실제 운행 결과가 아닌 학습용 예제입니다.</strong> 반도체대학 ↔ AI공학관 직통 노선, 실제 도로 위에 가상 시간표·수요를 적용합니다. 정차점은 건물 인근의 예시 위치입니다.</p></div>
   <div class="workspace">
     <aside class="panel controls"><p class="eyebrow">01 / 실험 조건</p><h2>운행을 바꿔 봅시다</h2>
       <form id="controls">
@@ -49,8 +46,8 @@ $('#app').innerHTML = `
     </aside>
     <div class="results">
       <section class="panel route-panel"><div class="section-head"><div><p class="eyebrow">02 / 운행 재생</p><h2>정류장에서 일어나는 일</h2></div><span class="live-time" id="clock">11:00</span></div>
-        <div class="map-label"><span>가상 도로망 · 최단거리 경로</span><span>● 정류장 옆 숫자 = 대기인원</span></div>
-        <svg id="route-map" viewBox="0 0 805 435" role="img" aria-label="가상 직통 노선의 도로망과 차량 위치"></svg>
+        <div class="map-label"><span>실제 교내 도로 · 최단거리 경로</span><span>● 정류장 옆 숫자 = 대기인원</span></div>
+        <div id="route-map" aria-label="교내 도로와 차량 위치 지도"></div><p class="help" id="map-note">드래그·확대 가능 · 초록색은 도로 최단경로 · 차량 숫자는 탑승인원</p>
         <div class="playback"><button id="play" type="button" aria-label="운행 재생">▶ 재생</button><label class="sr-only" for="timeline">운행 시각</label><input type="range" id="timeline" min="0" max="240" value="0"><span id="frame-label">0 / 60분</span></div>
         <div class="snapshot-info" id="snapshot-info"></div>
       </section>
@@ -62,22 +59,10 @@ $('#app').innerHTML = `
       <details class="panel detail-panel"><summary>승하차 기록 보기</summary><div class="table-scroll"><table><thead><tr><th>시각</th><th>차량</th><th>정류장</th><th>승차</th><th>하차</th><th>차내</th><th>대기</th></tr></thead><tbody id="events"></tbody></table></div><p class="help">최근 12개 정차 기록입니다. 전체 기록은 결과 JSON에 포함됩니다.</p></details>
     </div>
   </div>
-  <details class="panel learning"><summary>이 예제로 확인할 것 · 학생이 개발할 것</summary><div class="learning-grid"><div><h3>제공하는 계산</h3><p>GTFS 읽기, 선착순 대기열, 하차 후 승차, 차량 정원, 차량 회차, 결과 비교입니다. 가상 도로망의 최단거리 경로는 다익스트라로 구합니다. RAPTOR는 사용하지 않습니다.</p></div><div><h3>학생이 채우는 모형</h3><p>실제 GTFS·도로망, 관측 기반 ETA, 시간대별 수요·OD와 검증 자료를 구축합니다. 완성 대시보드와 운영 개선안도 학생의 과제입니다.</p></div><div><h3>예제의 범위</h3><p>두 정류장만 오가는 가상의 직통 노선입니다. 모든 차량은 반도체대학에서 출발합니다. 실제 노선·좌표·관측 자료를 제공하지 않습니다.</p></div></div><p class="sources">GTFS → 도로 경로 → ETA·수요 → 승하차 → 화면 순서로 연결합니다. <a href="https://gtfs.org/documentation/schedule/reference/">GTFS 명세 ↗</a><br>예제는 실행 구조를 익히기 위한 출발점입니다. 실제 무당이 자료는 직접 구축합니다.</p></details>
+  <details class="panel learning"><summary>이 예제로 확인할 것 · 학생이 개발할 것</summary><div class="learning-grid"><div><h3>제공하는 계산</h3><p>GTFS 읽기, 선착순 대기열, 하차 후 승차, 차량 정원, 차량 회차, 결과 비교입니다. 저장된 OSM 도로망의 최단거리 경로는 다익스트라로 구합니다. RAPTOR는 사용하지 않습니다.</p></div><div><h3>학생이 채우는 모형</h3><p>실제 GTFS·도로망, 관측 기반 ETA, 시간대별 수요·OD와 검증 자료를 구축합니다. 완성 대시보드와 운영 개선안도 학생의 과제입니다.</p></div><div><h3>예제의 범위</h3><p>두 정류장만 오가는 가상의 직통 노선입니다. 모든 차량은 반도체대학에서 출발합니다. 도로 좌표는 OSM 자료이며, 노선·정차점·시간표·수요는 실습용입니다.</p></div></div><p class="sources">GTFS → 도로 경로 → ETA·수요 → 승하차 → 화면 순서로 연결합니다. <a href="https://gtfs.org/documentation/schedule/reference/">GTFS 명세 ↗</a><br>예제는 실행 구조를 익히기 위한 출발점입니다. 실제 무당이 자료는 직접 구축합니다.</p></details>
 </main><footer>무당이 시뮬레이션 실습 <span>가상 GTFS → 도로 경로 → 승객 대기열 → 운행 결과</span></footer>`;
 
-function drawRoute() {
-  const routePath = paths[0].nodes.map(id => `${network.nodes[id].x},${network.nodes[id].y}`).join(' ');
-  const roads = network.edges.filter((_, i) => i % 2 === 0).map(e => {
-    const a = network.nodes[e.from], b = network.nodes[e.to];
-    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#e4e9e3" stroke-width="14"/>`;
-  }).join('');
-  $('#route-map').innerHTML = `${roads}<polyline points="${routePath}" fill="none" stroke="#e4eceb" stroke-width="16" stroke-linejoin="round"/><polyline points="${routePath}" fill="none" stroke="#a4bcb6" stroke-width="2" stroke-dasharray="5 7"/>
-    <text x="400" y="211" text-anchor="middle" class="map-caption">하차 → 빈자리 확인 → 승차</text><text x="400" y="237" text-anchor="middle" class="map-subcaption">최단경로 ${paths[0].meters}m · GTFS 편도 ${route.travelSeconds[0] / 60}분</text><text x="400" y="356" text-anchor="middle" class="map-subcaption">회색 선: 다른 가상 도로 · 실제 지도 아님</text>
-    ${route.visits.slice(0, -1).map((v, i) => {
-      const [x, y] = points[i];
-      return `<g><circle cx="${x}" cy="${y}" r="9" fill="white" stroke="#294a45" stroke-width="3"/><text x="${x}" y="${y - 38}" text-anchor="middle" class="stop-name">${escape(v.name)}</text><text x="${x}" y="${y - 19}" text-anchor="middle" class="stop-seq">${i + 1}번 정차${v.pickup ? '' : ' · 하차만'}</text><rect x="${x - 25}" y="${y + 20}" width="50" height="25" rx="12" fill="#e9f0ed"/><text data-q="${i}" x="${x}" y="${y + 37}" text-anchor="middle" class="queue-count">0명</text></g>`;
-    }).join('')}<g id="buses"></g>`;
-}
+const routeMap = createRouteMap(network, paths, route.visits, stopNodes, colors);
 
 function pause() { clearInterval(timer); timer = null; $('#play').textContent = '▶ 재생'; }
 function showFrame(index) {
@@ -85,13 +70,7 @@ function showFrame(index) {
   const snap = result.snapshots[frame];
   $('#timeline').value = frame; $('#clock').textContent = clock(snap.time);
   $('#frame-label').textContent = `${Math.floor(snap.time / 60)} / 60분`;
-  snap.queues.slice(0, -1).forEach((q, i) => { $(`[data-q="${i}"]`).textContent = `${q}명`; });
-  $('#buses').innerHTML = snap.vehicles.map(v => {
-    const point = v.active ? positionOnPath(paths[v.from], network, v.progress) : points[0];
-    const x = point[0];
-    const y = point[1] + (v.active ? (v.from === 0 ? -13 : 13) : v.id * 27 + 58);
-    return `<g transform="translate(${x},${y})"><title>${v.id + 1}호차, ${v.active ? '운행 중' : '출발 대기'}, ${v.load}명 탑승</title><rect x="-25" y="-13" width="50" height="25" rx="8" fill="${colors[v.id % colors.length]}"/><circle cx="-15" cy="13" r="3" fill="#243832"/><circle cx="15" cy="13" r="3" fill="#243832"/><text y="4" text-anchor="middle" fill="white" font-size="11" font-weight="700">${v.id + 1}호 · ${v.load}</text></g>`;
-  }).join('');
+  routeMap.update(snap);
   $('#snapshot-info').textContent = `현재까지 도착 ${snap.arrived}명 · 대기 ${snap.queues.reduce((a, b) => a + b, 0)}명 · 차내 ${snap.boarded - snap.completed}명 · 도착 완료 ${snap.completed}명`;
 }
 
@@ -117,14 +96,14 @@ function run() {
     config = { fleetSize: +$('#fleet').value, capacity: +$('#capacity').value,
       headwayMinutes: +$('#headway').value, etaScale: +$('#eta').value, count: +$('#demand').value };
     demand = exampleDemand(route, duration, config.count, seed);
-    const common = { route, demand, duration };
+    const common = { route, demand, duration, snapshotEvery: 1 };
     baseline = simulate({ ...common, departures: route.departures.filter(t => t < duration),
       travelTime: (leg, time) => timetableETA(route, leg, time) });
     result = simulate({ ...common, fleetSize: config.fleetSize, capacity: config.capacity,
       departures: headwayDepartures(duration, config.headwayMinutes * 60),
       travelTime: (leg, time) => timetableETA(route, leg, time, config.etaScale) });
     $('#timeline').max = result.snapshots.length - 1;
-    drawRoute(); drawResults(); showFrame(0);
+    drawResults(); showFrame(0);
     $('#status').textContent = `계산 완료 · 두 시나리오에 동일한 ${demand.length}명 적용`;
   } catch (error) { $('#status').textContent = `실행 오류: ${error.message}`; }
 }
@@ -136,7 +115,7 @@ $('#play').addEventListener('click', () => {
   if (timer) { pause(); return; }
   if (frame === result.snapshots.length - 1) showFrame(0);
   $('#play').textContent = 'Ⅱ 일시정지';
-  timer = setInterval(() => { showFrame(frame + 1); if (frame === result.snapshots.length - 1) pause(); }, 100);
+  timer = setInterval(() => { showFrame(frame + 1); if (frame === result.snapshots.length - 1) pause(); }, 50);
 });
 $('#timeline').addEventListener('input', event => { pause(); showFrame(+event.target.value); });
 $('#download').addEventListener('click', () => {
