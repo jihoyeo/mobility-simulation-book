@@ -36,7 +36,7 @@ export function createRouteMap(network, paths, visits, stopNodes, colors) {
     return queue;
   });
   const buses = [];
-  map.on('error', event => { console.warn(event.error); document.querySelector('#map-note').textContent = '배경지도 연결 확인 필요 · 저장된 도로·건물로 운행 재생 중'; });
+  map.on('error', event => { console.warn(event.error); document.querySelector('#map-note').textContent = '지도를 불러오지 못했습니다. 저장된 도로 위에서 재생합니다.'; });
   return {
     update(snap) {
       queues.forEach((el, i) => { el.textContent = `대기 ${snap.queues[i]}명`; });
