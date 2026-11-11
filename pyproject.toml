@@ -22,6 +22,7 @@ dependencies = [
 [project.optional-dependencies]
 viz = ["matplotlib>=3.8", "pydeck>=0.9", "folium>=0.17", "geopandas>=1.0"]
 dev = ["pytest>=8.0"]
+optimization = ["ortools>=9.15,<10"]
 
 [tool.setuptools.packages.find]
 include = ["smartmob*"]

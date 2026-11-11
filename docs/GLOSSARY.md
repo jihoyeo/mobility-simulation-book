@@ -95,6 +95,16 @@
 | Poisson process | 포아송 과정 | 포아송 과정(Poisson process) | 포아송 분포와 혼용 |
 | arrival rate | 발생률 | 발생률(arrival rate, 단위 시간당 기대 발생 건수) | 구간의 기대 건수와 혼용 |
 
+## 최적화 모형
+
+| 개념 | 본문 표기 | 최초 1회 | 쓰지 않는 말 |
+|---|---|---|---|
+| decision variable | 결정변수 | 결정변수(decision variable) | 입력값과 혼용 |
+| objective function | 목적함수 | 목적함수(objective function) | 막연한 효율 |
+| constraint | 제약조건 | 제약조건(constraint) | 설정값과 혼용 |
+| feasible solution | 실행 가능한 해 | 실행 가능한 해(feasible solution) | 최적해와 혼용 |
+| capacitated vehicle routing problem | 용량 제약 차량경로 문제 | 용량 제약 차량경로 문제(CVRP, capacitated vehicle routing problem) | 일대일 할당과 혼용 |
+
 ## 쓰지 않는 말
 
 | 흔히 쓰이지만 | 대신 |

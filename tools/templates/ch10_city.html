@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>하남 OSM 지도 · 배차와 배송 최적화</title>
+<style>
+:root{color-scheme:light;--ink:#203449;--muted:#627487;--line:#dce4ea;--blue:#2266ae;--orange:#bf542c;--map-height:clamp(430px,60vh,640px)}
+*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif}main{max-width:1440px;margin:auto;padding:28px 32px 36px}h1,h2,p{margin:0}h1{font-size:clamp(23px,2.4vw,30px);letter-spacing:-.045em;line-height:1.35}h2{font-size:18px}a{color:#205f9f;text-underline-offset:3px}button,select,input{font:inherit}button,select{border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink)}button{cursor:pointer;padding:7px 12px;min-height:38px}button:hover{background:#edf3f8}button:disabled{opacity:.4;cursor:default}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,svg:focus-visible{outline:3px solid #4c8aca;outline-offset:3px}[hidden]{display:none!important}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:.08em;margin-bottom:7px}.intro{max-width:920px;color:var(--muted);margin:10px 0 22px;font-size:14px}.panel{background:white;border:1px solid var(--line);border-radius:12px;overflow:hidden}.setup{padding:16px 20px}.setup-top{display:flex;align-items:center;gap:18px;margin-bottom:16px}.tabs{display:inline-flex;background:#edf1f5;border-radius:8px;padding:3px;gap:3px}.tabs button{border:0;background:transparent;min-width:108px}.tabs button[aria-pressed=true]{background:var(--ink);color:white}.setup-note{font-size:13px;color:var(--muted)}.controls{display:grid;grid-template-columns:1fr 1fr .9fr 1.5fr;gap:22px}.control{display:flex;flex-direction:column;gap:7px;min-width:0}.control-title{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}.control-title output{color:var(--ink);font-weight:650;font-size:15px}.control input[type=range]{width:100%;margin:9px 0;accent-color:var(--blue);cursor:pointer}.control select{width:100%;min-height:40px;padding:7px 10px}#truckControls{grid-template-columns:1fr .8fr 1.3fr 1.1fr}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0;gap:12px}.metric{background:white;border:1px solid var(--line);border-radius:10px;padding:13px 18px}.metric-label,.metric-note{font-size:12px;color:var(--muted)}.metric-value{display:block;font-size:25px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.5;letter-spacing:-.035em}.metric-value small{font-size:13px;font-weight:400;letter-spacing:0;margin-left:4px}.metric-note{display:block}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start}.map-heading,.results-heading{padding:16px 18px;border-bottom:1px solid var(--line)}.map-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:72px}.map-heading h2,.results-heading h2{font-size:16px}.map-subtitle,.results-heading p{font-size:12px;color:var(--muted)}.map-tools{display:flex;gap:5px;flex-shrink:0}.map-tools button{font-size:13px;padding:5px 10px}.map-stage{position:relative;background:#f5f7f9}.map-stage svg{display:block;width:100%;height:var(--map-height);touch-action:none;cursor:grab}.map-stage svg.dragging{cursor:grabbing}.map-stage svg text{font-family:inherit}.north{position:absolute;right:16px;top:14px;pointer-events:none;display:grid;justify-items:center;font-size:11px;color:#758596;line-height:1.3}.north b{font-size:21px;color:#4f6376}.map-caption{padding:13px 18px;font-size:12px;color:var(--muted)}.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:7px}.legend-item{display:inline-flex;gap:6px;align-items:center}.symbol{width:10px;height:10px;display:inline-block;background:var(--blue);border:1px solid white;outline:1px solid var(--blue)}.symbol.depot{background:var(--ink);outline-color:var(--ink)}.symbol.passenger{background:var(--orange);outline-color:var(--orange);border-radius:50%}.symbol.unserved{background:white;outline-color:var(--orange);border-radius:50%}.symbol.route{height:3px;width:19px;border:0;outline:0;background:var(--blue)}.source{font-size:11px;color:#758596;margin-top:5px}.result-scroll{max-height:var(--map-height);overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}th{position:sticky;top:0;background:#f8fafc;color:var(--muted);font-weight:500;z-index:1}td,th{padding:9px 14px;text-align:left;border-bottom:1px solid #edf1f4}th:last-child,td:last-child{text-align:right}td button{padding:3px 8px;min-height:32px;min-width:52px;border-color:transparent;background:#f0f4f8;color:var(--blue);font-weight:600}td button[aria-pressed=true]{background:var(--blue);color:white}tr.is-selected{background:#edf4fc}tr.is-unserved td{color:var(--orange)}.route-order{font-size:12px;line-height:1.7;min-width:70px}.result-footer{padding:12px 16px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}.result-footer p{margin-top:8px}.selection{min-height:46px;padding:12px 18px;border-top:1px solid var(--line);font-size:13px;color:var(--blue);background:#f8fbff}.explanation{margin-top:20px;display:grid;grid-template-columns:1fr;gap:18px;align-items:start}.explanation>section,.explanation>details{padding:20px}.explanation p{margin-top:10px;font-size:14px;color:var(--muted)}details summary{cursor:pointer;font-size:16px;font-weight:600}.comparison{padding-left:20px;font-size:14px;color:var(--muted);margin:12px 0 0}.comparison li+li{margin-top:5px}footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}footer p+p{margin-top:8px}.links{display:flex;flex-wrap:wrap;gap:7px 20px}.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(min-width:1500px){:root{--map-height:640px}}@media(max-width:1050px){main{padding:24px}.controls{grid-template-columns:1fr 1fr}.layout{grid-template-columns:minmax(0,1fr) 270px}.map-heading{flex-wrap:wrap}.map-tools{margin-left:auto}.metric{padding:12px}.metric-value{font-size:23px}}
+@media(max-width:760px){:root{--map-height:460px}main{padding:18px 12px 28px}.setup{padding:14px}.setup-top{gap:10px;flex-wrap:wrap}.controls{gap:14px}.metrics{grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.metric{padding:10px 14px}.layout,.explanation{grid-template-columns:1fr;gap:12px}.map-heading{padding:12px}.map-caption{padding:12px}.result-scroll{max-height:340px}.explanation>section,.explanation>details{padding:16px}#truckControls{grid-template-columns:1fr 1fr}.setup-note{font-size:12px}.selection{padding:11px 12px}.intro{margin-bottom:16px}.map-heading h2{font-size:15px}}@media(max-width:370px){.controls,#truckControls{grid-template-columns:1fr}.map-tools{margin-left:0}}
+
+.model-panel{margin-top:18px;border-top:3px solid var(--blue)}.model-heading{padding:17px 22px;border-bottom:1px solid var(--line)}.model-heading h2{font-size:20px}.model-heading p{color:var(--muted);font-size:13px;margin-top:3px}.model-grid{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,2fr)}.notation-panel{padding:20px 22px;background:#f7f9fc;border-right:1px solid var(--line)}.model-panel h3{font-size:14px;margin:0 0 14px;color:var(--muted);font-weight:600}.notation-list{display:grid;grid-template-columns:62px minmax(0,1fr);gap:11px 14px;margin:0}.notation-list dt{margin:0;color:#174d80;line-height:1.5}.notation-list dd{margin:0;font-size:14px;line-height:1.65}.notation-list math{font-size:19px}.formulation{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}.formula-group{padding:20px 24px;min-width:0}.formula-group+.formula-group{border-left:1px solid var(--line);background:#f5f9ff}.formula-item+.formula-item{margin-top:19px}.equation{overflow-x:auto;padding:3px 0 5px}.equation math{font-family:"Cambria Math","STIX Two Math",math;font-size:23px;text-align:left;display:block;width:max-content;max-width:100%;margin:0}.equation-note{font-size:13px;color:var(--muted);margin-top:5px}.priority{display:inline-block;font-size:12px;color:#215e99;margin-bottom:6px;font-weight:650}.formula-rule{font-size:16px;line-height:1.8;margin:0}.formula-footnote{font-size:12px;color:var(--muted);margin-top:16px}.model-interpretation{font-size:13px;color:var(--muted);padding:14px 22px;border-top:1px solid var(--line);line-height:1.8}
+@media(max-width:1100px){.model-grid{grid-template-columns:minmax(220px,.8fr) minmax(0,2fr)}.notation-panel,.formula-group{padding:18px 16px}.notation-list{gap:10px}.equation math{font-size:21px}}@media(max-width:900px){.model-grid{grid-template-columns:1fr}.notation-panel{border-right:0;border-bottom:1px solid var(--line)}.notation-list{grid-template-columns:62px minmax(0,1fr) 62px minmax(0,1fr)}}@media(max-width:600px){.model-heading{padding:15px 16px}.model-heading h2{font-size:18px}.notation-list{grid-template-columns:62px minmax(0,1fr)}.formulation{grid-template-columns:1fr}.formula-group+.formula-group{border-left:0;border-top:1px solid var(--line)}.model-interpretation{padding:14px 16px}.equation math{font-size:22px}}
+.metric-focus{border-color:var(--blue);background:#f1f7ff}.truck-status{padding:13px 18px;margin-bottom:16px;background:#fff4e5;border:1px solid #e7c89d;border-radius:8px;color:#804b13;font-size:14px}.truck-stat{display:block;font-size:11px;color:var(--muted);white-space:nowrap}.route-swatch{display:inline-block;width:8px;height:8px;margin-right:5px;border-radius:2px}.comparison-table{margin-top:14px}.comparison-table td,.comparison-table th{text-align:left}.comparison-table .chosen{background:#edf4fc}@media(max-width:1050px){#truckControls{grid-template-columns:1fr 1fr}}@media(max-width:370px){#truckControls{grid-template-columns:1fr}}
+</style></head><body><main>
+<header><p class="eyebrow">10장 · 배차와 차량 경로</p><h1>하남시 도로망에서 배차와 배송 최적화</h1><p class="intro">실제 OpenStreetMap 도로망 위에 학습용 승객·차량·주문을 배치했습니다. 조건을 바꾸면 배차 결과와 도로를 따라가는 경로가 함께 바뀝니다.</p></header>
+<section class="panel setup" aria-label="최적화 조건"><div class="setup-top"><div class="tabs" aria-label="문제 선택"><button id="taxi" aria-pressed="true">택시 배차</button><button id="truck" aria-pressed="false">트럭 배송</button></div><p class="setup-note">가상 수요 · 모든 도로 시속 30km 가정</p></div>
+<div id="taxiControls" class="controls">
+<label class="control"><span class="control-title">승객 수 <span><output id="np" for="passengers">12</output>명</span></span><input id="passengers" aria-label="승객 수" type="range" min="4" max="12" value="12"></label>
+<label class="control"><span class="control-title">빈 차량 수 <span><output id="nv" for="vehicles">12</output>대</span></span><input id="vehicles" aria-label="차량 수" type="range" min="4" max="16" value="12"></label>
+<label class="control"><span class="control-title">픽업 시간 상한</span><select id="limit"><option value="180">3분</option><option value="300">5분</option><option value="600" selected>10분</option><option value="1200">20분</option></select></label>
+<label class="control"><span class="control-title">배차 목적</span><select id="objective"><option value="sum">총 픽업 시간 최소</option><option value="max">최대 픽업 시간 최소</option><option value="greedy">호출 순서 탐욕 배차</option></select></label></div>
+<div id="truckControls" class="controls" hidden>
+<label class="control"><span class="control-title">운행 트럭 수 <span><output id="nk" for="trucks">4</output>대</span></span><input id="trucks" aria-label="운행 트럭 수" type="range" min="2" max="6" value="4"></label>
+<label class="control"><span class="control-title">트럭당 적재 한도</span><select id="capacity"><option value="7">7상자</option><option value="10" selected>10상자</option><option value="15">15상자</option></select></label>
+<label class="control"><span class="control-title">배송 목적</span><select id="truckObjective"><option value="sum">총 주행거리 최소</option><option value="max" selected>가장 긴 트럭 경로 최소</option></select></label>
+<label class="control"><span class="control-title">계산 결과</span><select id="truckMethod"><option value="exact" selected>동적계획법 최적해</option><option value="delivery">OR-Tools 탐색 결과</option></select></label>
+</div></section>
+<section class="panel model-panel" aria-labelledby="modelTitle">
+<div class="model-heading"><h2 id="modelTitle">현재 모형과 계산 조건</h2><p id="modelContext"></p></div>
+<div class="model-grid"><aside class="notation-panel" aria-labelledby="notationTitle"><h3 id="notationTitle">기호 설명</h3><dl id="notation" class="notation-list"></dl></aside><div id="formula" class="formulation"></div></div>
+<p id="interpretation" class="model-interpretation"></p>
+</section>
+<div id="summary" class="metrics" aria-live="polite" aria-atomic="true"></div>
+<p id="truckStatus" class="truck-status" role="status" hidden></p>
+<div class="layout"><section class="panel" aria-label="OSM 경로 지도"><div class="map-heading"><div><h2 id="mapTitle">차량에서 승객까지의 픽업 경로</h2><p class="map-subtitle">드래그로 이동 · 지도에 초점을 둔 뒤 방향키로 이동</p></div><div class="map-tools"><button id="zoomIn" aria-label="지도 확대">＋</button><button id="zoomOut" aria-label="지도 축소">−</button><button id="reset">전체 범위</button></div></div>
+<div class="map-stage"><svg id="map" role="img" tabindex="0" aria-label="하남 OSM 도로와 배차 경로. 방향키로 이동하고 더하기·빼기로 확대·축소합니다."></svg><div class="north" aria-hidden="true"><span>N</span><b>↑</b></div></div><p id="selection" class="selection" aria-live="polite"></p><div class="map-caption"><div id="legend" class="legend"></div><p>결과표의 번호를 선택하면 해당 경로와 주행 방향을 강조합니다.</p><p class="source">지도 데이터 © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> · <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL</a> · 저장된 도로 형상, 오프라인 사용 가능</p></div></section>
+<aside class="panel" aria-label="경로별 계산 결과"><div class="results-heading"><h2 id="resultsTitle">승객별 배차 결과</h2><p>번호를 선택해 지도와 대조합니다.</p></div><div id="results" class="result-scroll"></div><div class="result-footer"><button id="showAll" disabled>모든 경로 표시</button><p id="resultNote"></p></div></aside></div>
+<div class="explanation"><section class="panel"><h2>조건에 따른 결과 비교</h2><div id="comparison"></div></section></div>
+<footer><p>도로의 방향성을 반영합니다. 회전 금지, 승하차 가능 지점, 혼잡, 배송 작업시간은 반영하지 않습니다. 경로는 전체 하남 도로망에서 계산하며 실시간 교통정보는 아닙니다.</p><p class="links"><a href="../ko/ch10_dispatch.md">10장 원리 설명</a><a href="../labs/ch10_dispatch.ipynb">10장 실습 노트북</a><a href="https://developers.google.com/optimization/examples?hl=ko">OR-Tools 공식 예제</a><a href="ch10_city.json">입력 데이터와 계산 결과</a></p></footer>
+</main><script>
+const data=__DATA__;
+const $=id=>document.getElementById(id);
+let mode='taxi',zoom=1,pan=[0,0],drag=null,focused=null;
+function solve(n,m,cutoff){
+ const size=n+m+2,source=size-2,sink=size-1,g=Array.from({length:size},()=>[]);
+ function add(u,v,cost){const a={to:v,cap:1,cost,rev:g[v].length},b={to:u,cap:0,cost:-cost,rev:g[u].length};g[u].push(a);g[v].push(b);}
+ for(let i=0;i<n;i++){add(source,i,0);for(let j=0;j<m;j++)if(data.taxi[i][j].seconds<=cutoff)add(i,n+j,data.taxi[i][j].seconds);}
+ for(let j=0;j<m;j++)add(n+j,sink,0);
+ while(true){const dist=Array(size).fill(Infinity),prev=Array(size);dist[source]=0;
+  for(let k=0;k<size-1;k++){let changed=false;for(let u=0;u<size;u++)if(isFinite(dist[u]))g[u].forEach((e,idx)=>{if(e.cap&&dist[e.to]>dist[u]+e.cost){dist[e.to]=dist[u]+e.cost;prev[e.to]=[u,idx];changed=true;}});if(!changed)break;}
+  if(!prev[sink])break;for(let v=sink;v!==source;){const[u,idx]=prev[v],e=g[u][idx];e.cap--;g[v][e.rev].cap++;v=u;}
+ }
+ const pairs=[];for(let i=0;i<n;i++)for(const e of g[i])if(e.to>=n&&e.to<n+m&&e.cap===0)pairs.push([i,e.to-n]);return pairs;
+}
+function matching(n,m,limit,objective){
+ if(objective==='greedy'){const free=new Set(Array.from({length:m},(_,j)=>j)),pairs=[];for(let i=0;i<n;i++){const choices=[...free].filter(j=>data.taxi[i][j].seconds<=limit).sort((a,b)=>data.taxi[i][a].seconds-data.taxi[i][b].seconds||a-b);if(choices.length){pairs.push([i,choices[0]]);free.delete(choices[0]);}}return pairs;}
+ let pairs=solve(n,m,limit);if(objective==='sum'||!pairs.length)return pairs;
+ const count=pairs.length;let lo=0,hi=limit;while(lo<hi){const mid=Math.floor((lo+hi)/2);if(solve(n,m,mid).length===count)hi=mid;else lo=mid+1;}return solve(n,m,lo);
+}
+
+let selectedPaths=[],markers=[],projection=null,roadCache={};
+const palette=['#2266ae','#b35f2b','#16816b','#8059ab','#bd4774','#8b771b'];
+const minutes=value=>(value/60).toFixed(1);
+const symbol=(kind,label)=>`<span class="legend-item"><i class="symbol ${kind}" aria-hidden="true"></i>${label}</span>`;
+function metric(label,value,unit,note,highlight=false){return `<div class="metric${highlight?' metric-focus':''}"><span class="metric-label">${label}</span><span class="metric-value">${value}<small>${unit}</small></span><span class="metric-note">${note}</span></div>`;}
+function routeButton(key,label){return `<button type="button" data-route="${key}" aria-pressed="false" aria-label="${label} 경로 선택">${mode==='truck'?`<span class="route-swatch" style="background:${palette[key]}" aria-hidden="true"></span>`:''}${label}</button>`;}
+
+// MathML로 수식을 표시하므로 외부 수식 라이브러리 없이 오프라인에서도 읽을 수 있습니다.
+const mi=name=>`<mi>${name}</mi>`;
+const sub=(name,indices)=>`<msub>${mi(name)}<mrow>${[...indices].map(mi).join('')}</mrow></msub>`;
+const sum=(index,expression)=>`<munder><mo>∑</mo>${mi(index)}</munder>${expression}`;
+const math=(expression,block=false)=>`<math xmlns="http://www.w3.org/1998/Math/MathML"${block?' display="block"':''}><mrow>${expression}</mrow></math>`;
+const minimum=expression=>`<mi mathvariant="normal">min</mi><mspace width="0.4em"/>${expression}`;
+const notation=(expression,meaning)=>`<dt>${math(expression)}</dt><dd>${meaning}</dd>`;
+function formulaItem(expression,note,priority=''){
+ return `<div class="formula-item">${priority?`<span class="priority">${priority}</span>`:''}<div class="equation">${math(expression,true)}</div><p class="equation-note">${note}</p></div>`;
+}
+function renderTaxiModel(n,m,limit,objective){
+ const x=sub('x','ij'),u=sub('u','i'),c=sub('c','ij'),T=mi('T');
+ $('modelContext').textContent=`택시 배차 · 승객 ${n}명 · 차량 ${m}대 · 픽업 상한 ${limit/60}분`;
+ $('notation').innerHTML=notation(mi('i'),`승객 번호: 0부터 ${n-1}까지`)+notation(mi('j'),`차량 번호: 0부터 ${m-1}까지`)+notation(c,'차량 j에서 승객 i까지의 최단 픽업 시간. 단위: 분')+notation(x,'차량 j를 승객 i에게 배차하면 1, 아니면 0')+notation(u,'승객 i가 미배차이면 1, 배차되면 0')+(objective==='max'?notation(T,'배차된 승객 중 가장 긴 픽업 시간. 단위: 분'):'');
+ const constraints=formulaItem(sum('j',x)+`<mo>+</mo>${u}<mo>=</mo><mn>1</mn>`,'각 승객 i는 차량 1대에 배차되거나 미배차로 남습니다.')+formulaItem(sum('i',x)+'<mo>≤</mo><mn>1</mn>','각 차량 j는 승객을 최대 1명 맡습니다.')+formulaItem(c+`<mo>&gt;</mo><mn>${limit/60}</mn><mtext>분</mtext><mo>⇒</mo>${x}<mo>=</mo><mn>0</mn>`,'픽업 상한을 넘는 차량·승객 조합은 배차할 수 없습니다.');
+ let objectives;
+ if(objective==='greedy'){
+  objectives='<p class="formula-rule">호출 순서대로, 배차 가능한 차량 중 가장 가까운 차량을 선택합니다.</p><p class="equation-note">선택한 차량은 다음 호출의 후보에서 제외합니다.</p><p class="formula-footnote">탐욕 배차는 배차 인원과 픽업 시간의 최적성을 보장하지 않습니다.</p>';
+ }else{
+  objectives=formulaItem(minimum(sum('i',u)),'먼저 미배차 인원을 최소화합니다.','1순위 · 배차 인원')+formulaItem(minimum(objective==='max'?T:sum('i',sum('j',c+x))),objective==='max'?'같은 배차 인원을 유지하며 최대 픽업 시간을 최소화합니다.':'같은 배차 인원을 유지하며 총 픽업 시간을 최소화합니다.','2순위 · 픽업 시간');
+  if(objective==='max')objectives+=formulaItem(c+x+`<mo>≤</mo>${T}`,'모든 승객 i와 차량 j에 적용합니다.')+'<p class="formula-footnote">최대 시간이 같은 해에서는 총 픽업 시간이 더 짧은 해를 선택합니다.</p>';
+ }
+ $('formula').innerHTML=`<section class="formula-group"><h3>제약조건</h3>${constraints}</section><section class="formula-group"><h3>${objective==='greedy'?'배차 규칙':'목적함수 · 우선순위 순서'}</h3>${objectives}</section>`;
+ $('interpretation').textContent='모든 요청은 같은 시각에 들어왔다고 가정합니다. 픽업 시간은 배차 확정 뒤 차량이 승객까지 이동하는 시간이며, 모든 도로의 속도를 시속 30km로 둡니다. 미배차 승객은 평균·최대 픽업 시간에서 제외합니다.';
+}
+function renderTruckModel(trucks,cap,objective,method,result){
+ const f=data.fleet,n=f.demands.length-1,total=f.demands.reduce((a,b)=>a+b,0);
+ const q=sub('q','i'),z=sub('z','ik'),y=sub('y','ijk'),d=sub('d','ij'),Q=mi('Q'),D=sub('D','k'),L=mi('L');
+ $('modelContext').textContent=`중앙 차고지 D · 배송지 ${n}곳 · 운행 트럭 ${trucks}대 · 적재 한도 ${cap}상자/대`;
+ $('notation').innerHTML=notation(mi('i')+'<mo>,</mo>'+mi('j'),`지점 번호: 0은 차고지 D, 1부터 ${n}까지는 배송지`)+notation(mi('k'),`운행 트럭 번호: 0부터 ${trucks-1}까지`)+notation(q,`배송지 i의 주문량. 총 ${total}상자`)+notation(Q,`트럭당 적재 한도: ${cap}상자`)+notation(d,'지점 i에서 j까지 방향 도로의 최단거리. 단위: m')+notation(z,'배송지 i를 트럭 k에 배정하면 1, 아니면 0')+notation(y,'트럭 k가 i 다음 j를 방문하면 1, 아니면 0')+notation(D,'트럭 k의 차고지 출발·배송·복귀 거리. 단위: m')+(objective==='max'?notation(L,'운행 트럭 중 가장 긴 경로의 거리. 단위: m'):'');
+ const over=expression=>`<munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mn>${n}</mn></munderover>${expression}`;
+ const constraints=formulaItem(sum('k',z)+'<mo>=</mo><mn>1</mn>',`각 배송지 i를 트럭 1대에 배정합니다. (i = 1, …, ${n})`)+formulaItem(over(q+z)+`<mo>≤</mo>${Q}<mo>=</mo><mn>${cap}</mn>`,'각 트럭 k의 적재량은 한도 이하여야 합니다.')+formulaItem(over(z)+'<mo>≥</mo><mn>1</mn>','선택한 모든 트럭에 배송지를 1곳 이상 배정합니다.')+'<p class="formula-rule">모든 트럭은 같은 차고지 D에서 출발해 D로 복귀합니다.</p><p class="equation-note">각 배송지를 정확히 1회 방문하는 연결된 순회 경로를 구성합니다. 주문 분할과 중간 재적재는 허용하지 않습니다.</p>';
+ let goal=formulaItem(minimum(objective==='max'?L:sum('k',D)),objective==='max'?'가장 긴 경로를 줄여 마지막 트럭의 복귀를 앞당깁니다.':'모든 트럭의 주행거리를 합해 최소화합니다.');
+ if(objective==='max')goal+=formulaItem(D+`<mo>≤</mo>${L}`,'모든 운행 트럭 k에 적용합니다.');
+ goal+=formulaItem(D+'<mo>=</mo>'+sum('i',sum('j',d+y)),'트럭별 거리는 차고지 왕복을 포함합니다.');
+ if(objective==='max')goal+='<p class="formula-footnote">최장 거리가 같은 해에서는 총 주행거리가 더 짧은 해를 선택합니다.</p>';
+ $('formula').innerHTML=`<section class="formula-group"><h3>제약조건 · 경로 구성 요약</h3>${constraints}</section><section class="formula-group"><h3>목적함수 · ${objective==='max'?'최장 경로':'총 주행거리'}</h3>${goal}</section>`;
+ $('interpretation').textContent=`배송지는 중앙 차고지 주변에 배치한 가상 주문입니다. 모든 트럭은 같은 시각에 출발하며, 배송 작업시간은 생략합니다. 일정한 속도에서는 최장 거리를 줄이면 마지막 복귀 시간도 줄어듭니다. ${method==='exact'?'이 12곳 예제는 부분집합별 최단 순회와 트럭별 분할을 동적계획법으로 검산한 최적해를 사용합니다.':'OR-Tools는 제한 시간 안에 찾은 경로를 사용하며 최적성을 보장하지 않습니다.'} 수식의 거리 단위는 m, 결과 표시는 km입니다.`;
+}
+function renderFleet(){
+ const f=data.fleet,trucks=+$('trucks').value,cap=+$('capacity').value,obj=$('truckObjective').value,method=$('truckMethod').value;
+ const options=f.solutions[`${trucks}:${cap}:${obj}`],result=options[method],optimal=options.exact,n=f.demands.length-1,total=f.demands.reduce((a,b)=>a+b,0),ok=result.cost!==null;
+ $('nk').textContent=trucks;
+ $('summary').innerHTML=metric('배송 주문',n,'곳',`총 ${total}상자 · 차고지 1곳`)+metric('운행 트럭',trucks,'대',`대당 ${cap}상자 · 총용량 ${trucks*cap}상자`)+metric('총 주행거리',ok?(result.cost/1000).toFixed(2):'—','km','모든 트럭의 차고지 왕복 합계',obj==='sum')+metric('가장 긴 트럭 경로',ok?(result.max_distance/1000).toFixed(2):'—','km','마지막 복귀 시간에 대응',obj==='max');
+ $('mapTitle').textContent='차고지 D를 중심으로 나눈 배송 경로';$('resultsTitle').textContent=`트럭 ${trucks}대의 배송 결과`;
+ renderTruckModel(trucks,cap,obj,method,result);
+ $('truckStatus').hidden=ok;
+ $('truckStatus').textContent=ok?'':result.status==='INFEASIBLE'?(trucks*cap<total?`현재 총 적재용량은 ${trucks*cap}상자로 주문 ${total}상자보다 작습니다. 트럭 대수나 적재 한도를 늘리면 배송할 수 있습니다.`:'현재 대수와 적재 한도에서는 모든 주문을 나눠 실을 수 없습니다.'):'제한된 탐색 시간 안에 경로를 찾지 못했습니다. 동적계획법 최적해로 전환하면 배송 가능 여부를 확인할 수 있습니다.';
+ $('comparison').innerHTML='<p>트럭 수·적재 한도·주문은 고정하고 목적함수만 바꾼 결과입니다. 트럭을 늘리면 주문을 더 나눌 수 있지만 차고지 왕복이 늘어 총거리가 길어질 수 있습니다.</p><table class="comparison-table"><caption class="sr-only">동일 조건에서 배송 목적함수별 거리 비교</caption><thead><tr><th scope="col">목적함수</th><th scope="col">총거리</th><th scope="col">최장 경로</th></tr></thead><tbody>'+['sum','max'].map(o=>{const r=f.solutions[`${trucks}:${cap}:${o}`][method];return `<tr class="${obj===o?'chosen':''}"><td>${o==='sum'?'총 주행거리 최소':'가장 긴 경로 최소'}</td><td>${r.cost===null?'—':(r.cost/1000).toFixed(2)+'km'}</td><td>${r.cost===null?'—':(r.max_distance/1000).toFixed(2)+'km'}</td></tr>`;}).join('')+'</tbody></table><p>모든 운행 트럭은 배송지를 1곳 이상 맡습니다. 지도에서 T0, T1 등의 번호를 선택해 차고지 출발부터 복귀까지 확인합니다.</p>';
+ $('resultNote').textContent=!ok?'실행 가능한 경로가 없으므로 거리와 방문 순서를 표시하지 않습니다.':method==='exact'?'동적계획법으로 검산한 최적해입니다. 색과 선 모양으로 트럭을 구분합니다.':`${obj==='sum'?'총거리':'최장 경로'} 최솟값보다 ${((obj==='sum'?result.cost-optimal.cost:result.max_distance-optimal.max_distance)/1000).toFixed(3)}km 깁니다. 최적해로 전환해 비교할 수 있습니다.`;
+ $('results').innerHTML='<table><caption class="sr-only">트럭별 방문 순서, 적재량과 주행거리</caption><thead><tr><th scope="col">트럭</th><th scope="col">방문 순서</th><th scope="col">적재·거리</th></tr></thead><tbody>'+result.routes.map((r,k)=>`<tr data-result="${k}"><td>${routeButton(k,'T'+k)}</td><td class="route-order">${r.map(i=>i===0?'D':i).join(' →<wbr> ')}</td><td>${result.loads[k]}상자<span class="truck-stat">${(result.lengths[k]/1000).toFixed(2)}km</span></td></tr>`).join('')+'</tbody></table>';
+ selectedPaths=result.routes.map((r,k)=>({key:k,edges:r.slice(1).flatMap((b,i)=>f.legs[r[i]][b].edges),color:palette[k],dash:k%2===1,description:`T${k} · ${r.map(i=>i===0?'D':i).join(' → ')} · ${result.loads[k]}상자 · ${(result.lengths[k]/1000).toFixed(2)}km`}));
+ markers=f.stops.map((p,i)=>{const owners=result.routes.flatMap((r,k)=>r.includes(i)?[k]:[]);return {p,label:i===0?'차고지 D':`${i} (${f.demands[i]})`,square:i===0,depot:i===0,keys:owners,unserved:!ok&&i>0,color:i===0?'#203449':owners.length?palette[owners[0]]:'#bf542c'};});
+ $('legend').innerHTML=symbol('depot','D · 공동 차고지')+symbol('passenger','배송지 (상자 수)')+selectedPaths.map(r=>`<span class="legend-item"><i style="width:19px;border-top:3px ${r.dash?'dashed':'solid'} ${r.color}" aria-hidden="true"></i>T${r.key}</span>`).join('');
+}
+
+function render(){
+ const taxi=mode==='taxi';$('taxiControls').hidden=!taxi;$('truckControls').hidden=taxi;$('truckStatus').hidden=true;
+ focused=null;zoom=1;pan=[0,0];
+ if(taxi){
+  const n=+$('passengers').value,m=+$('vehicles').value,limit=+$('limit').value,obj=$('objective').value;
+  const pairs=matching(n,m,limit,obj),waits=pairs.map(([i,j])=>data.taxi[i][j].seconds),sum=waits.reduce((a,b)=>a+b,0),used=new Map(pairs),active=new Set(pairs.map(([,j])=>j));
+  $('np').textContent=n;$('nv').textContent=m;
+  $('summary').innerHTML=metric('배차 인원',`${pairs.length} / ${n}`,'명',`미배차 ${n-pairs.length}명`)+metric('총 픽업 시간',minutes(sum),'분','배차된 승객의 합계')+metric('평균 픽업 시간',waits.length?minutes(sum/waits.length):'—','분','미배차 승객 제외')+metric('최대 픽업 시간',waits.length?minutes(Math.max(...waits)):'—','분',`설정 상한 ${limit/60}분`);
+  $('mapTitle').textContent='차량에서 승객까지의 픽업 경로';$('resultsTitle').textContent='승객별 배차 결과';
+  renderTaxiModel(n,m,limit,obj);
+
+  $('comparison').innerHTML='<ol class="comparison"><li>차량을 12대에서 6대로 줄이고 배차 인원과 시간을 비교합니다.</li><li>차량을 12대로 되돌린 뒤 픽업 상한을 3분으로 줄입니다.</li><li>총 시간과 최대 시간 목적을 바꾸고 승객별 대기시간을 비교합니다.</li></ol><p>미배차 승객은 평균·최대 시간에서 제외합니다. 시간이 줄어도 배차 인원이 함께 줄었는지 확인합니다.</p>';
+  $('resultNote').textContent='픽업 시간은 배차 확정 뒤 차량이 승객까지 이동하는 시간입니다.';
+  $('results').innerHTML='<table><caption class="sr-only">승객별 배차 결과와 픽업 시간</caption><thead><tr><th scope="col">승객</th><th scope="col">차량</th><th scope="col">픽업</th></tr></thead><tbody>'+Array.from({length:n},(_,i)=>`<tr data-result="${i}" class="${used.has(i)?'':'is-unserved'}"><td>${routeButton(i,'P'+i)}</td><td>${used.has(i)?'V'+used.get(i):'미배차'}</td><td>${used.has(i)?minutes(data.taxi[i][used.get(i)].seconds)+'분':'—'}</td></tr>`).join('')+'</tbody></table>';
+  selectedPaths=pairs.map(([i,j])=>({key:i,edges:data.taxi[i][j].edges,color:palette[0],dash:false,description:`V${j} → P${i} · 픽업 ${minutes(data.taxi[i][j].seconds)}분`}));
+  markers=[...data.vehicles.slice(0,m).map((p,j)=>({p,label:'V'+j,square:true,keys:pairs.filter(([,v])=>v===j).map(([i])=>i),idle:!active.has(j)})),...data.passengers.slice(0,n).map((p,i)=>({p,label:'P'+i,keys:[i],unserved:!used.has(i)}))];
+  $('legend').innerHTML=symbol('','V · 빈 차량')+symbol('passenger','P · 승객')+symbol('unserved','미배차 승객')+symbol('route','픽업 경로');
+ }else{
+  renderFleet();
+ }
+ updateSelection();draw();
+}
+function updateSelection(){
+ const route=selectedPaths.find(r=>r.key===focused);
+ $('selection').textContent=mode==='truck'&&!selectedPaths.length?'현재 조건의 배송 경로가 없습니다. 트럭 대수와 적재 한도를 확인합니다.':focused===null?'전체 경로 · 결과표에서 승객 또는 트럭 번호를 선택할 수 있습니다.':route?route.description:`P${focused} · 현재 조건에서 배차되지 않은 승객입니다.`;
+ $('showAll').disabled=focused===null;
+ document.querySelectorAll('[data-route]').forEach(button=>{const active=Number(button.dataset.route)===focused;button.setAttribute('aria-pressed',active);button.closest('tr').classList.toggle('is-selected',active);});
+}
+function focusRoute(key){focused=focused===key?null:key;updateSelection();drawView();}
+function line(points){return points.map(([x,y],i)=>`${i?'L':'M'}${x.toFixed(1)},${y.toFixed(1)}`).join('');}
+function draw(){
+ const map=$('map'),w=Math.max(map.clientWidth,280),h=map.clientHeight;
+ const all=markers.map(o=>o.p).concat(selectedPaths.flatMap(r=>r.edges.flatMap(e=>data.shapes[e]))),lats=all.map(p=>p[0]),lons=all.map(p=>p[1]);
+ const mid=mode==='truck'?data.fleet.stops[0]:[(Math.min(...lats)+Math.max(...lats))/2,(Math.min(...lons)+Math.max(...lons))/2],cos=Math.cos(mid[0]*Math.PI/180);
+ const scale=Math.min((w-116)/Math.max(2*Math.max(...lons.map(lon=>Math.abs(lon-mid[1])))*cos,.001),(h-112)/Math.max(2*Math.max(...lats.map(lat=>Math.abs(lat-mid[0]))),.001));
+ const xy=p=>[w/2+(p[1]-mid[1])*cos*scale,h/2-(p[0]-mid[0])*scale];projection={w,h,scale,xy};
+ const cacheKey=[w,h,...mid,scale].join(':');
+ if(roadCache.key!==cacheKey)roadCache={key:cacheKey,path:data.background.map(e=>line(data.shapes[e].map(xy))).join('')};
+ selectedPaths.forEach(r=>{r.points=r.edges.flatMap(e=>data.shapes[e].map(xy));r.path=r.edges.map(e=>line(data.shapes[e].map(xy))).join('');});
+ map.setAttribute('viewBox',`0 0 ${w} ${h}`);
+ map.innerHTML='<title>하남시 실제 OSM 도로와 최적화 결과</title><desc>사각형은 차량 또는 물류센터, 원은 승객 또는 배송지입니다. 결과표에서 개별 경로를 선택할 수 있습니다.</desc>'+`<g id="geography"><path d="${roadCache.path}" fill="none" stroke="#d6dfe5" stroke-width="1" vector-effect="non-scaling-stroke"/><g id="routes"></g></g><g id="directions"></g><g id="places"></g><g id="points"></g><g id="scaleBar"></g>`;
+ drawView();
+}
+// 도로는 한 번 투영하고, 이동·확대 중에는 SVG 변환과 라벨만 갱신합니다.
+function drawView(){
+ if(!projection)return;
+ const {w,h,scale,xy}=projection,screen=([x,y])=>[w/2+(x-w/2)*zoom+pan[0],h/2+(y-h/2)*zoom+pan[1]];
+ $('geography').setAttribute('transform',`translate(${w/2+pan[0]} ${h/2+pan[1]}) scale(${zoom}) translate(${-w/2} ${-h/2})`);
+ const ordered=[...selectedPaths].sort((a,b)=>Number(a.key===focused)-Number(b.key===focused));
+ $('routes').innerHTML=ordered.map(r=>{const active=focused===null||r.key===focused;return `<g fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="${active?1:.12}"><path d="${r.path}" stroke="white" stroke-width="6" vector-effect="non-scaling-stroke"/><path d="${r.path}" stroke="${r.color}" stroke-width="${r.key===focused?3.5:2.5}" ${r.dash?'stroke-dasharray="9 6"':''} vector-effect="non-scaling-stroke"/></g>`;}).join('');
+ let arrows='';
+ for(const r of selectedPaths.filter(r=>r.key===focused||(mode==='truck'&&focused===null))){
+  const points=r.points.map(screen);let until=64;
+  for(let i=1;i<points.length;i++){const[a,b]=[points[i-1],points[i]],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);if(!length)continue;
+   for(;until<length;until+=110){const x=a[0]+dx*until/length,y=a[1]+dy*until/length;if(x>12&&x<w-12&&y>12&&y<h-12)arrows+=`<path d="M-5,-3 L0,0 L-5,3" transform="translate(${x},${y}) rotate(${Math.atan2(dy,dx)*180/Math.PI})" fill="none" stroke="${r.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;}
+   until-=length;
+  }
+ }
+ $('directions').innerHTML=arrows;
+ const overlaps=(a,b)=>Math.max(0,Math.min(a[0]+a[2],b[0]+b[2])-Math.max(a[0],b[0]))*Math.max(0,Math.min(a[1]+a[3],b[1]+b[3])-Math.max(a[1],b[1]));
+ const visible=markers.map(o=>({...o,at:screen(xy(o.p)),active:focused===null||o.keys.includes(focused)})).filter(o=>o.at[0]>8&&o.at[0]<w-8&&o.at[1]>8&&o.at[1]<h-8);
+ const occupied=visible.map(o=>{const r=o.depot?17:8;return [o.at[0]-r,o.at[1]-r,2*r,2*r];});
+ // 선택한 지점의 라벨부터 배치해 다른 기호·문자와의 겹침을 줄입니다.
+ visible.sort((a,b)=>Number(b.active)-Number(a.active));const labels=[],dots=[];
+ for(const o of visible){const[x,y]=o.at,color=o.color||(o.idle?'#80909d':o.square?palette[0]:'#bf542c'),opacity=o.active?1:.28;
+  dots.push(`<g opacity="${opacity}"><title>${o.label}${o.unserved?' 미배차':''}</title>${o.depot?`<circle cx="${x}" cy="${y}" r="15" fill="white" stroke="#c9d5e0"/><path d="M${x-10},${y-3} L${x},${y-11} L${x+10},${y-3} V${y+9} H${x-10} Z" fill="${color}"/><rect x="${x-3}" y="${y+1}" width="6" height="8" fill="white"/>`:o.square?`<rect x="${x-5}" y="${y-5}" width="10" height="10" rx="1.5" fill="${color}" stroke="white" stroke-width="2"/>`:`<circle cx="${x}" cy="${y}" r="5.5" fill="${o.unserved?'white':color}" stroke="${o.unserved?color:'white'}" stroke-width="2"/>`}</g>`);
+  if(!o.active&&focused!==null)continue;
+  const lw=[...o.label].reduce((s,c)=>s+(c.charCodeAt(0)>255?12:7),12),lh=22;
+  const gap=o.depot?21:10;
+  const candidates=[[x+gap,y-11],[x-lw-gap,y-11],[x-lw/2,y-(o.depot?42:34)],[x-lw/2,y+(o.depot?21:12)],[x+gap,y-34],[x-lw-gap,y+12]].map(([a,b])=>[Math.max(5,Math.min(w-lw-5,a)),Math.max(5,Math.min(h-lh-5,b)),lw,lh]);
+  candidates.sort((a,b)=>occupied.reduce((s,r)=>s+overlaps(a,r),0)-occupied.reduce((s,r)=>s+overlaps(b,r),0));
+  const box=candidates[0];occupied.push(box);
+  labels.push(`<g><rect x="${box[0]}" y="${box[1]}" width="${lw}" height="${lh}" rx="4" fill="white" fill-opacity=".95" stroke="${o.unserved?'#e2b7a7':'#e0e6eb'}"/><text x="${box[0]+lw/2}" y="${box[1]+15}" text-anchor="middle" fill="${color}" font-size="12" font-weight="600">${o.label}</text></g>`);
+ }
+ $('points').innerHTML=dots.join('')+labels.join('');
+ $('places').innerHTML=[['미사역 부근',[37.5606,127.193]],['하남시청 부근',[37.5393,127.2148]]].map(([name,p])=>{const[x,y]=screen(xy(p)),box=[x-35,y+12,80,18];return x>50&&x<w-60&&y>25&&y<h-40&&!occupied.some(r=>overlaps(box,r))?`<text x="${x}" y="${y+25}" text-anchor="middle" font-size="11" fill="#788b9a" paint-order="stroke" stroke="#f5f7f9" stroke-width="4">${name}</text>`:'';}).join('');
+ const metersPerPixel=111320/(scale*zoom),target=90*metersPerPixel,power=10**Math.floor(Math.log10(target)),meters=[1,2,5,10].map(v=>v*power).filter(v=>v<=target).pop(),length=meters/metersPerPixel;
+ $('scaleBar').innerHTML=`<rect x="12" y="${h-45}" width="${length+24}" height="35" rx="4" fill="white" fill-opacity=".9"/><path d="M24,${h-25} v5 h${length} v-5" fill="none" stroke="#65798b" stroke-width="1.5"/><text x="${24+length/2}" y="${h-29}" text-anchor="middle" font-size="10" fill="#65798b">약 ${meters>=1000?meters/1000+'km':meters+'m'}</text>`;
+ $('zoomIn').disabled=zoom>=8;$('zoomOut').disabled=zoom<=.75;
+}
+for(const id of ['passengers','vehicles','limit','objective','trucks','capacity','truckObjective','truckMethod'])$(id).addEventListener('input',render);
+for(const id of ['taxi','truck'])$(id).addEventListener('click',()=>{mode=id;['taxi','truck'].forEach(k=>$(k).setAttribute('aria-pressed',k===mode));render();});
+$('results').addEventListener('click',event=>{const button=event.target.closest('[data-route]');if(button)focusRoute(Number(button.dataset.route));});
+$('showAll').onclick=()=>{focused=null;updateSelection();drawView();};
+function changeZoom(factor){const next=Math.max(.75,Math.min(8,zoom*factor));pan=pan.map(v=>v*next/zoom);zoom=next;drawView();}
+$('zoomIn').onclick=()=>changeZoom(1.35);$('zoomOut').onclick=()=>changeZoom(1/1.35);
+$('reset').onclick=()=>{zoom=1;pan=[0,0];drawView();};
+$('map').onpointerdown=e=>{if(e.button!==0)return;drag=[e.clientX,e.clientY,...pan];$('map').classList.add('dragging');$('map').setPointerCapture(e.pointerId);};
+let frame=null;
+$('map').onpointermove=e=>{if(!drag)return;pan=[drag[2]+e.clientX-drag[0],drag[3]+e.clientY-drag[1]];if(frame===null)frame=requestAnimationFrame(()=>{frame=null;drawView();});};
+const stopDrag=()=>{drag=null;$('map').classList.remove('dragging');};
+$('map').onpointerup=stopDrag;$('map').onpointercancel=stopDrag;$('map').onlostpointercapture=stopDrag;
+$('map').onkeydown=e=>{const shifts={ArrowLeft:[40,0],ArrowRight:[-40,0],ArrowUp:[0,40],ArrowDown:[0,-40]};if(shifts[e.key]){e.preventDefault();pan=pan.map((v,i)=>v+shifts[e.key][i]);drawView();}else if(['+','=','-','Home','Escape'].includes(e.key)){e.preventDefault();if(e.key==='Home')$('reset').click();else if(e.key==='Escape')$('showAll').click();else changeZoom(e.key==='-'?1/1.35:1.35);}};
+new ResizeObserver(()=>draw()).observe($('map'));
+render();
+</script></body></html>
